@@ -35,8 +35,8 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 13, 13, 13 }, 100, false));
 
         addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 6 }, 100, true));
-        addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 1, 6}, 50, true));
-      
+        addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 1, 6 }, 50, true));
+
         play(State.IDLE.ToString());
 
     }
@@ -114,18 +114,19 @@ public class Player : FAnimatedSprite
                     return;
                 }
 
-                if (grounded && xVel != 0)
-                {
-                    if (isActivelyMoving)
-                        currentState = State.RUN;
+                if (grounded)
+                    if (xVel != 0)
+                    {
+                        if (isActivelyMoving)
+                            currentState = State.RUN;
+                        else
+                            currentState = State.SLIDE;
+                    }
                     else
-                        currentState = State.SLIDE;
-                }
-                else
-                {
-                    currentState = State.IDLE;
+                    {
+                        currentState = State.IDLE;
 
-                }
+                    }
                 if (grounded)
                     xVel *= groundFriction;
                 if (Mathf.Abs(xVel) < .1f)
@@ -224,6 +225,8 @@ public class Player : FAnimatedSprite
 
         stateCount += Time.deltaTime;
 
+        RXDebug.Log(currentState, grounded);
+
         this.scaleX = isFacingLeft ? -1 : 1;
         this.play(currentState.ToString());
     }
@@ -265,8 +268,8 @@ public class Player : FAnimatedSprite
     public void TryMoveRight()
     {
         float newX = this.x + xVel;
-        float topY = this.y + tilemap.tileHeight/3;
-        float bottomY = this.y - tilemap.tileHeight/3;
+        float topY = this.y + tilemap.tileHeight / 3;
+        float bottomY = this.y - tilemap.tileHeight / 3;
         if (tilemap.isPassable(newX + tilemap.tileWidth / 2, topY) &&
             tilemap.isPassable(newX + tilemap.tileWidth / 2, bottomY))
             this.x = newX;
@@ -281,8 +284,8 @@ public class Player : FAnimatedSprite
     public void TryMoveLeft()
     {
         float newX = this.x + xVel;
-        float topY = this.y + tilemap.tileHeight/3;
-        float bottomY = this.y - tilemap.tileHeight/3;
+        float topY = this.y + tilemap.tileHeight / 3;
+        float bottomY = this.y - tilemap.tileHeight / 3;
         if (tilemap.isPassable(newX - tilemap.tileWidth / 2, topY) &&
             tilemap.isPassable(newX - tilemap.tileWidth / 2, bottomY))
             this.x = newX;
@@ -298,6 +301,11 @@ public class Player : FAnimatedSprite
         float newY = this.y + yVel;
         float leftX = this.x - this.width / 3;
         float rightX = this.x + this.width / 3;
+        if (!tilemap.isPassable(leftX, newY - tilemap.tileWidth) ||
+            !tilemap.isPassable(rightX, newY - tilemap.tileWidth))
+        {
+            grounded = true;
+        }
         if (tilemap.isPassable(leftX, newY - tilemap.tileWidth / 2) &&
             tilemap.isPassable(rightX, newY - tilemap.tileWidth / 2))
             this.y = newY;
