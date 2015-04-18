@@ -27,9 +27,9 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 2, 3, 4, 5 }, 100, true));
         addAnimation(new FAnimation(State.SLIDE.ToString(), new int[] { 6 }, 100, true));
         addAnimation(new FAnimation(State.JUMP.ToString(), new int[] { 1, 1, 1, 2 }, 100, true));
-        addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 1, 6 }, 100, false));
-        addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 1, 6 }, 100, false));
-        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 1, 6 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 7, 8, 9 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 10, 11, 12 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 13, 13, 13 }, 100, false));
         play(State.IDLE.ToString());
 
     }
@@ -145,12 +145,14 @@ public class Player : FAnimatedSprite
         yVel += gravity * Time.deltaTime;
         if (xVel > 0)
         {
-            xVel = Mathf.Min(maxXVel, xVel);
+            if (!isAttacking())
+                xVel = Mathf.Min(maxXVel, xVel);
             TryMoveRight();
         }
         else if (xVel < 0)
         {
-            xVel = Mathf.Max(-maxXVel, xVel);
+            if (!isAttacking())
+                xVel = Mathf.Max(-maxXVel, xVel);
             TryMoveLeft();
         }
         if (yVel > 0)
@@ -167,13 +169,18 @@ public class Player : FAnimatedSprite
         stateCount += Time.deltaTime;
 
         this.scaleX = isFacingLeft ? -1 : 1;
-            this.play(currentState.ToString());
+        this.play(currentState.ToString());
+    }
+
+    private bool isAttacking()
+    {
+        return currentState == State.ATTACK_ONE || currentState == State.ATTACK_TWO || currentState == State.ATTACK_THREE;
     }
     private const float ATTACK_ONE_TIME = 1.0f;
     private const float ATTACK_TWO_TIME = 1.0f;
     private const float ATTACK_THREE_TIME = 1.0f;
-    private const float ATTACK_ONE_XVEL = 6;
-    private const float ATTACK_TWO_XVEL = 12;
+    private const float ATTACK_ONE_XVEL = 20;
+    private const float ATTACK_TWO_XVEL = 40;
     private const float ATTACK_THREE_XVEL = 10;
 
     public void StartAttackOne()
@@ -202,8 +209,8 @@ public class Player : FAnimatedSprite
     public void TryMoveRight()
     {
         float newX = this.x + xVel;
-        float topY = this.y + this.height / 3;
-        float bottomY = this.y - this.height / 3;
+        float topY = this.y + tilemap.tileHeight/3;
+        float bottomY = this.y - tilemap.tileHeight/3;
         if (tilemap.isPassable(newX + tilemap.tileWidth / 2, topY) &&
             tilemap.isPassable(newX + tilemap.tileWidth / 2, bottomY))
             this.x = newX;
@@ -218,8 +225,8 @@ public class Player : FAnimatedSprite
     public void TryMoveLeft()
     {
         float newX = this.x + xVel;
-        float topY = this.y + this.height / 3;
-        float bottomY = this.y - this.height / 3;
+        float topY = this.y + tilemap.tileHeight/3;
+        float bottomY = this.y - tilemap.tileHeight/3;
         if (tilemap.isPassable(newX - tilemap.tileWidth / 2, topY) &&
             tilemap.isPassable(newX - tilemap.tileWidth / 2, bottomY))
             this.x = newX;
