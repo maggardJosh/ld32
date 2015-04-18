@@ -324,6 +324,10 @@ public class Player : FAnimatedSprite
     public void StartAttackTwo()
     {
         currentState = State.ATTACK_TWO;
+        if (C.getKey(C.LEFT_KEY))
+            isFacingLeft = true;
+        else if (C.getKey(C.RIGHT_KEY))
+            isFacingLeft = false;
         xVel = ATTACK_TWO_XVEL * (isFacingLeft ? -1 : 1);
         this.play(State.ATTACK_TWO.ToString(), true);
     }
@@ -331,6 +335,10 @@ public class Player : FAnimatedSprite
     public void StartAttackThree()
     {
         currentState = State.ATTACK_THREE;
+        if (C.getKey(C.LEFT_KEY))
+            isFacingLeft = true;
+        else if (C.getKey(C.RIGHT_KEY))
+            isFacingLeft = false;
         xVel = ATTACK_THREE_XVEL * (isFacingLeft ? -1 : 1);
         this.play(State.ATTACK_THREE.ToString(), true);
     }
