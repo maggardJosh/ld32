@@ -16,7 +16,8 @@ public class Player : FAnimatedSprite
         SUPERJUMP_ABLE,
         ATTACK_ONE,
         ATTACK_TWO,
-        ATTACK_THREE
+        ATTACK_THREE,
+        TAIL_HANG
 
     }
     public Player(FTilemap tilemap)
@@ -69,6 +70,7 @@ public class Player : FAnimatedSprite
     private bool grounded = false;
     private float jumpStrength = 15;
     private float superJumpStrength = 25;
+    private float hangJumpStrength = 5;
     private float speed = 200;
     private float gravity = -50;
     private float stateCount = 0;
@@ -81,7 +83,7 @@ public class Player : FAnimatedSprite
             case State.RUN:
             case State.SLIDE:
                 bool isActivelyMoving = false;
-                if (C.getKeyDown(C.UP_KEY) && grounded)
+                if (C.getKeyDown(C.JUMP_KEY) && grounded)
                 {
                     grounded = false;
                     currentState = State.JUMP;
@@ -170,6 +172,13 @@ public class Player : FAnimatedSprite
                     grounded = false;
                     currentState = State.JUMP;
                     yVel = superJumpStrength;
+                }
+                break;
+            case State.TAIL_HANG:
+                if (C.getKeyDown(C.JUMP_KEY))
+                {
+                    currentState = State.JUMP;
+                    yVel = hangJumpStrength;
                 }
                 break;
         }
