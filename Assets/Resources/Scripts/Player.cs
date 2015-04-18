@@ -141,7 +141,7 @@ public class Player : FAnimatedSprite
                 break;
         }
 
-
+        stateCount += Time.deltaTime;
 
         this.scaleX = isFacingLeft ? -1 : 1;
 
