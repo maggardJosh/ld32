@@ -30,6 +30,8 @@ public class GameScript : MonoBehaviour
 
         tilemap = (FTilemap)map.getLayerNamed("tilemap");
         player = new Player(tilemap);
+        player.x = 100;
+        player.y = -100;
         background.AddChild(tilemap);
         playerLayer.AddChild(player);
         FCamObject camera = C.getCameraInstance();

@@ -2,11 +2,11 @@
 
 "player_01":
 {
-	"frame": {"x":3,"y":3,"w":36,"h":36},
+	"frame": {"x":39,"y":43,"w":22,"h":32},
 	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":36},
-	"sourceSize": {"w":36,"h":36}
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":0,"w":22,"h":32},
+	"sourceSize": {"w":32,"h":32}
 },
 "player_02":
 {
@@ -39,6 +39,6 @@
 	"format": "RGBA8888",
 	"size": {"w":64,"h":128},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:46b3a429509431bc153bc2f41713868a:4154369298dbf231f6dd252117aa7c6b:472867876a4db3e566643cd3fb500437$"
+	"smartupdate": "$TexturePacker:SmartUpdate:2967e3d14111afb89f846e71b9a62bfe:f726e34c421a3d202c8e9e0a5feb8651:472867876a4db3e566643cd3fb500437$"
 }
 }
