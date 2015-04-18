@@ -11,6 +11,8 @@ public class Player : FAnimatedSprite
         IDLE,
         RUN,
         JUMP,
+        SUPERJUMP_CHARGE,
+        SUPERJUMP_ABLE,
         ATTACK_ONE,
         ATTACK_TWO,
         ATTACK_THREE
@@ -133,6 +135,10 @@ public class Player : FAnimatedSprite
                     currentState = State.IDLE;
 
                 break;
+            case State.SUPERJUMP_CHARGE:
+                break;
+            case State.SUPERJUMP_ABLE:
+                break;
         }
 
 
@@ -152,6 +158,8 @@ public class Player : FAnimatedSprite
         xVel = ATTACK_ONE_XVEL * (isFacingLeft ? -1 : 1);
 
     }
+
+    private const float SUPERJUMP_CHARGE_TIME = 2.0f;
 
     public void TryMoveRight()
     {
