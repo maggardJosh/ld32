@@ -291,14 +291,15 @@ public class Player : FAnimatedSprite
         get { return extendPoleMiddle.width; }
         set
         {
-            extendPoleMiddle.SetPosition(this.GetPosition() + (Vector2.right * (this.width / 2) * (isFacingLeft ? -1 : 1)  * (extendPoleMiddle.width/2)));
             extendPoleEnd.scaleX = isFacingLeft ? -1 : 1;
                     
             extendPoleMiddle.width = value;
+            extendPoleMiddle.SetPosition(this.GetPosition() + (Vector2.right * (this.width / 2 + (extendPoleMiddle.width / 2) * (isFacingLeft ? -1 : 1))));
             
             extendPoleEnd.SetPosition(extendPoleMiddle.GetPosition() + (Vector2.right * ((extendPoleMiddle.width / 2) * (isFacingLeft ? -1 : 1) + extendPoleEnd.width / 2)));
         }
     }
+
     private const float ATTACK_THREE_EXTEND_TIME = .5f;
 
     private bool isAttacking()
