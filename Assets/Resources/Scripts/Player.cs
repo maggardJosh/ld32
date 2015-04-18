@@ -30,6 +30,10 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 7, 8, 9 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 10, 11, 12 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 13, 13, 13 }, 100, false));
+
+        addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 6 }, 100, true));
+        addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 1, 6}, 50, true));
+      
         play(State.IDLE.ToString());
 
     }
@@ -64,6 +68,7 @@ public class Player : FAnimatedSprite
     private float maxYVel = 30;
     private bool grounded = false;
     private float jumpStrength = 15;
+    private float superJumpStrength = 25;
     private float speed = 200;
     private float gravity = -50;
     private float stateCount = 0;
@@ -81,6 +86,11 @@ public class Player : FAnimatedSprite
                     grounded = false;
                     currentState = State.JUMP;
                     yVel = jumpStrength;
+                }
+                if (C.getKeyDown(C.DOWN_KEY) && grounded)
+                {
+                    currentState = State.SUPERJUMP_CHARGE;
+                    return;
                 }
                 if (C.getKey(C.RIGHT_KEY))
                 {
@@ -137,8 +147,30 @@ public class Player : FAnimatedSprite
                     currentState = State.IDLE;
                 break;
             case State.SUPERJUMP_CHARGE:
+                if (C.getKeyUp(C.DOWN_KEY))
+                {
+                    currentState = State.IDLE;
+                    return;
+                }
+                if (C.getKey(C.DOWN_KEY))
+                {
+                    xVel *= groundFriction;
+                    if (stateCount >= SUPERJUMP_CHARGE_TIME)
+                        currentState = State.SUPERJUMP_ABLE;
+                }
                 break;
             case State.SUPERJUMP_ABLE:
+                if (C.getKeyUp(C.DOWN_KEY))
+                {
+                    currentState = State.IDLE;
+                    return;
+                }
+                if (C.getKeyDown(C.JUMP_KEY))
+                {
+                    grounded = false;
+                    currentState = State.JUMP;
+                    yVel = superJumpStrength;
+                }
                 break;
         }
 
@@ -204,7 +236,7 @@ public class Player : FAnimatedSprite
         this.play(State.ATTACK_THREE.ToString(), true);
     }
 
-    private const float SUPERJUMP_CHARGE_TIME = 2.0f;
+    private const float SUPERJUMP_CHARGE_TIME = 1.5f;
 
     public void TryMoveRight()
     {

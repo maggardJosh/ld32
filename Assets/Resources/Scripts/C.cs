@@ -56,6 +56,14 @@ public class C
         return false;
     }
 
+    public static bool getKeyUp(KeyCode[] keys)
+    {
+        foreach (KeyCode key in keys)
+            if (Input.GetKeyUp(key))
+                return true;
+        return false;
+    }
+
     internal static bool getStartPressed()
     {
         return Input.GetButtonDown("Start");
