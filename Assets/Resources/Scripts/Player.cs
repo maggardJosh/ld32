@@ -18,7 +18,9 @@ public class Player : FAnimatedSprite
         ATTACK_ONE,
         ATTACK_TWO,
         ATTACK_THREE,
+        POWERPOLE_EXTEND_DOWN_TRANS_IN,
         POWERPOLE_EXTEND_DOWN,
+        POWERPOLE_EXTEND_DOWN_TRANS_OUT,
         TAIL_HANG
 
     }
@@ -76,6 +78,7 @@ public class Player : FAnimatedSprite
     private float speed = 200;
     private float gravity = -50;
     private float stateCount = 0;
+    private float poleExtendLength = 96;
     public void Update()
     {
         switch (currentState)
@@ -157,9 +160,13 @@ public class Player : FAnimatedSprite
                     currentState = State.IDLE;
                     return;
                 }
-                else
+                if (!C.getKey(C.JUMP_KEY))
                 {
-                    xVel *= groundFriction;
+                    currentState = State.CROUCH;
+                    return;
+                }
+                if (C.getKey(C.DOWN_KEY) && C.getKey(C.JUMP_KEY))
+                {
                     if (stateCount >= SUPERJUMP_CHARGE_TIME)
                         currentState = State.SUPERJUMP_ABLE;
                 }
@@ -170,7 +177,7 @@ public class Player : FAnimatedSprite
                     currentState = State.IDLE;
                     return;
                 }
-                if (C.getKeyDown(C.JUMP_KEY))
+                if (!C.getKeyDown(C.JUMP_KEY))
                 {
                     grounded = false;
                     currentState = State.JUMP;
@@ -185,17 +192,36 @@ public class Player : FAnimatedSprite
                 }
                 break;
             case State.CROUCH:
+                xVel *= groundFriction;
                 if (C.getKey(C.ACTION_KEY))
                 {
-                    currentState = State.POWERPOLE_EXTEND_DOWN;
+                    currentState = State.POWERPOLE_EXTEND_DOWN_TRANS_IN;
+                }
+                if (C.getKey(C.JUMP_KEY))
+                {
+                    currentState = State.SUPERJUMP_CHARGE;
                 }
                 if (!C.getKey(C.DOWN_KEY))
                 {
                     currentState = State.IDLE;
                 }
                 break;
+            case State.POWERPOLE_EXTEND_DOWN_TRANS_IN:
+                if (C.getKey(C.ACTION_KEY))
+                {
+                    //move slightly and start the pole extend
+
+                }
+                if (!C.getKey(C.DOWN_KEY) || !C.getKey(C.ACTION_KEY))
+                {
+                    currentState = State.IDLE;
+                }
+                break;
             case State.POWERPOLE_EXTEND_DOWN:
-                currentState = State.IDLE;
+
+                break;
+            case State.POWERPOLE_EXTEND_DOWN_TRANS_OUT:
+
                 break;
         }
 
