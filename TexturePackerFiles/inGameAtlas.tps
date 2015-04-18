@@ -6,7 +6,7 @@
         <key>texturePackerVersion</key>
         <string>3.3.3</string>
         <key>fileName</key>
-        <string>C:/Users/Josh/git/FutileTemplate/TexturePackerFiles/inGameAtlas.tps</string>
+        <string>C:/Users/Josh/git/LD32/TexturePackerFiles/inGameAtlas.tps</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -177,7 +177,8 @@
         </struct>
         <key>fileList</key>
         <array>
-            <filename>white.png</filename>
+            <filename>tilemap</filename>
+            <filename>player</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

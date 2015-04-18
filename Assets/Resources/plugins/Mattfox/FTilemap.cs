@@ -59,7 +59,7 @@ public class FTilemap : FContainer
 			Vector2 relPos = StageToLocal (_clipNode.GetPosition ());
 
             float xMin =  relPos.x - _clipWidth / 2 - _tileWidth;
-            float yMin =relPos.y - _clipHeight / 2 - _tileHeight;
+            float yMin = relPos.y - _clipHeight / 2 - _tileHeight;
 			
 			// check if the _clipNode has moved enough to check tile positions
 			if (Mathf.Round (xMin / (_tileWidth*.9f)) == _clipPos.x && Mathf.Round (yMin / (_tileHeight*.9f)) == _clipPos.y) {
@@ -136,6 +136,7 @@ public class FTilemap : FContainer
 			}
 		}
 	}
+
 	
 	public void LoadText (string text, bool skipZero=true, bool draw=true, int firstGID=0)
 	{
@@ -347,6 +348,10 @@ public class FTilemap : FContainer
         return getFrameNum(Mathf.FloorToInt(xPos / tileWidth), Mathf.FloorToInt(-yPos / tileHeight));
     }
 	
+    public bool isPassable(float xPos, float yPos)
+    {
+        return !C.WALL_LIST.Contains(getFrameNumAt(xPos, yPos));
+    }
 	// returns FSprite at 
 	public FSprite getTile (int givenX, int givenY)
 	{

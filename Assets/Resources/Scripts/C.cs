@@ -6,7 +6,17 @@ using UnityEngine;
 
 public class C
 {
-    public const string versionNumber = "v1.1";
+    private static FCamObject camera;
+    public static FCamObject getCameraInstance()
+    {
+        if (camera == null)
+            camera = new FCamObject();
+        return camera;
+    }
+
+    public static readonly List<int> WALL_LIST = new List<int> { -1, 1 };
+
+    public const string versionNumber = "v0.1";
 
     public static bool isTransitioning = false;
 
