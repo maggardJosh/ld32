@@ -85,6 +85,10 @@ public class Player : FAnimatedSprite
                     xVel -= speed * Time.deltaTime;
                     isFacingLeft = true;
                 }
+                if (C.getKeyDown(C.ACTION_KEY) && grounded)
+                {
+                    StartAttackOne();
+                }
 
                 yVel += gravity * Time.deltaTime;
                 if (xVel > 0)
@@ -107,7 +111,7 @@ public class Player : FAnimatedSprite
                     yVel = Mathf.Max(minYVel, yVel);
                     TryMoveDown();
                 }
-               
+
                 if (grounded && xVel != 0)
                 {
 
@@ -129,7 +133,7 @@ public class Player : FAnimatedSprite
                 xVel *= groundFriction;
                 if (stateCount > ATTACK_ONE_TIME)
                     currentState = State.IDLE;
-                
+
                 break;
             case State.SUPERJUMP_CHARGE:
                 break;
@@ -137,16 +141,26 @@ public class Player : FAnimatedSprite
                 break;
         }
 
-
+        stateCount += Time.deltaTime;
 
         this.scaleX = isFacingLeft ? -1 : 1;
-        
+
         this.play(currentState.ToString());
     }
     private const float ATTACK_ONE_TIME = 1.0f;
     private const float ATTACK_TWO_TIME = 1.0f;
     private const float ATTACK_THREE_TIME = 1.0f;
+    private const float ATTACK_ONE_XVEL = 6;
+
+    public void StartAttackOne()
+    {
+        currentState = State.ATTACK_ONE;
+        xVel = ATTACK_ONE_XVEL * (isFacingLeft ? -1 : 1);
+
+    }
+
     private const float SUPERJUMP_CHARGE_TIME = 2.0f;
+
     public void TryMoveRight()
     {
         float newX = this.x + xVel;
@@ -168,8 +182,8 @@ public class Player : FAnimatedSprite
         float newX = this.x + xVel;
         float topY = this.y + this.height / 3;
         float bottomY = this.y - this.height / 3;
-        if (tilemap.isPassable(newX - tilemap.tileWidth / 2 , topY) &&
-            tilemap.isPassable(newX - tilemap.tileWidth / 2 , bottomY))
+        if (tilemap.isPassable(newX - tilemap.tileWidth / 2, topY) &&
+            tilemap.isPassable(newX - tilemap.tileWidth / 2, bottomY))
             this.x = newX;
         else
         {
