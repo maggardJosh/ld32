@@ -12,11 +12,13 @@ public class Player : FAnimatedSprite
         RUN,
         JUMP,
         SLIDE,
+        CROUCH,
         SUPERJUMP_CHARGE,
         SUPERJUMP_ABLE,
         ATTACK_ONE,
         ATTACK_TWO,
         ATTACK_THREE,
+        POWERPOLE_EXTEND_DOWN,
         TAIL_HANG
 
     }
@@ -89,9 +91,9 @@ public class Player : FAnimatedSprite
                     currentState = State.JUMP;
                     yVel = jumpStrength;
                 }
-                if (C.getKeyDown(C.DOWN_KEY) && grounded)
+                if (C.getKey(C.DOWN_KEY) && (!C.getKey(C.LEFT_KEY) || !C.getKey(C.RIGHT_KEY)) && grounded)
                 {
-                    currentState = State.SUPERJUMP_CHARGE;
+                    currentState = State.CROUCH;
                     return;
                 }
                 if (C.getKey(C.RIGHT_KEY))
@@ -149,12 +151,12 @@ public class Player : FAnimatedSprite
                     currentState = State.IDLE;
                 break;
             case State.SUPERJUMP_CHARGE:
-                if (C.getKeyUp(C.DOWN_KEY))
+                if (!C.getKey(C.DOWN_KEY))
                 {
                     currentState = State.IDLE;
                     return;
                 }
-                if (C.getKey(C.DOWN_KEY))
+                else
                 {
                     xVel *= groundFriction;
                     if (stateCount >= SUPERJUMP_CHARGE_TIME)
@@ -162,7 +164,7 @@ public class Player : FAnimatedSprite
                 }
                 break;
             case State.SUPERJUMP_ABLE:
-                if (C.getKeyUp(C.DOWN_KEY))
+                if (!C.getKey(C.DOWN_KEY))
                 {
                     currentState = State.IDLE;
                     return;
@@ -180,6 +182,19 @@ public class Player : FAnimatedSprite
                     currentState = State.JUMP;
                     yVel = hangJumpStrength;
                 }
+                break;
+            case State.CROUCH:
+                if (C.getKey(C.ACTION_KEY))
+                {
+                    currentState = State.POWERPOLE_EXTEND_DOWN;
+                }
+                if (!C.getKey(C.DOWN_KEY))
+                {
+                    currentState = State.IDLE;
+                }
+                break;
+            case State.POWERPOLE_EXTEND_DOWN:
+                currentState = State.IDLE;
                 break;
         }
 
