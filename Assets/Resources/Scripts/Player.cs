@@ -11,12 +11,17 @@ public class Player : FAnimatedSprite
         IDLE,
         RUN,
         JUMP,
+        DOUBLE_JUMP,
         SLIDE,
+        CROUCH,
         SUPERJUMP_CHARGE,
         SUPERJUMP_ABLE,
         ATTACK_ONE,
         ATTACK_TWO,
         ATTACK_THREE,
+        POWERPOLE_EXTEND_DOWN_TRANS_IN,
+        POWERPOLE_EXTEND_DOWN,
+        POWERPOLE_EXTEND_DOWN_TRANS_OUT,
         TAIL_HANG
 
     }
@@ -78,6 +83,7 @@ public class Player : FAnimatedSprite
     private float speed = 200;
     private float gravity = -50;
     private float stateCount = 0;
+    private float poleExtendLength = 96;
     public void Update()
     {
         
@@ -85,18 +91,26 @@ public class Player : FAnimatedSprite
         {
             case State.IDLE:
             case State.JUMP:
+            case State.DOUBLE_JUMP:
             case State.RUN:
             case State.SLIDE:
                 bool isActivelyMoving = false;
-                if (C.getKey(C.JUMP_KEY) && !lastJumpPress && grounded)
+                if (C.getKey(C.JUMP_KEY) && !lastJumpPress && currentState != State.DOUBLE_JUMP)
                 {
-                    grounded = false;
-                    currentState = State.JUMP;
+                    if (currentState == State.JUMP)
+                    {
+                        currentState = State.DOUBLE_JUMP;
+                    }
+                    if (grounded)
+                    {
+                        grounded = false;
+                        currentState = State.JUMP;
+                    }
                     yVel = jumpStrength;
                 }
-                if (C.getKey(C.DOWN_KEY) && !lastDownPress && grounded)
+                if (C.getKey(C.DOWN_KEY) && (!C.getKey(C.LEFT_KEY) || !C.getKey(C.RIGHT_KEY)) && !lastDownPress && grounded)
                 {
-                    currentState = State.SUPERJUMP_CHARGE;
+                    currentState = State.CROUCH;
                     return;
                 }
                 if (C.getKey(C.RIGHT_KEY))
@@ -157,25 +171,29 @@ public class Player : FAnimatedSprite
                     currentState = State.IDLE;
                 break;
             case State.SUPERJUMP_CHARGE:
-                if (C.getKeyUp(C.DOWN_KEY))
+                if (!C.getKey(C.DOWN_KEY))
                 {
                     currentState = State.IDLE;
                     return;
                 }
-                if (C.getKey(C.DOWN_KEY))
+                if (!C.getKey(C.JUMP_KEY))
                 {
-                    xVel *= groundFriction;
+                    currentState = State.CROUCH;
+                    return;
+                }
+                if (C.getKey(C.DOWN_KEY) && C.getKey(C.JUMP_KEY))
+                {
                     if (stateCount >= SUPERJUMP_CHARGE_TIME)
                         currentState = State.SUPERJUMP_ABLE;
                 }
                 break;
             case State.SUPERJUMP_ABLE:
-                if (C.getKeyUp(C.DOWN_KEY))
+                if (!C.getKey(C.DOWN_KEY))
                 {
                     currentState = State.IDLE;
                     return;
                 }
-                if (C.getKeyDown(C.JUMP_KEY))
+                if (!C.getKeyDown(C.JUMP_KEY))
                 {
                     grounded = false;
                     currentState = State.JUMP;
@@ -188,6 +206,34 @@ public class Player : FAnimatedSprite
                     currentState = State.JUMP;
                     yVel = hangJumpStrength;
                 }
+                break;
+            case State.CROUCH:
+                xVel *= groundFriction;
+                if (C.getKey(C.ACTION_KEY))
+                {
+                    currentState = State.POWERPOLE_EXTEND_DOWN_TRANS_IN;
+                }
+                if (C.getKey(C.JUMP_KEY))
+                {
+                    currentState = State.SUPERJUMP_CHARGE;
+                }
+                if (!C.getKey(C.DOWN_KEY))
+                {
+                    currentState = State.IDLE;
+                }
+                break;
+            case State.POWERPOLE_EXTEND_DOWN_TRANS_IN:
+                if (C.getKey(C.ACTION_KEY))
+                {
+                    //just go to idle for now
+                }
+                currentState = State.IDLE;
+                break;
+            case State.POWERPOLE_EXTEND_DOWN:
+
+                break;
+            case State.POWERPOLE_EXTEND_DOWN_TRANS_OUT:
+
                 break;
         }
 
