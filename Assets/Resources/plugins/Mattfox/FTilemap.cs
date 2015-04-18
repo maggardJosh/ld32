@@ -445,8 +445,8 @@ public class FTilemap : FContainer
 		set {
 			if (value) {
 				Futile.screen.SignalResize += this.HandleResize;
-				_clipWidth = Futile.screen.width * 1.2f;
-				_clipHeight = Futile.screen.height * 1.3f;
+				_clipWidth = Futile.screen.width * 1.5f;
+				_clipHeight = Futile.screen.height * 1.5f;
                 
 			} else if (_clipToScreen == true) {
 				Futile.screen.SignalResize -= this.HandleResize;
