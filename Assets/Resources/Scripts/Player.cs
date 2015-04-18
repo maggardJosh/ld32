@@ -21,8 +21,14 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 1, 2 }, 100, true));
         addAnimation(new FAnimation(State.JUMP.ToString(), new int[] { 1, 1, 1, 2 }, 100, true));
         play(State.IDLE.ToString());
+
     }
 
+    public override void HandleAddedToStage()
+    {
+        Futile.instance.SignalFixedUpdate += Update;
+        base.HandleAddedToStage();
+    }
     private State currentState = State.IDLE;
     private bool isFacingLeft = false;
     private FTilemap tilemap;
@@ -63,16 +69,6 @@ public class Player : FAnimatedSprite
                 }
 
                 yVel += gravity * Time.deltaTime;
-                if (yVel > 0)
-                {
-                    yVel = Mathf.Min(maxYVel, yVel);
-                    TryMoveUp();
-                }
-                else if (yVel < 0)
-                {
-                    yVel = Mathf.Max(minYVel, yVel);
-                    TryMoveDown();
-                }
                 if (xVel > 0)
                 {
                     xVel = Mathf.Min(maxXVel, xVel);
@@ -83,6 +79,17 @@ public class Player : FAnimatedSprite
                     xVel = Mathf.Max(-maxXVel, xVel);
                     TryMoveLeft();
                 }
+                if (yVel > 0)
+                {
+                    yVel = Mathf.Min(maxYVel, yVel);
+                    TryMoveUp();
+                }
+                else if (yVel < 0)
+                {
+                    yVel = Mathf.Max(minYVel, yVel);
+                    TryMoveDown();
+                }
+               
                 if (grounded && xVel != 0)
                 {
 
@@ -114,12 +121,12 @@ public class Player : FAnimatedSprite
         float newX = this.x + xVel;
         float topY = this.y + this.height / 3;
         float bottomY = this.y - this.height / 3;
-        if (tilemap.isPassable(newX + this.width / 2, topY) &&
-            tilemap.isPassable(newX + this.width / 2, bottomY))
+        if (tilemap.isPassable(newX + tilemap.tileWidth / 2, topY) &&
+            tilemap.isPassable(newX + tilemap.tileWidth / 2, bottomY))
             this.x = newX;
         else
         {
-            this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + this.width / 2;
+            this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2;
             xVel = 0;
         }
 
@@ -130,12 +137,12 @@ public class Player : FAnimatedSprite
         float newX = this.x + xVel;
         float topY = this.y + this.height / 3;
         float bottomY = this.y - this.height / 3;
-        if (tilemap.isPassable(newX - this.width / 2, topY) &&
-            tilemap.isPassable(newX - this.width / 2, bottomY))
+        if (tilemap.isPassable(newX - tilemap.tileWidth / 2 , topY) &&
+            tilemap.isPassable(newX - tilemap.tileWidth / 2 , bottomY))
             this.x = newX;
         else
         {
-            this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + this.width / 2;
+            this.x = Mathf.CeilToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth - tilemap.tileWidth / 2;
             xVel = 0;
         }
     }
@@ -145,8 +152,8 @@ public class Player : FAnimatedSprite
         float newY = this.y + yVel;
         float leftX = this.x - this.width / 3;
         float rightX = this.x + this.width / 3;
-        if (tilemap.isPassable(leftX, newY - this.height / 2) &&
-            tilemap.isPassable(rightX, newY - this.height / 2))
+        if (tilemap.isPassable(leftX, newY - tilemap.tileWidth / 2) &&
+            tilemap.isPassable(rightX, newY - tilemap.tileWidth / 2))
             this.y = newY;
         else
         {
@@ -155,7 +162,7 @@ public class Player : FAnimatedSprite
                 currentState = State.IDLE;
             xVel *= groundFriction;
             yVel = 0;
-            this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + this.height / 2;
+            this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileWidth / 2;
         }
     }
 

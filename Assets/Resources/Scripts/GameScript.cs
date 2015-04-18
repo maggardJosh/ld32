@@ -47,6 +47,6 @@ public class GameScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        player.Update();
+
     }
 }
