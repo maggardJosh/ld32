@@ -15,6 +15,7 @@ public class C
     }
 
     public static readonly List<int> WALL_LIST = new List<int> { -1, 1 };
+    public static readonly List<int> HOOK_LIST = new List<int> { 3 };
 
     public const string versionNumber = "v0.2";
 

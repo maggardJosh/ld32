@@ -66,7 +66,7 @@ public class Player : FAnimatedSprite
 
     private float xVel = 0;
     private float yVel = 0;
-    private float airFriction = .8f;
+    private float airFriction = .7f;
     private float groundFriction = .7f;
     private float maxXVel = 10;
     private float minYVel = -15;
@@ -74,7 +74,7 @@ public class Player : FAnimatedSprite
     private bool grounded = false;
     private float jumpStrength = 15;
     private float superJumpStrength = 25;
-    private float hangJumpStrength = 5;
+    private float hangJumpStrength = 20;
     private float speed = 200;
     private float gravity = -50;
     private float stateCount = 0;
@@ -183,7 +183,7 @@ public class Player : FAnimatedSprite
                 }
                 break;
             case State.TAIL_HANG:
-                if (C.getKeyDown(C.JUMP_KEY))
+                if (C.getKey(C.JUMP_KEY) && !lastJumpPress)
                 {
                     currentState = State.JUMP;
                     yVel = hangJumpStrength;
@@ -216,6 +216,7 @@ public class Player : FAnimatedSprite
         }
 
         stateCount += Time.deltaTime;
+        RXDebug.Log(currentState);
 
         this.scaleX = isFacingLeft ? -1 : 1;
         this.play(currentState.ToString());
@@ -311,8 +312,19 @@ public class Player : FAnimatedSprite
             yVel = 0;
             this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileWidth / 2;
         }
+        CheckHook();
     }
-
+    private void CheckHook()
+    {
+        if (tilemap.isHook(this.x, this.y))
+        {
+            this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2;
+            this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileHeight / 2;
+            currentState = State.TAIL_HANG;
+            xVel = 0;
+            yVel = 0;
+        }
+    }
     public void TryMoveUp()
     {
         float newY = this.y + yVel;
@@ -325,7 +337,10 @@ public class Player : FAnimatedSprite
         {
             this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileHeight / 2;
         }
+        if (yVel < HOOK_MIN_Y_VEL)
+            CheckHook();
     }
+    private const float HOOK_MIN_Y_VEL = 3;
 
 
 }

@@ -353,6 +353,10 @@ public class FTilemap : FContainer
     {
         return !C.WALL_LIST.Contains(getFrameNumAt(xPos, yPos));
     }
+    public bool isHook(float xPos, float yPos)
+    {
+        return C.HOOK_LIST.Contains(getFrameNumAt(xPos, yPos));
+    }
 	// returns FSprite at 
 	public FSprite getTile (int givenX, int givenY)
 	{
