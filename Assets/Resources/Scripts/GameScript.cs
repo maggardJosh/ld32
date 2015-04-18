@@ -39,9 +39,15 @@ public class GameScript : MonoBehaviour
         camera.setWorldBounds(new Rect(0, -tilemap.height, tilemap.width, tilemap.height));
         tilemap.clipNode = camera;
 
+        Futile.atlasManager.LoadFont(C.smallFontName, "debugFont_0", "Atlases/debugFont", 0, 0);
+
+        FLabel versionLabel = new FLabel(C.smallFontName, C.versionNumber);
+        versionLabel.y = -Futile.screen.height / 2 + versionLabel.textRect.height;
         Futile.stage.AddChild(background);
         Futile.stage.AddChild(playerLayer);
         Futile.stage.AddChild(camera);
+        camera.AddChild(versionLabel);
+        Go.to(versionLabel, 6.0f, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadIn));
 
     }
 

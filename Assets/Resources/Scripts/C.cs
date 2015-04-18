@@ -16,7 +16,7 @@ public class C
 
     public static readonly List<int> WALL_LIST = new List<int> { -1, 1 };
 
-    public const string versionNumber = "v0.1";
+    public const string versionNumber = "v0.2";
 
     public static bool isTransitioning = false;
 

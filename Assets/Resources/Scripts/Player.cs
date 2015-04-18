@@ -60,9 +60,13 @@ public class Player : FAnimatedSprite
     private bool isFacingLeft = false;
     private FTilemap tilemap;
 
+    private bool lastJumpPress = false;
+    private bool lastActionPress = false;
+    private bool lastDownPress = false;
+
     private float xVel = 0;
     private float yVel = 0;
-    private float airFriction = .9f;
+    private float airFriction = .8f;
     private float groundFriction = .7f;
     private float maxXVel = 10;
     private float minYVel = -15;
@@ -76,6 +80,7 @@ public class Player : FAnimatedSprite
     private float stateCount = 0;
     public void Update()
     {
+        
         switch (currentState)
         {
             case State.IDLE:
@@ -83,13 +88,13 @@ public class Player : FAnimatedSprite
             case State.RUN:
             case State.SLIDE:
                 bool isActivelyMoving = false;
-                if (C.getKeyDown(C.JUMP_KEY) && grounded)
+                if (C.getKey(C.JUMP_KEY) && !lastJumpPress && grounded)
                 {
                     grounded = false;
                     currentState = State.JUMP;
                     yVel = jumpStrength;
                 }
-                if (C.getKeyDown(C.DOWN_KEY) && grounded)
+                if (C.getKey(C.DOWN_KEY) && !lastDownPress && grounded)
                 {
                     currentState = State.SUPERJUMP_CHARGE;
                     return;
@@ -106,7 +111,7 @@ public class Player : FAnimatedSprite
                     xVel -= speed * Time.deltaTime;
                     isFacingLeft = true;
                 }
-                if (C.getKeyDown(C.ACTION_KEY) && grounded)
+                if (C.getKey(C.ACTION_KEY) && !lastActionPress && grounded)
                 {
                     StartAttackOne();
                     return;
@@ -127,6 +132,8 @@ public class Player : FAnimatedSprite
                     }
                 if (grounded)
                     xVel *= groundFriction;
+                else
+                    xVel *= airFriction;
                 if (Mathf.Abs(xVel) < .1f)
                     xVel = 0;
                 break;
@@ -134,14 +141,14 @@ public class Player : FAnimatedSprite
                 xVel *= groundFriction;
                 if (stateCount > ATTACK_ONE_TIME)
                     currentState = State.IDLE;
-                if (C.getKeyDown(C.ACTION_KEY))
+                if (C.getKey(C.ACTION_KEY) && !lastActionPress)
                     StartAttackTwo();
                 break;
             case State.ATTACK_TWO:
                 xVel *= groundFriction;
                 if (stateCount > ATTACK_TWO_TIME)
                     currentState = State.IDLE;
-                if (C.getKeyDown(C.ACTION_KEY))
+                if (C.getKey(C.ACTION_KEY) && !lastActionPress)
                     StartAttackThree();
                 break;
             case State.ATTACK_THREE:
@@ -210,19 +217,20 @@ public class Player : FAnimatedSprite
 
         stateCount += Time.deltaTime;
 
-        RXDebug.Log(currentState, grounded);
-
         this.scaleX = isFacingLeft ? -1 : 1;
         this.play(currentState.ToString());
+        lastJumpPress = C.getKey(C.JUMP_KEY);
+        lastDownPress = C.getKey(C.DOWN_KEY);
+        lastActionPress = C.getKey(C.ACTION_KEY);
     }
 
     private bool isAttacking()
     {
         return currentState == State.ATTACK_ONE || currentState == State.ATTACK_TWO || currentState == State.ATTACK_THREE;
     }
-    private const float ATTACK_ONE_TIME = 1.0f;
-    private const float ATTACK_TWO_TIME = 1.0f;
-    private const float ATTACK_THREE_TIME = 1.0f;
+    private const float ATTACK_ONE_TIME = .7f;
+    private const float ATTACK_TWO_TIME = .7f;
+    private const float ATTACK_THREE_TIME = .8f;
     private const float ATTACK_ONE_XVEL = 20;
     private const float ATTACK_TWO_XVEL = 30;
     private const float ATTACK_THREE_XVEL = 10;
@@ -232,6 +240,7 @@ public class Player : FAnimatedSprite
         currentState = State.ATTACK_ONE;
         xVel = ATTACK_ONE_XVEL * (isFacingLeft ? -1 : 1);
         this.play(State.ATTACK_ONE.ToString(), true);
+        lastActionPress = C.getKey(C.ACTION_KEY);
     }
 
     public void StartAttackTwo()
@@ -284,8 +293,8 @@ public class Player : FAnimatedSprite
     public void TryMoveDown()
     {
         float newY = this.y + yVel;
-        float leftX = this.x - this.width / 3;
-        float rightX = this.x + this.width / 3;
+        float leftX = this.x - tilemap.tileWidth / 3;
+        float rightX = this.x + tilemap.tileWidth / 3;
         if (!tilemap.isPassable(leftX, newY - tilemap.tileWidth) ||
             !tilemap.isPassable(rightX, newY - tilemap.tileWidth))
         {
@@ -307,8 +316,8 @@ public class Player : FAnimatedSprite
     public void TryMoveUp()
     {
         float newY = this.y + yVel;
-        float leftX = this.x - this.width / 3;
-        float rightX = this.x + this.width / 3;
+        float leftX = this.x - tilemap.tileWidth / 3;
+        float rightX = this.x + tilemap.tileWidth / 3;
         if (tilemap.isPassable(leftX, newY + tilemap.tileHeight / 2) &&
             tilemap.isPassable(rightX, newY + tilemap.tileHeight / 2))
             this.y = newY;

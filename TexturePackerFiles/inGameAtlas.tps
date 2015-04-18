@@ -179,6 +179,7 @@
         <array>
             <filename>tilemap</filename>
             <filename>player</filename>
+            <filename>debugFont_0.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
