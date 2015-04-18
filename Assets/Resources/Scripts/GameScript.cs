@@ -36,6 +36,7 @@ public class GameScript : MonoBehaviour
         playerLayer.AddChild(player);
         FCamObject camera = C.getCameraInstance();
         camera.follow(player);
+        camera.setWorldBounds(new Rect(0, -tilemap.height, tilemap.width, tilemap.height));
         tilemap.clipNode = camera;
 
         Futile.stage.AddChild(background);
