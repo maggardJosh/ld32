@@ -24,7 +24,9 @@ public class Player : FAnimatedSprite
         POWERPOLE_EXTEND_DOWN_TRANS_IN,
         POWERPOLE_EXTEND_DOWN,
         POWERPOLE_EXTEND_DOWN_TRANS_OUT,
-        TAIL_HANG
+        TAIL_HANG_TRANS_IN,
+        TAIL_HANG,
+        TAIL_HANG_FALL
 
     }
     private FSprite extendPoleMiddle;
@@ -44,6 +46,9 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 11, 12, 13 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 14, 15 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_THREE_EXTEND.ToString(), new int[] { 16 }, 100, false));
+        addAnimation(new FAnimation(State.TAIL_HANG_TRANS_IN.ToString(), new int[] { 16 }, 100, false));
+        addAnimation(new FAnimation(State.TAIL_HANG.ToString(), new int[] { 2, 3, 4 }, 100, true));
+        addAnimation(new FAnimation(State.TAIL_HANG_FALL.ToString(), new int[] { 2, 3, 4 }, 100, true));
 
         addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 6 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 1, 6 }, 50, true));
@@ -245,12 +250,22 @@ public class Player : FAnimatedSprite
                 if (grounded)
                     currentState = State.IDLE;
                 break;
+            case State.TAIL_HANG_TRANS_IN:
+                return;
             case State.TAIL_HANG:
+                xVel = 0;
                 if (C.getKey(C.JUMP_KEY) && !lastJumpPress)
                 {
                     currentState = State.JUMP;
                     yVel = hangJumpStrength;
                 }
+                if (C.getKey(C.DOWN_KEY))
+                    currentState = State.TAIL_HANG_FALL;
+                lastJumpPress = C.getKey(C.JUMP_KEY);
+                return;
+            case State.TAIL_HANG_FALL:
+                if (stateCount > TAIL_HANG_FALL_TIME)
+                    currentState = State.JUMP;
                 break;
             case State.CROUCH:
                 xVel = 0;
@@ -315,6 +330,7 @@ public class Player : FAnimatedSprite
         lastActionPress = C.getKey(C.ACTION_KEY);
     }
     Tween attackExtendTween;
+    private const float TAIL_HANG_FALL_TIME = .1f;
     public float AttackExtendLength
     {
         get { return extendPoleMiddle.width; }
@@ -378,12 +394,12 @@ public class Player : FAnimatedSprite
         float newX = this.x + xVel;
         float topY = this.y + tilemap.tileHeight / 3;
         float bottomY = this.y - tilemap.tileHeight / 3;
-        if (tilemap.isPassable(newX + tilemap.tileWidth / 2, topY) &&
-            tilemap.isPassable(newX + tilemap.tileWidth / 2, bottomY))
+        if (tilemap.isPassable(newX + tilemap.tileWidth / 3, topY) &&
+            tilemap.isPassable(newX + tilemap.tileWidth / 3, bottomY))
             this.x = newX;
         else
         {
-            this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2;
+            this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth *2/3f;
             xVel = 0;
         }
 
@@ -394,12 +410,12 @@ public class Player : FAnimatedSprite
         float newX = this.x + xVel;
         float topY = this.y + tilemap.tileHeight / 3;
         float bottomY = this.y - tilemap.tileHeight / 3;
-        if (tilemap.isPassable(newX - tilemap.tileWidth / 2, topY) &&
-            tilemap.isPassable(newX - tilemap.tileWidth / 2, bottomY))
+        if (tilemap.isPassable(newX - tilemap.tileWidth /3, topY) &&
+            tilemap.isPassable(newX - tilemap.tileWidth / 3, bottomY))
             this.x = newX;
         else
         {
-            this.x = Mathf.CeilToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth - tilemap.tileWidth / 2;
+            this.x = Mathf.CeilToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth - tilemap.tileWidth *2/3f;
             xVel = 0;
         }
     }
@@ -407,12 +423,27 @@ public class Player : FAnimatedSprite
     public void TryMoveDown()
     {
         float newY = this.y + yVel;
-        float leftX = this.x - tilemap.tileWidth / 3;
-        float rightX = this.x + tilemap.tileWidth / 3;
+        float leftX = this.x - tilemap.tileWidth / 4;
+        float rightX = this.x + tilemap.tileWidth / 4;
         if (!tilemap.isPassable(leftX, newY - tilemap.tileWidth) ||
             !tilemap.isPassable(rightX, newY - tilemap.tileWidth))
         {
+            if (currentState == State.TAIL_HANG_FALL)
+                currentState = State.IDLE;
             grounded = true;
+        }
+        else
+        {
+            switch (currentState)
+            {
+                case State.IDLE:
+                case State.SLIDE:
+                case State.RUN:
+                case State.CROUCH:
+                    currentState = State.JUMP;
+                    grounded = false;
+                    break;
+            }
         }
         if (tilemap.isPassable(leftX, newY - tilemap.tileWidth / 2) &&
             tilemap.isPassable(rightX, newY - tilemap.tileWidth / 2))
@@ -431,20 +462,21 @@ public class Player : FAnimatedSprite
     {
         if (tilemap.isHook(this.x, this.y))
         {
-            this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2;
-            this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileHeight / 2;
-            currentState = State.TAIL_HANG;
+            currentState = State.TAIL_HANG_TRANS_IN;
+            Go.to(this, TRANS_HOOK_TIME, new TweenConfig().floatProp("x", Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2).floatProp("y", Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileHeight / 2).setEaseType(EaseType.Linear).onComplete((t) => { currentState = State.TAIL_HANG; }));
             xVel = 0;
             yVel = 0;
         }
     }
+    private const float TRANS_HOOK_TIME = .2f;
     private void CheckHookDown()
     {
+        if (C.getKey(C.DOWN_KEY) || currentState == State.TAIL_HANG_FALL)
+            return;
         if (tilemap.isHook(this.x, this.y))
         {
-            this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2;
-            this.y = Mathf.CeilToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight - tilemap.tileHeight / 2;
-            currentState = State.TAIL_HANG;
+            currentState = State.TAIL_HANG_TRANS_IN;
+            Go.to(this, TRANS_HOOK_TIME, new TweenConfig().floatProp("x", Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2).floatProp("y", Mathf.CeilToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight - tilemap.tileHeight / 2).setEaseType(EaseType.Linear).onComplete((t) => { currentState = State.TAIL_HANG; }));
             xVel = 0;
             yVel = 0;
         }
@@ -452,8 +484,8 @@ public class Player : FAnimatedSprite
     public void TryMoveUp()
     {
         float newY = this.y + yVel;
-        float leftX = this.x - tilemap.tileWidth / 3;
-        float rightX = this.x + tilemap.tileWidth / 3;
+        float leftX = this.x - tilemap.tileWidth / 4;
+        float rightX = this.x + tilemap.tileWidth / 4;
         if (tilemap.isPassable(leftX, newY + tilemap.tileHeight / 2) &&
             tilemap.isPassable(rightX, newY + tilemap.tileHeight / 2))
             this.y = newY;
@@ -461,7 +493,7 @@ public class Player : FAnimatedSprite
         {
             this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileHeight / 2;
         }
-        if (yVel > HOOK_MIN_Y_VEL)
+        if (yVel < HOOK_MIN_Y_VEL)
             CheckHookUp();
     }
     private const float HOOK_MIN_Y_VEL = 5;
