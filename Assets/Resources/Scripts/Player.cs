@@ -39,9 +39,9 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 2, 3, 4, 5 }, 100, true));
         addAnimation(new FAnimation(State.SLIDE.ToString(), new int[] { 6 }, 100, true));
         addAnimation(new FAnimation(State.JUMP.ToString(), new int[] { 1, 1, 1, 2 }, 100, true));
-        addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 7, 8, 9, 10}, 100, false));
-        addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 11, 12, 13}, 100, false));
-        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 14,15 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 7, 8, 9, 10 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 11, 12, 13 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 14, 15 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_THREE_EXTEND.ToString(), new int[] { 16 }, 100, false));
 
         addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 6 }, 100, true));
@@ -91,6 +91,8 @@ public class Player : FAnimatedSprite
     private float gravity = -50;
     private float stateCount = 0;
     private float poleExtendLength = 96;
+
+    private const float ATTACK_THREE_EXTEND_TIME = .3f;
     public void Update()
     {
 
@@ -180,7 +182,16 @@ public class Player : FAnimatedSprite
                     Futile.stage.AddChild(extendPoleEnd);
                     AttackExtendLength = 0;
                     currentState = State.ATTACK_THREE_EXTEND;
-                    attackExtendTween = Go.to(this, ATTACK_THREE_EXTEND_TIME / 2, new TweenConfig().floatProp("AttackExtendLength", poleExtendLength).setIterations(2, LoopType.PingPong).setEaseType(EaseType.ExpoIn).onComplete((t) => { extendPoleEnd.RemoveFromContainer(); extendPoleMiddle.RemoveFromContainer(); currentState = State.IDLE; }));
+                    attackExtendTween = Go.to(this, ATTACK_THREE_EXTEND_TIME / 8, new TweenConfig().floatProp("AttackExtendLength", poleExtendLength).setEaseType(EaseType.QuartIn).onComplete(
+                        (t) =>
+                        {
+                            Go.to(this, ATTACK_THREE_TIME / 2, new TweenConfig().floatProp("AttackExtendLength", 0).setEaseType(EaseType.QuadIn).onComplete((t2) =>
+                            {
+                                extendPoleEnd.RemoveFromContainer();
+                                extendPoleMiddle.RemoveFromContainer();
+                                currentState = State.IDLE;
+                            }));
+                        }));
                 }
                 break;
             case State.ATTACK_THREE_EXTEND:
@@ -292,15 +303,14 @@ public class Player : FAnimatedSprite
         set
         {
             extendPoleEnd.scaleX = isFacingLeft ? -1 : 1;
-                    
+
             extendPoleMiddle.width = value;
             extendPoleMiddle.SetPosition(this.GetPosition() + (Vector2.right * (this.width / 2 + (extendPoleMiddle.width / 2) * (isFacingLeft ? -1 : 1))));
-            
+
             extendPoleEnd.SetPosition(extendPoleMiddle.GetPosition() + (Vector2.right * ((extendPoleMiddle.width / 2) * (isFacingLeft ? -1 : 1) + extendPoleEnd.width / 2)));
         }
     }
 
-    private const float ATTACK_THREE_EXTEND_TIME = .5f;
 
     private bool isAttacking()
     {
