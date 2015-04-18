@@ -24,7 +24,10 @@ public class Player : FAnimatedSprite
         POWERPOLE_EXTEND_DOWN_TRANS_IN,
         POWERPOLE_EXTEND_DOWN,
         POWERPOLE_EXTEND_DOWN_TRANS_OUT,
-        TAIL_HANG
+        TAIL_HANG,
+        SLAM_TRANS_IN,
+        SLAM_MOVE,
+        SLAM_LAND
 
     }
     private FSprite extendPoleMiddle;
@@ -84,6 +87,7 @@ public class Player : FAnimatedSprite
     private float maxXVel = 10;
     private float minYVel = -15;
     private float maxYVel = 30;
+    private float slamSpeed = -1.5f;
     private bool grounded = false;
     private float jumpStrength = 15;
     private float superJumpStrength = 30;
@@ -123,6 +127,14 @@ public class Player : FAnimatedSprite
                 {
                     currentState = State.CROUCH;
                     return;
+                }
+                if (currentState == State.JUMP || currentState == State.DOUBLE_JUMP)
+                {
+                    if (C.getKey(C.DOWN_KEY) && !lastDownPress)
+                    {
+                        currentState = State.SLAM_TRANS_IN;
+                        return;
+                    }
                 }
                 if (C.getKey(C.RIGHT_KEY))
                 {
@@ -200,28 +212,18 @@ public class Player : FAnimatedSprite
 
                 break;
             case State.SUPERJUMP_CHARGE:
-                if (!C.getKey(C.DOWN_KEY))
+                if (!C.getKey(C.JUMP_KEY))
                 {
                     currentState = State.IDLE;
                     return;
                 }
-                if (!C.getKey(C.JUMP_KEY))
-                {
-                    currentState = State.CROUCH;
-                    return;
-                }
-                if (C.getKey(C.DOWN_KEY) && C.getKey(C.JUMP_KEY))
+                if (C.getKey(C.JUMP_KEY))
                 {
                     if (stateCount >= SUPERJUMP_CHARGE_TIME)
                         currentState = State.SUPERJUMP_ABLE;
                 }
                 break;
             case State.SUPERJUMP_ABLE:
-                if (!C.getKey(C.DOWN_KEY))
-                {
-                    currentState = State.IDLE;
-                    return;
-                }
                 if (!C.getKey(C.JUMP_KEY) && lastJumpPress)
                 {
                     grounded = false;
@@ -241,6 +243,11 @@ public class Player : FAnimatedSprite
                     isActivelyMoving = true;
                     xVel -= superjumpAirSpeed * Time.deltaTime;
                     isFacingLeft = true;
+                }
+                if (C.getKey(C.DOWN_KEY) && !lastDownPress && yVel <= 0)
+                {
+                    currentState = State.SLAM_TRANS_IN;
+                    return;
                 }
                 if (grounded)
                     currentState = State.IDLE;
@@ -280,6 +287,19 @@ public class Player : FAnimatedSprite
             case State.POWERPOLE_EXTEND_DOWN_TRANS_OUT:
 
                 break;
+            case State.SLAM_TRANS_IN:
+                yVel = 0;
+                currentState = State.SLAM_MOVE;
+                break;
+            case State.SLAM_MOVE:
+                yVel = slamSpeed * maxYVel;
+                xVel = 0;
+                if (grounded)
+                    currentState = State.SLAM_LAND;
+                break;
+            case State.SLAM_LAND:
+                currentState = State.IDLE;
+                break;
         }
 
         yVel += gravity * Time.deltaTime;
@@ -302,7 +322,8 @@ public class Player : FAnimatedSprite
         }
         else if (yVel < 0)
         {
-            yVel = Mathf.Max(minYVel, yVel);
+            if (currentState != State.SLAM_MOVE)
+                yVel = Mathf.Max(minYVel, yVel);
             TryMoveDown();
         }
 
