@@ -11,6 +11,7 @@ public class Player : FAnimatedSprite
         IDLE,
         RUN,
         JUMP,
+        SLIDE,
         SUPERJUMP_CHARGE,
         SUPERJUMP_ABLE,
         ATTACK_ONE,
@@ -23,7 +24,8 @@ public class Player : FAnimatedSprite
     {
         this.tilemap = tilemap;
         addAnimation(new FAnimation(State.IDLE.ToString(), new int[] { 1 }, 100, true));
-        addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 1, 2 }, 100, true));
+        addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 2,3,4,5 }, 100, true));
+        addAnimation(new FAnimation(State.SLIDE.ToString(), new int[] { 6 }, 100, true));
         addAnimation(new FAnimation(State.JUMP.ToString(), new int[] { 1, 1, 1, 2 }, 100, true));
         play(State.IDLE.ToString());
 
@@ -69,6 +71,8 @@ public class Player : FAnimatedSprite
             case State.IDLE:
             case State.JUMP:
             case State.RUN:
+            case State.SLIDE:
+                bool isActivelyMoving = false;
                 if (C.getKeyDown(C.UP_KEY) && grounded)
                 {
                     grounded = false;
@@ -77,11 +81,13 @@ public class Player : FAnimatedSprite
                 }
                 if (C.getKey(C.RIGHT_KEY))
                 {
+                    isActivelyMoving = true;
                     xVel += speed * Time.deltaTime;
                     isFacingLeft = false;
                 }
                 if (C.getKey(C.LEFT_KEY))
                 {
+                    isActivelyMoving = true;
                     xVel -= speed * Time.deltaTime;
                     isFacingLeft = true;
                 }
@@ -114,15 +120,17 @@ public class Player : FAnimatedSprite
 
                 if (grounded && xVel != 0)
                 {
-
-                    if (currentState == State.IDLE)
+                    if (isActivelyMoving)
                         currentState = State.RUN;
+                    else
+                        currentState = State.SLIDE;
                 }
                 else
                 {
-                    if (currentState == State.RUN)
                         currentState = State.IDLE;
+
                 }
+
 
 
                 xVel *= airFriction;
