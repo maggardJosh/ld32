@@ -16,6 +16,7 @@ public class Player : FAnimatedSprite
         CROUCH,
         SUPERJUMP_CHARGE,
         SUPERJUMP_ABLE,
+        SUPERJUMP,
         ATTACK_ONE,
         ATTACK_TWO,
         ATTACK_THREE,
@@ -85,9 +86,10 @@ public class Player : FAnimatedSprite
     private float maxYVel = 30;
     private bool grounded = false;
     private float jumpStrength = 15;
-    private float superJumpStrength = 25;
+    private float superJumpStrength = 30;
     private float hangJumpStrength = 20;
     private float speed = 200;
+    private float superjumpAirSpeed = 5;
     private float gravity = -50;
     private float stateCount = 0;
     private float poleExtendLength = 96;
@@ -220,12 +222,28 @@ public class Player : FAnimatedSprite
                     currentState = State.IDLE;
                     return;
                 }
-                if (!C.getKeyDown(C.JUMP_KEY))
+                if (!C.getKey(C.JUMP_KEY) && lastJumpPress)
                 {
                     grounded = false;
-                    currentState = State.JUMP;
+                    currentState = State.SUPERJUMP;
                     yVel = superJumpStrength;
                 }
+                break;
+            case State.SUPERJUMP:
+                if (C.getKey(C.RIGHT_KEY))
+                {
+                    isActivelyMoving = true;
+                    xVel += superjumpAirSpeed * Time.deltaTime;
+                    isFacingLeft = false;
+                }
+                if (C.getKey(C.LEFT_KEY))
+                {
+                    isActivelyMoving = true;
+                    xVel -= superjumpAirSpeed * Time.deltaTime;
+                    isFacingLeft = true;
+                }
+                if (grounded)
+                    currentState = State.IDLE;
                 break;
             case State.TAIL_HANG:
                 if (C.getKey(C.JUMP_KEY) && !lastJumpPress)
@@ -235,7 +253,7 @@ public class Player : FAnimatedSprite
                 }
                 break;
             case State.CROUCH:
-                xVel *= groundFriction;
+                xVel = 0;
                 if (C.getKey(C.ACTION_KEY))
                 {
                     currentState = State.POWERPOLE_EXTEND_DOWN_TRANS_IN;
