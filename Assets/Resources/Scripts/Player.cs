@@ -10,7 +10,10 @@ public class Player : FAnimatedSprite
     {
         IDLE,
         RUN,
-        JUMP
+        JUMP,
+        ATTACK_ONE,
+        ATTACK_TWO,
+        ATTACK_THREE
 
     }
     public Player(FTilemap tilemap)
@@ -29,7 +32,19 @@ public class Player : FAnimatedSprite
         Futile.instance.SignalFixedUpdate += Update;
         base.HandleAddedToStage();
     }
-    private State currentState = State.IDLE;
+    private State _currentState = State.IDLE;
+    private State currentState
+    {
+        get { return _currentState; }
+        set
+        {
+            if (_currentState != value)
+            {
+                _currentState = value;
+                stateCount = 0;
+            }
+        }
+    }
     private bool isFacingLeft = false;
     private FTilemap tilemap;
 
@@ -44,6 +59,7 @@ public class Player : FAnimatedSprite
     private float jumpStrength = 15;
     private float speed = 200;
     private float gravity = -50;
+    private float stateCount = 0;
     public void Update()
     {
         switch (currentState)
@@ -107,6 +123,12 @@ public class Player : FAnimatedSprite
                 if (Mathf.Abs(xVel) < .1f)
                     xVel = 0;
                 break;
+            case State.ATTACK_ONE:
+                xVel *= groundFriction;
+                if (stateCount > ATTACK_ONE_TIME)
+                    currentState = State.IDLE;
+                
+                break;
         }
 
 
@@ -115,7 +137,9 @@ public class Player : FAnimatedSprite
         
         this.play(currentState.ToString());
     }
-
+    private const float ATTACK_ONE_TIME = 1.0f;
+    private const float ATTACK_TWO_TIME = 1.0f;
+    private const float ATTACK_THREE_TIME = 1.0f;
     public void TryMoveRight()
     {
         float newX = this.x + xVel;
