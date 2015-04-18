@@ -2,10 +2,10 @@
 
 "player_01":
 {
-	"frame": {"x":39,"y":43,"w":22,"h":32},
+	"frame": {"x":39,"y":43,"w":24,"h":32},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":3,"y":0,"w":22,"h":32},
+	"spriteSourceSize": {"x":1,"y":0,"w":24,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
 "player_02":
@@ -37,8 +37,8 @@
 	"version": "1.0",
 	"image": "inGameAtlas.png",
 	"format": "RGBA8888",
-	"size": {"w":64,"h":128},
+	"size": {"w":128,"h":128},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:55e9b48ecdab9fb77e5990d986b3e5f0:4907a0b73c446642c477fc4e453c2233:472867876a4db3e566643cd3fb500437$"
+	"smartupdate": "$TexturePacker:SmartUpdate:ddb147a834e6fefebb1f26d8fcaa1316:bbd27e8c73a5897b59edb84c4de43fc8:472867876a4db3e566643cd3fb500437$"
 }
 }
