@@ -24,7 +24,7 @@ public class Player : FAnimatedSprite
     private float minYVel = -15;
     private float maxYVel = 30;
     private bool grounded = false;
-    private float jumpStrength = 20;
+    private float jumpStrength = 15;
     private float speed = 200;
     private float gravity = -50;
     public void Update()
