@@ -212,7 +212,7 @@ public class Player : FAnimatedSprite
     private const float ATTACK_TWO_TIME = 1.0f;
     private const float ATTACK_THREE_TIME = 1.0f;
     private const float ATTACK_ONE_XVEL = 20;
-    private const float ATTACK_TWO_XVEL = 40;
+    private const float ATTACK_TWO_XVEL = 30;
     private const float ATTACK_THREE_XVEL = 10;
 
     public void StartAttackOne()

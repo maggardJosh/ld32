@@ -59,10 +59,11 @@ public class FTilemap : FContainer
 			Vector2 relPos = StageToLocal (_clipNode.GetPosition ());
 
             float xMin =  relPos.x - _clipWidth / 2 - _tileWidth;
-            float yMin = relPos.y - _clipHeight / 2 - _tileHeight;
+            float yMin = relPos.y - _clipHeight *.5f - _tileHeight;
 			
 			// check if the _clipNode has moved enough to check tile positions
-			if (Mathf.Round (xMin / (_tileWidth*.9f)) == _clipPos.x && Mathf.Round (yMin / (_tileHeight*.9f)) == _clipPos.y) {
+            if (Mathf.Round(xMin / (_tileWidth * .9f)) == _clipPos.x && Mathf.Round(yMin / (_tileHeight * .9f)) == _clipPos.y)
+            {
 				return;
 			}
 			_clipPos = new Vector2 (Mathf.Round (xMin / _tileWidth), Mathf.Round (yMin / _tileHeight));
@@ -444,8 +445,9 @@ public class FTilemap : FContainer
 		set {
 			if (value) {
 				Futile.screen.SignalResize += this.HandleResize;
-				_clipWidth = Futile.screen.width;
-				_clipHeight = Futile.screen.height;
+				_clipWidth = Futile.screen.width * 1.2f;
+				_clipHeight = Futile.screen.height * 1.3f;
+                
 			} else if (_clipToScreen == true) {
 				Futile.screen.SignalResize -= this.HandleResize;
 			}
