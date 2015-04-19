@@ -32,6 +32,7 @@ public class Player : FAnimatedSprite
     }
     private FSprite extendPoleMiddle;
     private FSprite extendPoleEnd;
+    public World world;
     
     public Player()
         : base("player")
@@ -427,8 +428,8 @@ public class Player : FAnimatedSprite
         float newX = this.x + xVel;
         float topY = this.y + tilemap.tileHeight / 3;
         float bottomY = this.y - tilemap.tileHeight / 3;
-        if (tilemap.isPassable(newX + tilemap.tileWidth / 3, topY) &&
-            tilemap.isPassable(newX + tilemap.tileWidth / 3, bottomY))
+        if (world.isPassable(newX + tilemap.tileWidth / 3, topY) &&
+            world.isPassable(newX + tilemap.tileWidth / 3, bottomY))
             this.x = newX;
         else
         {
@@ -443,8 +444,8 @@ public class Player : FAnimatedSprite
         float newX = this.x + xVel;
         float topY = this.y + tilemap.tileHeight / 3;
         float bottomY = this.y - tilemap.tileHeight / 3;
-        if (tilemap.isPassable(newX - tilemap.tileWidth / 3, topY) &&
-            tilemap.isPassable(newX - tilemap.tileWidth / 3, bottomY))
+        if (world.isPassable(newX - tilemap.tileWidth / 3, topY) &&
+            world.isPassable(newX - tilemap.tileWidth / 3, bottomY))
             this.x = newX;
         else
         {
@@ -458,8 +459,8 @@ public class Player : FAnimatedSprite
         float newY = this.y + yVel;
         float leftX = this.x - tilemap.tileWidth / 4;
         float rightX = this.x + tilemap.tileWidth / 4;
-        if (!tilemap.isPassable(leftX, newY - tilemap.tileWidth) ||
-            !tilemap.isPassable(rightX, newY - tilemap.tileWidth))
+        if (!world.isPassable(leftX, newY - tilemap.tileWidth) ||
+            !world.isPassable(rightX, newY - tilemap.tileWidth))
         {
             if (currentState == State.TAIL_HANG_FALL)
                 currentState = State.IDLE;
@@ -478,8 +479,8 @@ public class Player : FAnimatedSprite
                     break;
             }
         }
-        if (tilemap.isPassable(leftX, newY - tilemap.tileWidth / 2) &&
-            tilemap.isPassable(rightX, newY - tilemap.tileWidth / 2))
+        if (world.isPassable(leftX, newY - tilemap.tileWidth / 2) &&
+            world.isPassable(rightX, newY - tilemap.tileWidth / 2))
             this.y = newY;
         else
         {
@@ -514,16 +515,19 @@ public class Player : FAnimatedSprite
             yVel = 0;
         }
     }
+
     private void CheckOneWayDown()
     {
+
     }
+
     public void TryMoveUp()
     {
         float newY = this.y + yVel;
         float leftX = this.x - tilemap.tileWidth / 4;
         float rightX = this.x + tilemap.tileWidth / 4;
-        if (tilemap.isPassable(leftX, newY + tilemap.tileHeight / 2) &&
-            tilemap.isPassable(rightX, newY + tilemap.tileHeight / 2))
+        if (world.isPassable(leftX, newY + tilemap.tileHeight / 2) &&
+            world.isPassable(rightX, newY + tilemap.tileHeight / 2))
             this.y = newY;
         else
         {

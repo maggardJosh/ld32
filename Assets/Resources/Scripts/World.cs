@@ -13,12 +13,14 @@ public class World : FContainer
     FContainer playerLayer;
 
     List<WorldTravelPoint> travelPoints = new List<WorldTravelPoint>();
+    List<Door> doors = new List<Door>();
 
     public World()
     {
         background = new FContainer();
         playerLayer = new FContainer();
         this.p = new Player();
+        this.p.world = this;
         C.getCameraInstance().follow(p);
         Futile.stage.AddChild(C.getCameraInstance());
         map = new FTmxMap();
@@ -32,14 +34,15 @@ public class World : FContainer
         background.RemoveAllChildren();
 
         travelPoints.Clear();
+        doors.Clear();
         this.map = new FTmxMap();
         this.map.LoadTMX("Maps/" + mapName);
-        MapLoader.LoadObjects(this, map.objects);
         tilemap = (FTilemap)this.map.getLayerNamed("tilemap");
 
         p.tilemap = this.tilemap;
         tilemap.clipNode = C.getCameraInstance();
         background.AddChild(tilemap);
+        MapLoader.LoadObjects(this, map.objects);
         C.getCameraInstance().setWorldBounds(new Rect(0, -tilemap.height, tilemap.width, tilemap.height));
 
     }
@@ -49,8 +52,31 @@ public class World : FContainer
 
         travelPoints.Add(travelPoint);
     }
+
+    public void addDoor(Door door)
+    {
+        doors.Add(door);
+        background.AddChild(door);
+    }
     public string lastWarp = "";
     private void Update()
+    {
+        CheckTravelPoints();
+
+    }
+    public bool isPassable(float x, float y)
+    {
+        bool result = tilemap.isPassable(x, y);
+        int tileX = Mathf.FloorToInt(x / tilemap.tileWidth);
+        int tileY = Mathf.FloorToInt(y / tilemap.tileHeight);
+        if (result)
+            foreach (Door door in doors)
+                if (door.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                    return false;
+
+        return result;
+    }
+    private void CheckTravelPoints()
     {
         WorldTravelPoint activeTravelPoint = null;
         foreach (WorldTravelPoint travelPoint in travelPoints)
@@ -70,9 +96,7 @@ public class World : FContainer
         {
             LoadAndSpawn(activeTravelPoint.mapToLoad, activeTravelPoint.travelPointTarget);
         }
-
     }
-
     public void LoadAndSpawn(string mapName, string travelPoint)
     {
         LoadMap(mapName);
