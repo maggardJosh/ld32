@@ -33,7 +33,7 @@ public class Player : FAnimatedSprite
     private FSprite extendPoleMiddle;
     private FSprite extendPoleEnd;
     public World world;
-    
+
     public Player()
         : base("player")
     {
@@ -44,6 +44,7 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 2, 3, 4, 5 }, 100, true));
         addAnimation(new FAnimation(State.SLIDE.ToString(), new int[] { 6 }, 100, true));
         addAnimation(new FAnimation(State.JUMP.ToString(), new int[] { 17 }, 100, true));
+        addAnimation(new FAnimation(State.DOUBLE_JUMP.ToString(), new int[] { 17 }, 100, true));
         addAnimation(new FAnimation(State.FALL.ToString(), new int[] { 18 }, 100, true));
         addAnimation(new FAnimation(State.CROUCH.ToString(), new int[] { 19 }, 100, true));
         addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 7, 8, 9, 10 }, 100, false));
@@ -57,7 +58,7 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.SLAM_MOVE.ToString(), new int[] { 13 }, 100, false));
         addAnimation(new FAnimation(State.SLAM_LAND.ToString(), new int[] { 20 }, 100, false));
 
-        addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] {  19 }, 100, true));
+        addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 19 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 1, 6 }, 50, true));
 
         play(State.IDLE.ToString());
@@ -325,7 +326,7 @@ public class Player : FAnimatedSprite
                     currentState = State.IDLE;
                 }
                 break;
-         
+
             case State.SLAM_TRANS_IN:
                 if (this.IsStopped)
                     currentState = State.SLAM_MOVE;
@@ -372,9 +373,12 @@ public class Player : FAnimatedSprite
         }
         //RXDebug.Log(currentState);
         stateCount += Time.deltaTime;
-        
+
         this.scaleX = isFacingLeft ? -1 : 1;
-        this.play(currentState.ToString());
+        if ((currentState == State.JUMP || currentState == State.DOUBLE_JUMP) && yVel < 0)
+            this.play(State.FALL.ToString());
+        else
+            this.play(currentState.ToString());
         lastJumpPress = C.getKey(C.JUMP_KEY);
         lastDownPress = C.getKey(C.DOWN_KEY);
         lastActionPress = C.getKey(C.ACTION_KEY);
