@@ -7,21 +7,20 @@ using UnityEngine;
 public class WorldTravelPoint
 {
     public Rect rect;
+    public string name;
     public string mapToLoad;
     public string travelPointTarget;
-    public WorldTravelPoint(Rect rect, string mapToLoad, string travelPointTarget)
+    public WorldTravelPoint(Rect rect, string name, string mapToLoad, string travelPointTarget)
     {
+        this.name = name;
         this.rect = rect;
         this.mapToLoad = mapToLoad;
         this.travelPointTarget = travelPointTarget;
     }
 
-    public void CheckPlayerCollision(Player p)
+    public bool CheckPlayerCollision(Player p)
     {
-        if (rect.Contains(p.GetPosition()))
-        {
-
-        }
+        return rect.Contains(p.GetPosition());
     }
 }
 

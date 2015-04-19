@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEngine;
+
+public class MapLoader
+{
+    public static void LoadObjects(World world, List<XMLNode> objects)
+    {
+        foreach (XMLNode node in objects)
+            switch (node.attributes["type"].ToUpper())
+            {
+                case "TRAVELPOINT":
+                    string name = node.attributes["name"];
+                    string mapTarget = "";
+                    string target = "";
+                    float x, y, width, height;
+                    float.TryParse(node.attributes["x"], out x);
+                    float.TryParse(node.attributes["y"], out y);
+                    float.TryParse(node.attributes["width"], out width);
+                    float.TryParse(node.attributes["height"], out height);
+                    foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                    {
+                        switch(property.attributes["name"].ToUpper())
+                        {
+                            case "MAP": mapTarget = property.attributes["value"]; break;
+                            case "TARGET": target = property.attributes["value"]; break;
+                        }
+                    }
+                    world.addTravelPoint(new WorldTravelPoint(new Rect(x, -y-32, width, height), name, mapTarget, target));
+                    break;
+            }
+    }
+}
+

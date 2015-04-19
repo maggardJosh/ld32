@@ -11,6 +11,7 @@ public class Player : FAnimatedSprite
         IDLE,
         RUN,
         JUMP,
+        FALL,
         DOUBLE_JUMP,
         SLIDE,
         CROUCH,
@@ -21,12 +22,6 @@ public class Player : FAnimatedSprite
         ATTACK_TWO,
         ATTACK_THREE,
         ATTACK_THREE_EXTEND,
-        POWERPOLE_EXTEND_DOWN_TRANS_IN,
-        POWERPOLE_EXTEND_DOWN,
-        POWERPOLE_EXTEND_DOWN_TRANS_OUT,
-        POWERPOLE_DOWN_TRANS_IN,
-        POWERPOLE_DOWN,
-        POWERPOLE_DOWN_TRANS_OUT,
         TAIL_HANG_TRANS_IN,
         TAIL_HANG_FALL,
         TAIL_HANG,
@@ -47,26 +42,21 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.IDLE.ToString(), new int[] { 1 }, 100, true));
         addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 2, 3, 4, 5 }, 100, true));
         addAnimation(new FAnimation(State.SLIDE.ToString(), new int[] { 6 }, 100, true));
-        addAnimation(new FAnimation(State.JUMP.ToString(), new int[] { 1, 1, 1, 2 }, 100, true));
+        addAnimation(new FAnimation(State.JUMP.ToString(), new int[] { 17 }, 100, true));
+        addAnimation(new FAnimation(State.FALL.ToString(), new int[] { 18 }, 100, true));
+        addAnimation(new FAnimation(State.CROUCH.ToString(), new int[] { 19 }, 100, true));
         addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 7, 8, 9, 10 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 11, 12, 13 }, 100, false));
-        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 14, 15 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 14, 15 }, 50, false));
         addAnimation(new FAnimation(State.ATTACK_THREE_EXTEND.ToString(), new int[] { 16 }, 100, false));
-        addAnimation(new FAnimation(State.TAIL_HANG_TRANS_IN.ToString(), new int[] { 16 }, 100, false));
-        addAnimation(new FAnimation(State.TAIL_HANG.ToString(), new int[] { 2, 3, 4 }, 100, true));
+        addAnimation(new FAnimation(State.TAIL_HANG_TRANS_IN.ToString(), new int[] { 21 }, 100, false));
+        addAnimation(new FAnimation(State.TAIL_HANG.ToString(), new int[] { 21 }, 100, true));
         addAnimation(new FAnimation(State.TAIL_HANG_FALL.ToString(), new int[] { 2, 3, 4 }, 100, true));
         addAnimation(new FAnimation(State.SLAM_TRANS_IN.ToString(), new int[] { 11, 12, 13 }, 100, false));
         addAnimation(new FAnimation(State.SLAM_MOVE.ToString(), new int[] { 13 }, 100, false));
-        addAnimation(new FAnimation(State.SLAM_LAND.ToString(), new int[] { 13, 12, 11 }, 100, false));
-        addAnimation(new FAnimation(State.POWERPOLE_DOWN_TRANS_IN.ToString(), new int[] { 11, 12, 13}, 100, false));
-        addAnimation(new FAnimation(State.POWERPOLE_DOWN.ToString(), new int[] { 11 }, 100, true));
-        addAnimation(new FAnimation(State.POWERPOLE_DOWN_TRANS_OUT.ToString(), new int[] { 13, 12, 11 }, 100, false));
-        addAnimation(new FAnimation(State.POWERPOLE_EXTEND_DOWN_TRANS_IN.ToString(), new int[] { 11, 12, 13 }, 100, false));
-        addAnimation(new FAnimation(State.POWERPOLE_EXTEND_DOWN.ToString(), new int[] { 11 }, 100, true));
-        addAnimation(new FAnimation(State.POWERPOLE_EXTEND_DOWN_TRANS_OUT.ToString(), new int[] { 13, 12, 11 }, 100, false));
+        addAnimation(new FAnimation(State.SLAM_LAND.ToString(), new int[] { 20 }, 100, false));
 
-
-        addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 6 }, 100, true));
+        addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] {  19 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 1, 6 }, 50, true));
 
         play(State.IDLE.ToString());
@@ -90,8 +80,7 @@ public class Player : FAnimatedSprite
                 {
                     case State.SLAM_TRANS_IN:
                     case State.SLAM_LAND:
-                    case State.POWERPOLE_DOWN_TRANS_IN:
-                    case State.POWERPOLE_DOWN_TRANS_OUT:
+                    case State.TAIL_HANG:
                         this.play(value.ToString(), true);
                         break;
                 }
@@ -118,8 +107,8 @@ public class Player : FAnimatedSprite
     private bool grounded = false;
     private float jumpStrength = 13;
     private float superJumpStrength = 30;
-    private float hangJumpStrength = 20;
-    private float speed = 200;
+    private float hangJumpStrength = 12;
+    private float speed = 180;
     private float superjumpAirSpeed = 5;
     private float gravity = -50;
     private float stateCount = 0;
@@ -219,13 +208,18 @@ public class Player : FAnimatedSprite
                 xVel *= groundFriction;
                 if (this.IsStopped)
                 {
+                    xVel = 0;
+                    C.getCameraInstance().shake(.8f, .1f);
                     Futile.stage.AddChild(extendPoleMiddle);
                     Futile.stage.AddChild(extendPoleEnd);
                     AttackExtendLength = 0;
                     currentState = State.ATTACK_THREE_EXTEND;
+
                     attackExtendTween = Go.to(this, ATTACK_THREE_EXTEND_TIME / 8, new TweenConfig().floatProp("AttackExtendLength", poleExtendLength).setEaseType(EaseType.QuartIn).onComplete(
                         (t) =>
                         {
+
+                            C.getCameraInstance().shake(.5f, .1f);
                             Go.to(this, ATTACK_THREE_TIME / 2, new TweenConfig().floatProp("AttackExtendLength", 0).setEaseType(EaseType.QuadIn).onComplete((t2) =>
                             {
                                 extendPoleEnd.RemoveFromContainer();
@@ -303,10 +297,7 @@ public class Player : FAnimatedSprite
                 break;
             case State.CROUCH:
                 xVel = 0;
-                if (C.getKey(C.ACTION_KEY))
-                {
-                    currentState = State.POWERPOLE_DOWN_TRANS_IN;
-                }
+               
                 if (C.getKey(C.JUMP_KEY))
                 {
                     currentState = State.SUPERJUMP_CHARGE;
@@ -316,29 +307,7 @@ public class Player : FAnimatedSprite
                     currentState = State.IDLE;
                 }
                 break;
-            case State.POWERPOLE_DOWN_TRANS_IN:
-                if (this.IsStopped)
-                    currentState = State.POWERPOLE_DOWN;
-                return;
-            case State.POWERPOLE_DOWN:
-                if (C.getKey(C.DOWN_KEY) || C.getKey(C.JUMP_KEY))
-                {
-                    
-                }
-                return;
-            case State.POWERPOLE_EXTEND_DOWN_TRANS_IN:
-                if (C.getKey(C.ACTION_KEY))
-                {
-                    //just go to idle for now
-                }
-                currentState = State.IDLE;
-                break;
-            case State.POWERPOLE_EXTEND_DOWN:
-
-                break;
-            case State.POWERPOLE_EXTEND_DOWN_TRANS_OUT:
-
-                break;
+         
             case State.SLAM_TRANS_IN:
                 if (this.IsStopped)
                     currentState = State.SLAM_MOVE;
@@ -347,7 +316,10 @@ public class Player : FAnimatedSprite
                 yVel = slamSpeed * maxYVel;
                 xVel = 0;
                 if (grounded)
+                {
                     currentState = State.SLAM_LAND;
+                    C.getCameraInstance().shake(SLAM_LAND_SHAKE, SLAM_LAND_SHAKE_TIME);
+                }
                 break;
             case State.SLAM_LAND:
                 if (this.IsStopped)
@@ -388,6 +360,8 @@ public class Player : FAnimatedSprite
         lastDownPress = C.getKey(C.DOWN_KEY);
         lastActionPress = C.getKey(C.ACTION_KEY);
     }
+    private const float SLAM_LAND_SHAKE = 2.0f;
+    private const float SLAM_LAND_SHAKE_TIME = .2f;
     Tween attackExtendTween;
     private const float TAIL_HANG_FALL_TIME = .1f;
     public float AttackExtendLength
@@ -527,7 +501,7 @@ public class Player : FAnimatedSprite
             yVel = 0;
         }
     }
-    private const float TRANS_HOOK_TIME = .2f;
+    private const float TRANS_HOOK_TIME = .05f;
     private void CheckHookDown()
     {
         if (C.getKey(C.DOWN_KEY) || currentState == State.TAIL_HANG_FALL)
@@ -539,6 +513,9 @@ public class Player : FAnimatedSprite
             xVel = 0;
             yVel = 0;
         }
+    }
+    private void CheckOneWayDown()
+    {
     }
     public void TryMoveUp()
     {
