@@ -61,7 +61,7 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.SLAM_MOVE.ToString(), new int[] { 34 }, 100, false));
         addAnimation(new FAnimation(State.SLAM_LAND.ToString(), new int[] { 35,36,37,38,39 }, 50, false));
         addAnimation(new FAnimation(State.SUPERJUMP.ToString(), new int[] { 43,44,45,46 }, 100, true));
-        // air attack 40,41,42
+        addAnimation(new FAnimation(State.ATTACK_AIR.ToString(), new int[] { 40,40,40,40, 41,41,41,41,42}, 10, false));
 
         //addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 19 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 25 }, 50, true));
@@ -479,7 +479,7 @@ public class Player : FAnimatedSprite
         else if (C.getKey(C.RIGHT_KEY))
             isFacingLeft = false;
         xVel = ATTACK_AIR_XVEL * (isFacingLeft ? -1 : 1);
-        this.play(State.ATTACK_TWO.ToString(), true);
+        this.play(currentState.ToString(), true);
     }
 
     private const float SUPERJUMP_CHARGE_TIME = 1.5f;
