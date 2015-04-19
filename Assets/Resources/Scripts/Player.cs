@@ -16,26 +16,37 @@ public class Player : FAnimatedSprite
         CROUCH,
         SUPERJUMP_CHARGE,
         SUPERJUMP_ABLE,
+        SUPERJUMP,
         ATTACK_ONE,
         ATTACK_TWO,
         ATTACK_THREE,
+        ATTACK_THREE_EXTEND,
         POWERPOLE_EXTEND_DOWN_TRANS_IN,
         POWERPOLE_EXTEND_DOWN,
         POWERPOLE_EXTEND_DOWN_TRANS_OUT,
-        TAIL_HANG
+        TAIL_HANG,
+        SLAM_TRANS_IN,
+        SLAM_MOVE,
+        SLAM_LAND
 
     }
+    private FSprite extendPoleMiddle;
+    private FSprite extendPoleEnd;
     public Player(FTilemap tilemap)
         : base("player")
     {
+        extendPoleMiddle = new FSprite("pole_mid");
+        extendPoleEnd = new FSprite("pole_end");
+
         this.tilemap = tilemap;
         addAnimation(new FAnimation(State.IDLE.ToString(), new int[] { 1 }, 100, true));
         addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 2, 3, 4, 5 }, 100, true));
         addAnimation(new FAnimation(State.SLIDE.ToString(), new int[] { 6 }, 100, true));
         addAnimation(new FAnimation(State.JUMP.ToString(), new int[] { 1, 1, 1, 2 }, 100, true));
-        addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 7, 8, 9 }, 100, false));
-        addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 10, 11, 12 }, 100, false));
-        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 13, 13, 13 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 7, 8, 9, 10 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 11, 12, 13 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 14, 15 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_THREE_EXTEND.ToString(), new int[] { 16 }, 100, false));
 
         addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 6 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 1, 6 }, 50, true));
@@ -76,17 +87,21 @@ public class Player : FAnimatedSprite
     private float maxXVel = 10;
     private float minYVel = -15;
     private float maxYVel = 30;
+    private float slamSpeed = -1.5f;
     private bool grounded = false;
     private float jumpStrength = 15;
-    private float superJumpStrength = 25;
+    private float superJumpStrength = 30;
     private float hangJumpStrength = 20;
     private float speed = 200;
+    private float superjumpAirSpeed = 5;
     private float gravity = -50;
     private float stateCount = 0;
     private float poleExtendLength = 96;
+
+    private const float ATTACK_THREE_EXTEND_TIME = .3f;
     public void Update()
     {
-        
+
         switch (currentState)
         {
             case State.IDLE:
@@ -112,6 +127,14 @@ public class Player : FAnimatedSprite
                 {
                     currentState = State.CROUCH;
                     return;
+                }
+                if (currentState == State.JUMP || currentState == State.DOUBLE_JUMP)
+                {
+                    if (C.getKey(C.DOWN_KEY) && !lastDownPress)
+                    {
+                        currentState = State.SLAM_TRANS_IN;
+                        return;
+                    }
                 }
                 if (C.getKey(C.RIGHT_KEY))
                 {
@@ -167,38 +190,67 @@ public class Player : FAnimatedSprite
                 break;
             case State.ATTACK_THREE:
                 xVel *= groundFriction;
-                if (stateCount > ATTACK_THREE_TIME)
-                    currentState = State.IDLE;
+                if (this.IsStopped)
+                {
+                    Futile.stage.AddChild(extendPoleMiddle);
+                    Futile.stage.AddChild(extendPoleEnd);
+                    AttackExtendLength = 0;
+                    currentState = State.ATTACK_THREE_EXTEND;
+                    attackExtendTween = Go.to(this, ATTACK_THREE_EXTEND_TIME / 8, new TweenConfig().floatProp("AttackExtendLength", poleExtendLength).setEaseType(EaseType.QuartIn).onComplete(
+                        (t) =>
+                        {
+                            Go.to(this, ATTACK_THREE_TIME / 2, new TweenConfig().floatProp("AttackExtendLength", 0).setEaseType(EaseType.QuadIn).onComplete((t2) =>
+                            {
+                                extendPoleEnd.RemoveFromContainer();
+                                extendPoleMiddle.RemoveFromContainer();
+                                currentState = State.IDLE;
+                            }));
+                        }));
+                }
+                break;
+            case State.ATTACK_THREE_EXTEND:
+
                 break;
             case State.SUPERJUMP_CHARGE:
-                if (!C.getKey(C.DOWN_KEY))
+                if (!C.getKey(C.JUMP_KEY))
                 {
                     currentState = State.IDLE;
                     return;
                 }
-                if (!C.getKey(C.JUMP_KEY))
-                {
-                    currentState = State.CROUCH;
-                    return;
-                }
-                if (C.getKey(C.DOWN_KEY) && C.getKey(C.JUMP_KEY))
+                if (C.getKey(C.JUMP_KEY))
                 {
                     if (stateCount >= SUPERJUMP_CHARGE_TIME)
                         currentState = State.SUPERJUMP_ABLE;
                 }
                 break;
             case State.SUPERJUMP_ABLE:
-                if (!C.getKey(C.DOWN_KEY))
-                {
-                    currentState = State.IDLE;
-                    return;
-                }
-                if (!C.getKeyDown(C.JUMP_KEY))
+                if (!C.getKey(C.JUMP_KEY) && lastJumpPress)
                 {
                     grounded = false;
-                    currentState = State.JUMP;
+                    currentState = State.SUPERJUMP;
                     yVel = superJumpStrength;
                 }
+                break;
+            case State.SUPERJUMP:
+                if (C.getKey(C.RIGHT_KEY))
+                {
+                    isActivelyMoving = true;
+                    xVel += superjumpAirSpeed * Time.deltaTime;
+                    isFacingLeft = false;
+                }
+                if (C.getKey(C.LEFT_KEY))
+                {
+                    isActivelyMoving = true;
+                    xVel -= superjumpAirSpeed * Time.deltaTime;
+                    isFacingLeft = true;
+                }
+                if (C.getKey(C.DOWN_KEY) && !lastDownPress && yVel <= 0)
+                {
+                    currentState = State.SLAM_TRANS_IN;
+                    return;
+                }
+                if (grounded)
+                    currentState = State.IDLE;
                 break;
             case State.TAIL_HANG:
                 if (C.getKey(C.JUMP_KEY) && !lastJumpPress)
@@ -208,7 +260,7 @@ public class Player : FAnimatedSprite
                 }
                 break;
             case State.CROUCH:
-                xVel *= groundFriction;
+                xVel = 0;
                 if (C.getKey(C.ACTION_KEY))
                 {
                     currentState = State.POWERPOLE_EXTEND_DOWN_TRANS_IN;
@@ -235,6 +287,19 @@ public class Player : FAnimatedSprite
             case State.POWERPOLE_EXTEND_DOWN_TRANS_OUT:
 
                 break;
+            case State.SLAM_TRANS_IN:
+                yVel = 0;
+                currentState = State.SLAM_MOVE;
+                break;
+            case State.SLAM_MOVE:
+                yVel = slamSpeed * maxYVel;
+                xVel = 0;
+                if (grounded)
+                    currentState = State.SLAM_LAND;
+                break;
+            case State.SLAM_LAND:
+                currentState = State.IDLE;
+                break;
         }
 
         yVel += gravity * Time.deltaTime;
@@ -257,12 +322,12 @@ public class Player : FAnimatedSprite
         }
         else if (yVel < 0)
         {
-            yVel = Mathf.Max(minYVel, yVel);
+            if (currentState != State.SLAM_MOVE)
+                yVel = Mathf.Max(minYVel, yVel);
             TryMoveDown();
         }
 
         stateCount += Time.deltaTime;
-        RXDebug.Log(currentState);
 
         this.scaleX = isFacingLeft ? -1 : 1;
         this.play(currentState.ToString());
@@ -270,6 +335,21 @@ public class Player : FAnimatedSprite
         lastDownPress = C.getKey(C.DOWN_KEY);
         lastActionPress = C.getKey(C.ACTION_KEY);
     }
+    Tween attackExtendTween;
+    public float AttackExtendLength
+    {
+        get { return extendPoleMiddle.width; }
+        set
+        {
+            extendPoleEnd.scaleX = isFacingLeft ? -1 : 1;
+
+            extendPoleMiddle.width = value;
+            extendPoleMiddle.SetPosition(this.GetPosition() + (Vector2.right * (this.width / 2 + (extendPoleMiddle.width / 2) * (isFacingLeft ? -1 : 1))));
+
+            extendPoleEnd.SetPosition(extendPoleMiddle.GetPosition() + (Vector2.right * ((extendPoleMiddle.width / 2) * (isFacingLeft ? -1 : 1) + extendPoleEnd.width / 2)));
+        }
+    }
+
 
     private bool isAttacking()
     {
@@ -293,6 +373,10 @@ public class Player : FAnimatedSprite
     public void StartAttackTwo()
     {
         currentState = State.ATTACK_TWO;
+        if (C.getKey(C.LEFT_KEY))
+            isFacingLeft = true;
+        else if (C.getKey(C.RIGHT_KEY))
+            isFacingLeft = false;
         xVel = ATTACK_TWO_XVEL * (isFacingLeft ? -1 : 1);
         this.play(State.ATTACK_TWO.ToString(), true);
     }
@@ -300,6 +384,10 @@ public class Player : FAnimatedSprite
     public void StartAttackThree()
     {
         currentState = State.ATTACK_THREE;
+        if (C.getKey(C.LEFT_KEY))
+            isFacingLeft = true;
+        else if (C.getKey(C.RIGHT_KEY))
+            isFacingLeft = false;
         xVel = ATTACK_THREE_XVEL * (isFacingLeft ? -1 : 1);
         this.play(State.ATTACK_THREE.ToString(), true);
     }
@@ -358,14 +446,25 @@ public class Player : FAnimatedSprite
             yVel = 0;
             this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileWidth / 2;
         }
-        CheckHook();
+        CheckHookDown();
     }
-    private void CheckHook()
+    private void CheckHookUp()
     {
         if (tilemap.isHook(this.x, this.y))
         {
             this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2;
             this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileHeight / 2;
+            currentState = State.TAIL_HANG;
+            xVel = 0;
+            yVel = 0;
+        }
+    }
+    private void CheckHookDown()
+    {
+        if (tilemap.isHook(this.x, this.y))
+        {
+            this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2;
+            this.y = Mathf.CeilToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight - tilemap.tileHeight / 2;
             currentState = State.TAIL_HANG;
             xVel = 0;
             yVel = 0;
@@ -383,10 +482,10 @@ public class Player : FAnimatedSprite
         {
             this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileHeight / 2;
         }
-        if (yVel < HOOK_MIN_Y_VEL)
-            CheckHook();
+        if (yVel > HOOK_MIN_Y_VEL)
+            CheckHookUp();
     }
-    private const float HOOK_MIN_Y_VEL = 3;
+    private const float HOOK_MIN_Y_VEL = 5;
 
 
 }
