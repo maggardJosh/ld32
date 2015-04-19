@@ -25,8 +25,11 @@ public class Player : FAnimatedSprite
         POWERPOLE_EXTEND_DOWN,
         POWERPOLE_EXTEND_DOWN_TRANS_OUT,
         TAIL_HANG_TRANS_IN,
+        TAIL_HANG_FALL,
         TAIL_HANG,
-        TAIL_HANG_FALL
+        SLAM_TRANS_IN,
+        SLAM_MOVE,
+        SLAM_LAND
 
     }
     private FSprite extendPoleMiddle;
@@ -49,6 +52,9 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.TAIL_HANG_TRANS_IN.ToString(), new int[] { 16 }, 100, false));
         addAnimation(new FAnimation(State.TAIL_HANG.ToString(), new int[] { 2, 3, 4 }, 100, true));
         addAnimation(new FAnimation(State.TAIL_HANG_FALL.ToString(), new int[] { 2, 3, 4 }, 100, true));
+        addAnimation(new FAnimation(State.SLAM_TRANS_IN.ToString(), new int[] { 11, 12, 13 }, 100, false));
+        addAnimation(new FAnimation(State.SLAM_MOVE.ToString(), new int[] { 13 }, 100, false));
+        addAnimation(new FAnimation(State.SLAM_LAND.ToString(), new int[] { 13, 12, 11 }, 100, false));
 
         addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 6 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 1, 6 }, 50, true));
@@ -70,6 +76,14 @@ public class Player : FAnimatedSprite
         {
             if (_currentState != value)
             {
+                switch (value)
+                {
+                    case State.SLAM_TRANS_IN:
+                    case State.SLAM_LAND:
+                        RXDebug.Log("HI");
+                        this.play(value.ToString(), true);
+                        break;
+                }
                 _currentState = value;
                 stateCount = 0;
             }
@@ -89,8 +103,9 @@ public class Player : FAnimatedSprite
     private float maxXVel = 10;
     private float minYVel = -15;
     private float maxYVel = 30;
+    private float slamSpeed = -1.5f;
     private bool grounded = false;
-    private float jumpStrength = 15;
+    private float jumpStrength = 13;
     private float superJumpStrength = 30;
     private float hangJumpStrength = 20;
     private float speed = 200;
@@ -128,6 +143,14 @@ public class Player : FAnimatedSprite
                 {
                     currentState = State.CROUCH;
                     return;
+                }
+                if (currentState == State.JUMP || currentState == State.DOUBLE_JUMP)
+                {
+                    if (C.getKey(C.DOWN_KEY) && !lastDownPress)
+                    {
+                        currentState = State.SLAM_TRANS_IN;
+                        return;
+                    }
                 }
                 if (C.getKey(C.RIGHT_KEY))
                 {
@@ -205,28 +228,18 @@ public class Player : FAnimatedSprite
 
                 break;
             case State.SUPERJUMP_CHARGE:
-                if (!C.getKey(C.DOWN_KEY))
+                if (!C.getKey(C.JUMP_KEY))
                 {
                     currentState = State.IDLE;
                     return;
                 }
-                if (!C.getKey(C.JUMP_KEY))
-                {
-                    currentState = State.CROUCH;
-                    return;
-                }
-                if (C.getKey(C.DOWN_KEY) && C.getKey(C.JUMP_KEY))
+                if (C.getKey(C.JUMP_KEY))
                 {
                     if (stateCount >= SUPERJUMP_CHARGE_TIME)
                         currentState = State.SUPERJUMP_ABLE;
                 }
                 break;
             case State.SUPERJUMP_ABLE:
-                if (!C.getKey(C.DOWN_KEY))
-                {
-                    currentState = State.IDLE;
-                    return;
-                }
                 if (!C.getKey(C.JUMP_KEY) && lastJumpPress)
                 {
                     grounded = false;
@@ -246,6 +259,11 @@ public class Player : FAnimatedSprite
                     isActivelyMoving = true;
                     xVel -= superjumpAirSpeed * Time.deltaTime;
                     isFacingLeft = true;
+                }
+                if (C.getKey(C.DOWN_KEY) && !lastDownPress && yVel <= 0)
+                {
+                    currentState = State.SLAM_TRANS_IN;
+                    return;
                 }
                 if (grounded)
                     currentState = State.IDLE;
@@ -295,6 +313,20 @@ public class Player : FAnimatedSprite
             case State.POWERPOLE_EXTEND_DOWN_TRANS_OUT:
 
                 break;
+            case State.SLAM_TRANS_IN:
+                if (this.IsStopped)
+                    currentState = State.SLAM_MOVE;
+                return;
+            case State.SLAM_MOVE:
+                yVel = slamSpeed * maxYVel;
+                xVel = 0;
+                if (grounded)
+                    currentState = State.SLAM_LAND;
+                break;
+            case State.SLAM_LAND:
+                if (this.IsStopped)
+                    currentState = State.IDLE;
+                break;
         }
 
         yVel += gravity * Time.deltaTime;
@@ -317,12 +349,13 @@ public class Player : FAnimatedSprite
         }
         else if (yVel < 0)
         {
-            yVel = Mathf.Max(minYVel, yVel);
+            if (currentState != State.SLAM_MOVE)
+                yVel = Mathf.Max(minYVel, yVel);
             TryMoveDown();
         }
 
         stateCount += Time.deltaTime;
-
+        RXDebug.Log(currentState);
         this.scaleX = isFacingLeft ? -1 : 1;
         this.play(currentState.ToString());
         lastJumpPress = C.getKey(C.JUMP_KEY);
@@ -399,7 +432,7 @@ public class Player : FAnimatedSprite
             this.x = newX;
         else
         {
-            this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth *2/3f;
+            this.x = Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth * 2 / 3f;
             xVel = 0;
         }
 
@@ -410,12 +443,12 @@ public class Player : FAnimatedSprite
         float newX = this.x + xVel;
         float topY = this.y + tilemap.tileHeight / 3;
         float bottomY = this.y - tilemap.tileHeight / 3;
-        if (tilemap.isPassable(newX - tilemap.tileWidth /3, topY) &&
+        if (tilemap.isPassable(newX - tilemap.tileWidth / 3, topY) &&
             tilemap.isPassable(newX - tilemap.tileWidth / 3, bottomY))
             this.x = newX;
         else
         {
-            this.x = Mathf.CeilToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth - tilemap.tileWidth *2/3f;
+            this.x = Mathf.CeilToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth - tilemap.tileWidth * 2 / 3f;
             xVel = 0;
         }
     }
