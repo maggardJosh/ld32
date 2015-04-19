@@ -107,7 +107,7 @@ public class Player : FAnimatedSprite
     private bool grounded = false;
     private float jumpStrength = 13;
     private float superJumpStrength = 30;
-    private float hangJumpStrength = 20;
+    private float hangJumpStrength = 12;
     private float speed = 200;
     private float superjumpAirSpeed = 5;
     private float gravity = -50;
@@ -491,7 +491,7 @@ public class Player : FAnimatedSprite
             yVel = 0;
         }
     }
-    private const float TRANS_HOOK_TIME = .2f;
+    private const float TRANS_HOOK_TIME = .05f;
     private void CheckHookDown()
     {
         if (C.getKey(C.DOWN_KEY) || currentState == State.TAIL_HANG_FALL)

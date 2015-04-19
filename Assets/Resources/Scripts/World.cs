@@ -54,7 +54,7 @@ public class World : FContainer
     {
         WorldTravelPoint activeTravelPoint = null;
         foreach (WorldTravelPoint travelPoint in travelPoints)
-            if (travelPoint.CheckPlayerCollision(this.p))
+            if (!String.IsNullOrEmpty(travelPoint.mapToLoad) && travelPoint.CheckPlayerCollision(this.p))
             {
                 if (travelPoint.name != lastWarp)
                 {
@@ -68,17 +68,22 @@ public class World : FContainer
 
         if (activeTravelPoint != null)
         {
-            LoadMap(activeTravelPoint.mapToLoad);
-            foreach (WorldTravelPoint travelTo in travelPoints)
-                if (travelTo.name == activeTravelPoint.travelPointTarget)
-                {
-                    lastWarp = travelTo.name;
-                    p.SetPosition(travelTo.rect.center);
-
-                    break;
-                }
+            LoadAndSpawn(activeTravelPoint.mapToLoad, activeTravelPoint.travelPointTarget);
         }
 
+    }
+
+    public void LoadAndSpawn(string mapName, string travelPoint)
+    {
+        LoadMap(mapName);
+        foreach (WorldTravelPoint travelTo in travelPoints)
+            if (travelTo.name == travelPoint)
+            {
+                lastWarp = travelTo.name;
+                p.SetPosition(travelTo.rect.center);
+
+                break;
+            }
     }
 
 }
