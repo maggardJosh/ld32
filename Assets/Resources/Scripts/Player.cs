@@ -22,12 +22,6 @@ public class Player : FAnimatedSprite
         ATTACK_TWO,
         ATTACK_THREE,
         ATTACK_THREE_EXTEND,
-        POWERPOLE_EXTEND_DOWN_TRANS_IN,
-        POWERPOLE_EXTEND_DOWN,
-        POWERPOLE_EXTEND_DOWN_TRANS_OUT,
-        POWERPOLE_DOWN_TRANS_IN,
-        POWERPOLE_DOWN,
-        POWERPOLE_DOWN_TRANS_OUT,
         TAIL_HANG_TRANS_IN,
         TAIL_HANG_FALL,
         TAIL_HANG,
@@ -61,13 +55,6 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.SLAM_TRANS_IN.ToString(), new int[] { 11, 12, 13 }, 100, false));
         addAnimation(new FAnimation(State.SLAM_MOVE.ToString(), new int[] { 13 }, 100, false));
         addAnimation(new FAnimation(State.SLAM_LAND.ToString(), new int[] { 20 }, 100, false));
-        addAnimation(new FAnimation(State.POWERPOLE_DOWN_TRANS_IN.ToString(), new int[] { 11, 12, 13}, 100, false));
-        addAnimation(new FAnimation(State.POWERPOLE_DOWN.ToString(), new int[] { 11 }, 100, true));
-        addAnimation(new FAnimation(State.POWERPOLE_DOWN_TRANS_OUT.ToString(), new int[] { 13, 12, 11 }, 100, false));
-        addAnimation(new FAnimation(State.POWERPOLE_EXTEND_DOWN_TRANS_IN.ToString(), new int[] { 11, 12, 13 }, 100, false));
-        addAnimation(new FAnimation(State.POWERPOLE_EXTEND_DOWN.ToString(), new int[] { 11 }, 100, true));
-        addAnimation(new FAnimation(State.POWERPOLE_EXTEND_DOWN_TRANS_OUT.ToString(), new int[] { 13, 12, 11 }, 100, false));
-
 
         addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] {  19 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 1, 6 }, 50, true));
@@ -93,8 +80,6 @@ public class Player : FAnimatedSprite
                 {
                     case State.SLAM_TRANS_IN:
                     case State.SLAM_LAND:
-                    case State.POWERPOLE_DOWN_TRANS_IN:
-                    case State.POWERPOLE_DOWN_TRANS_OUT:
                     case State.TAIL_HANG:
                         this.play(value.ToString(), true);
                         break;
@@ -307,10 +292,7 @@ public class Player : FAnimatedSprite
                 break;
             case State.CROUCH:
                 xVel = 0;
-                if (C.getKey(C.ACTION_KEY))
-                {
-                    currentState = State.POWERPOLE_DOWN_TRANS_IN;
-                }
+               
                 if (C.getKey(C.JUMP_KEY))
                 {
                     currentState = State.SUPERJUMP_CHARGE;
@@ -320,29 +302,7 @@ public class Player : FAnimatedSprite
                     currentState = State.IDLE;
                 }
                 break;
-            case State.POWERPOLE_DOWN_TRANS_IN:
-                if (this.IsStopped)
-                    currentState = State.POWERPOLE_DOWN;
-                return;
-            case State.POWERPOLE_DOWN:
-                if (C.getKey(C.DOWN_KEY) || C.getKey(C.JUMP_KEY))
-                {
-                    
-                }
-                return;
-            case State.POWERPOLE_EXTEND_DOWN_TRANS_IN:
-                if (C.getKey(C.ACTION_KEY))
-                {
-                    //just go to idle for now
-                }
-                currentState = State.IDLE;
-                break;
-            case State.POWERPOLE_EXTEND_DOWN:
-
-                break;
-            case State.POWERPOLE_EXTEND_DOWN_TRANS_OUT:
-
-                break;
+         
             case State.SLAM_TRANS_IN:
                 if (this.IsStopped)
                     currentState = State.SLAM_MOVE;

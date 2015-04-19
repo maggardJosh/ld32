@@ -29,20 +29,55 @@ public class World : FContainer
     }
     public void LoadMap(string mapName)
     {
+        background.RemoveAllChildren();
+
         travelPoints.Clear();
-        this.map.LoadTMX(mapName);
+        this.map = new FTmxMap();
+        this.map.LoadTMX("Maps/" + mapName);
         MapLoader.LoadObjects(this, map.objects);
         tilemap = (FTilemap)this.map.getLayerNamed("tilemap");
-        
+
         p.tilemap = this.tilemap;
         tilemap.clipNode = C.getCameraInstance();
         background.AddChild(tilemap);
         C.getCameraInstance().setWorldBounds(new Rect(0, -tilemap.height, tilemap.width, tilemap.height));
-        
+
     }
 
+    public void addTravelPoint(WorldTravelPoint travelPoint)
+    {
+
+        travelPoints.Add(travelPoint);
+    }
+    public string lastWarp = "";
     private void Update()
     {
+        WorldTravelPoint activeTravelPoint = null;
+        foreach (WorldTravelPoint travelPoint in travelPoints)
+            if (travelPoint.CheckPlayerCollision(this.p))
+            {
+                if (travelPoint.name != lastWarp)
+                {
+                    activeTravelPoint = travelPoint;
+                    break;
+                }
+            }
+            else
+                if (travelPoint.name == lastWarp)
+                    lastWarp = "";
+
+        if (activeTravelPoint != null)
+        {
+            LoadMap(activeTravelPoint.mapToLoad);
+            foreach (WorldTravelPoint travelTo in travelPoints)
+                if (travelTo.name == activeTravelPoint.travelPointTarget)
+                {
+                    lastWarp = travelTo.name;
+                    p.SetPosition(travelTo.rect.center);
+
+                    break;
+                }
+        }
 
     }
 
