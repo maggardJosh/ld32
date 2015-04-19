@@ -33,7 +33,8 @@ public class Player : FAnimatedSprite
     }
     private FSprite extendPoleMiddle;
     private FSprite extendPoleEnd;
-    
+    public World world;
+
     public Player()
         : base("player")
     {
@@ -44,6 +45,7 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 2, 3, 4, 5 }, 100, true));
         addAnimation(new FAnimation(State.SLIDE.ToString(), new int[] { 6 }, 100, true));
         addAnimation(new FAnimation(State.JUMP.ToString(), new int[] { 17 }, 100, true));
+        addAnimation(new FAnimation(State.DOUBLE_JUMP.ToString(), new int[] { 17 }, 100, true));
         addAnimation(new FAnimation(State.FALL.ToString(), new int[] { 18 }, 100, true));
         addAnimation(new FAnimation(State.CROUCH.ToString(), new int[] { 19 }, 100, true));
         addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 7, 8, 9, 10 }, 100, false));
@@ -57,7 +59,7 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.SLAM_MOVE.ToString(), new int[] { 13 }, 100, false));
         addAnimation(new FAnimation(State.SLAM_LAND.ToString(), new int[] { 20 }, 100, false));
 
-        addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] {  19 }, 100, true));
+        addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 19 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 1, 6 }, 50, true));
 
         play(State.IDLE.ToString());
@@ -341,7 +343,7 @@ public class Player : FAnimatedSprite
                     return;
                 }
                 break;
-         
+
             case State.SLAM_TRANS_IN:
                 if (this.IsStopped)
                     currentState = State.SLAM_MOVE;
@@ -393,7 +395,10 @@ public class Player : FAnimatedSprite
             attackAirCount -= Time.deltaTime;
         
         this.scaleX = isFacingLeft ? -1 : 1;
-        this.play(currentState.ToString());
+        if ((currentState == State.JUMP || currentState == State.DOUBLE_JUMP) && yVel < 0)
+            this.play(State.FALL.ToString());
+        else
+            this.play(currentState.ToString());
         lastJumpPress = C.getKey(C.JUMP_KEY);
         lastDownPress = C.getKey(C.DOWN_KEY);
         lastActionPress = C.getKey(C.ACTION_KEY);
@@ -480,8 +485,8 @@ public class Player : FAnimatedSprite
         float newX = this.x + xVel;
         float topY = this.y + tilemap.tileHeight / 3;
         float bottomY = this.y - tilemap.tileHeight / 3;
-        if (tilemap.isPassable(newX + tilemap.tileWidth / 3, topY) &&
-            tilemap.isPassable(newX + tilemap.tileWidth / 3, bottomY))
+        if (world.isPassable(newX + tilemap.tileWidth / 3, topY) &&
+            world.isPassable(newX + tilemap.tileWidth / 3, bottomY))
             this.x = newX;
         else
         {
@@ -496,8 +501,8 @@ public class Player : FAnimatedSprite
         float newX = this.x + xVel;
         float topY = this.y + tilemap.tileHeight / 3;
         float bottomY = this.y - tilemap.tileHeight / 3;
-        if (tilemap.isPassable(newX - tilemap.tileWidth / 3, topY) &&
-            tilemap.isPassable(newX - tilemap.tileWidth / 3, bottomY))
+        if (world.isPassable(newX - tilemap.tileWidth / 3, topY) &&
+            world.isPassable(newX - tilemap.tileWidth / 3, bottomY))
             this.x = newX;
         else
         {
@@ -511,8 +516,8 @@ public class Player : FAnimatedSprite
         float newY = this.y + yVel;
         float leftX = this.x - tilemap.tileWidth / 4;
         float rightX = this.x + tilemap.tileWidth / 4;
-        if ((!tilemap.isPassable(leftX, newY - tilemap.tileWidth) ||
-            !tilemap.isPassable(rightX, newY - tilemap.tileWidth)) ||
+        if ((!world.isPassable(leftX, newY - tilemap.tileWidth) ||
+            !world.isPassable(rightX, newY - tilemap.tileWidth)) ||
             (tilemap.isOneWay(leftX, newY - tilemap.tileWidth) ||
             tilemap.isOneWay(rightX, newY - tilemap.tileWidth)))
         {
@@ -534,8 +539,8 @@ public class Player : FAnimatedSprite
                     break;
             }
         }
-        if ((tilemap.isPassable(leftX, newY - tilemap.tileWidth / 2) &&
-            tilemap.isPassable(rightX, newY - tilemap.tileWidth / 2)) &&
+        if ((world.isPassable(leftX, newY - tilemap.tileWidth / 2) &&
+            world.isPassable(rightX, newY - tilemap.tileWidth / 2)) &&
             !(tilemap.isOneWay(leftX, newY - tilemap.tileWidth / 2) &&
             tilemap.isOneWay(rightX, newY - tilemap.tileWidth / 2)))
             this.y = newY;
@@ -549,7 +554,6 @@ public class Player : FAnimatedSprite
             this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileWidth / 2;
         }
         CheckHookDown();
-        CheckOneWayDown();
     }
     private void CheckHookUp()
     {
@@ -574,17 +578,14 @@ public class Player : FAnimatedSprite
             yVel = 0;
         }
     }
-    private void CheckOneWayDown()
-    {
-        
-    }
+
     public void TryMoveUp()
     {
         float newY = this.y + yVel;
         float leftX = this.x - tilemap.tileWidth / 4;
         float rightX = this.x + tilemap.tileWidth / 4;
-        if (tilemap.isPassable(leftX, newY + tilemap.tileHeight / 2) &&
-            tilemap.isPassable(rightX, newY + tilemap.tileHeight / 2))
+        if (world.isPassable(leftX, newY + tilemap.tileHeight / 2) &&
+            world.isPassable(rightX, newY + tilemap.tileHeight / 2))
             this.y = newY;
         else
         {
