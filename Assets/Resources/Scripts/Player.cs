@@ -24,6 +24,9 @@ public class Player : FAnimatedSprite
         POWERPOLE_EXTEND_DOWN_TRANS_IN,
         POWERPOLE_EXTEND_DOWN,
         POWERPOLE_EXTEND_DOWN_TRANS_OUT,
+        POWERPOLE_DOWN_TRANS_IN,
+        POWERPOLE_DOWN,
+        POWERPOLE_DOWN_TRANS_OUT,
         TAIL_HANG_TRANS_IN,
         TAIL_HANG_FALL,
         TAIL_HANG,
@@ -34,13 +37,13 @@ public class Player : FAnimatedSprite
     }
     private FSprite extendPoleMiddle;
     private FSprite extendPoleEnd;
-    public Player(FTilemap tilemap)
+    
+    public Player()
         : base("player")
     {
         extendPoleMiddle = new FSprite("pole_mid");
         extendPoleEnd = new FSprite("pole_end");
 
-        this.tilemap = tilemap;
         addAnimation(new FAnimation(State.IDLE.ToString(), new int[] { 1 }, 100, true));
         addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 2, 3, 4, 5 }, 100, true));
         addAnimation(new FAnimation(State.SLIDE.ToString(), new int[] { 6 }, 100, true));
@@ -55,6 +58,13 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.SLAM_TRANS_IN.ToString(), new int[] { 11, 12, 13 }, 100, false));
         addAnimation(new FAnimation(State.SLAM_MOVE.ToString(), new int[] { 13 }, 100, false));
         addAnimation(new FAnimation(State.SLAM_LAND.ToString(), new int[] { 13, 12, 11 }, 100, false));
+        addAnimation(new FAnimation(State.POWERPOLE_DOWN_TRANS_IN.ToString(), new int[] { 11, 12, 13}, 100, false));
+        addAnimation(new FAnimation(State.POWERPOLE_DOWN.ToString(), new int[] { 11 }, 100, true));
+        addAnimation(new FAnimation(State.POWERPOLE_DOWN_TRANS_OUT.ToString(), new int[] { 13, 12, 11 }, 100, false));
+        addAnimation(new FAnimation(State.POWERPOLE_EXTEND_DOWN_TRANS_IN.ToString(), new int[] { 11, 12, 13 }, 100, false));
+        addAnimation(new FAnimation(State.POWERPOLE_EXTEND_DOWN.ToString(), new int[] { 11 }, 100, true));
+        addAnimation(new FAnimation(State.POWERPOLE_EXTEND_DOWN_TRANS_OUT.ToString(), new int[] { 13, 12, 11 }, 100, false));
+
 
         addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 6 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 1, 6 }, 50, true));
@@ -80,7 +90,8 @@ public class Player : FAnimatedSprite
                 {
                     case State.SLAM_TRANS_IN:
                     case State.SLAM_LAND:
-                        RXDebug.Log("HI");
+                    case State.POWERPOLE_DOWN_TRANS_IN:
+                    case State.POWERPOLE_DOWN_TRANS_OUT:
                         this.play(value.ToString(), true);
                         break;
                 }
@@ -90,7 +101,7 @@ public class Player : FAnimatedSprite
         }
     }
     private bool isFacingLeft = false;
-    private FTilemap tilemap;
+    public FTilemap tilemap;
 
     private bool lastJumpPress = false;
     private bool lastActionPress = false;
@@ -294,7 +305,7 @@ public class Player : FAnimatedSprite
                 xVel = 0;
                 if (C.getKey(C.ACTION_KEY))
                 {
-                    currentState = State.POWERPOLE_EXTEND_DOWN_TRANS_IN;
+                    currentState = State.POWERPOLE_DOWN_TRANS_IN;
                 }
                 if (C.getKey(C.JUMP_KEY))
                 {
@@ -305,6 +316,16 @@ public class Player : FAnimatedSprite
                     currentState = State.IDLE;
                 }
                 break;
+            case State.POWERPOLE_DOWN_TRANS_IN:
+                if (this.IsStopped)
+                    currentState = State.POWERPOLE_DOWN;
+                return;
+            case State.POWERPOLE_DOWN:
+                if (C.getKey(C.DOWN_KEY) || C.getKey(C.JUMP_KEY))
+                {
+                    
+                }
+                return;
             case State.POWERPOLE_EXTEND_DOWN_TRANS_IN:
                 if (C.getKey(C.ACTION_KEY))
                 {
@@ -360,7 +381,7 @@ public class Player : FAnimatedSprite
         }
 
         stateCount += Time.deltaTime;
-        RXDebug.Log(currentState);
+        
         this.scaleX = isFacingLeft ? -1 : 1;
         this.play(currentState.ToString());
         lastJumpPress = C.getKey(C.JUMP_KEY);

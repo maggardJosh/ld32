@@ -3,11 +3,7 @@ using System.Collections;
 
 public class GameScript : MonoBehaviour
 {
-    FTmxMap map;
-    Player player;
-    FContainer background;
-    FContainer playerLayer;
-    FTilemap tilemap;
+    World world;
     // Use this for initialization
     void Start()
     {
@@ -22,31 +18,14 @@ public class GameScript : MonoBehaviour
 
         Futile.atlasManager.LoadAtlas("Atlases/inGameAtlas");
 
-        map = new FTmxMap();
-        map.LoadTMX("Maps/mapOne");
-
-        background = new FContainer();
-        playerLayer = new FContainer();
-
-        tilemap = (FTilemap)map.getLayerNamed("tilemap");
-        player = new Player(tilemap);
-        player.x = 100;
-        player.y = -100;
-        background.AddChild(tilemap);
-        playerLayer.AddChild(player);
-        FCamObject camera = C.getCameraInstance();
-        camera.follow(player);
-        camera.setWorldBounds(new Rect(0, -tilemap.height, tilemap.width, tilemap.height));
-        tilemap.clipNode = camera;
+        world = new World();
+        world.LoadMap("Maps/mapOne");
+        Futile.stage.AddChild(world);
 
         Futile.atlasManager.LoadFont(C.smallFontName, "debugFont_0", "Atlases/debugFont", 0, 0);
-
         FLabel versionLabel = new FLabel(C.smallFontName, C.versionNumber);
         versionLabel.y = -Futile.screen.height / 2 + versionLabel.textRect.height;
-        Futile.stage.AddChild(background);
-        Futile.stage.AddChild(playerLayer);
-        Futile.stage.AddChild(camera);
-        camera.AddChild(versionLabel);
+        C.getCameraInstance().AddChild(versionLabel);
         Go.to(versionLabel, 6.0f, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadIn));
 
     }
