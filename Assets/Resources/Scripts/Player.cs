@@ -47,9 +47,9 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.CROUCH.ToString(), new int[] { 19 }, 100, true));
         addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 7, 8, 9, 10 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 11, 12, 13 }, 100, false));
-        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 14, 15 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 14, 15 }, 50, false));
         addAnimation(new FAnimation(State.ATTACK_THREE_EXTEND.ToString(), new int[] { 16 }, 100, false));
-        addAnimation(new FAnimation(State.TAIL_HANG_TRANS_IN.ToString(), new int[] { 16 }, 100, false));
+        addAnimation(new FAnimation(State.TAIL_HANG_TRANS_IN.ToString(), new int[] { 21 }, 100, false));
         addAnimation(new FAnimation(State.TAIL_HANG.ToString(), new int[] { 21 }, 100, true));
         addAnimation(new FAnimation(State.TAIL_HANG_FALL.ToString(), new int[] { 2, 3, 4 }, 100, true));
         addAnimation(new FAnimation(State.SLAM_TRANS_IN.ToString(), new int[] { 11, 12, 13 }, 100, false));
