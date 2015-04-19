@@ -351,7 +351,7 @@ public class Player : FAnimatedSprite
                 yVel = Mathf.Max(minYVel, yVel);
             TryMoveDown();
         }
-
+        RXDebug.Log(currentState);
         stateCount += Time.deltaTime;
         
         this.scaleX = isFacingLeft ? -1 : 1;
@@ -458,8 +458,10 @@ public class Player : FAnimatedSprite
         float newY = this.y + yVel;
         float leftX = this.x - tilemap.tileWidth / 4;
         float rightX = this.x + tilemap.tileWidth / 4;
-        if (!tilemap.isPassable(leftX, newY - tilemap.tileWidth) ||
-            !tilemap.isPassable(rightX, newY - tilemap.tileWidth))
+        if ((!tilemap.isPassable(leftX, newY - tilemap.tileWidth) ||
+            !tilemap.isPassable(rightX, newY - tilemap.tileWidth)) ||
+            (tilemap.isOneWay(leftX, newY - tilemap.tileWidth) ||
+            tilemap.isOneWay(rightX, newY - tilemap.tileWidth)))
         {
             if (currentState == State.TAIL_HANG_FALL)
                 currentState = State.IDLE;
@@ -478,8 +480,10 @@ public class Player : FAnimatedSprite
                     break;
             }
         }
-        if (tilemap.isPassable(leftX, newY - tilemap.tileWidth / 2) &&
-            tilemap.isPassable(rightX, newY - tilemap.tileWidth / 2))
+        if ((tilemap.isPassable(leftX, newY - tilemap.tileWidth / 2) &&
+            tilemap.isPassable(rightX, newY - tilemap.tileWidth / 2)) &&
+            !(tilemap.isOneWay(leftX, newY - tilemap.tileWidth / 2) &&
+            tilemap.isOneWay(rightX, newY - tilemap.tileWidth / 2)))
             this.y = newY;
         else
         {
@@ -490,6 +494,7 @@ public class Player : FAnimatedSprite
             this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileWidth / 2;
         }
         CheckHookDown();
+        CheckOneWayDown();
     }
     private void CheckHookUp()
     {
@@ -516,6 +521,7 @@ public class Player : FAnimatedSprite
     }
     private void CheckOneWayDown()
     {
+        
     }
     public void TryMoveUp()
     {

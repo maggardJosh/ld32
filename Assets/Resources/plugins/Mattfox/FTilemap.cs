@@ -357,6 +357,10 @@ public class FTilemap : FContainer
     {
         return C.HOOK_LIST.Contains(getFrameNumAt(xPos, yPos));
     }
+    public bool isOneWay(float xPos, float yPos)
+    {
+        return C.ONE_WAY_LIST.Contains(getFrameNumAt(xPos, yPos));
+    }
 	// returns FSprite at 
 	public FSprite getTile (int givenX, int givenY)
 	{
