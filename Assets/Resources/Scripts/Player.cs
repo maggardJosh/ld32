@@ -108,7 +108,11 @@ public class Player : FAnimatedSprite
     private float jumpStrength = 13;
     private float superJumpStrength = 30;
     private float hangJumpStrength = 12;
-    private float speed = 180;
+    private float speedMax = 180;
+    private float acceleration = 0;
+    private float speed = 0;
+    private float accel = 15;
+    private float accelDecay = .8f;
     private float superjumpAirSpeed = 5;
     private float gravity = -50;
     private float stateCount = 0;
@@ -155,12 +159,18 @@ public class Player : FAnimatedSprite
                 if (C.getKey(C.RIGHT_KEY))
                 {
                     isActivelyMoving = true;
+                    //xVel += speed * Time.deltaTime;
+                    speed += accel;
+                    speed = Mathf.Min(speed, speedMax);
                     xVel += speed * Time.deltaTime;
                     isFacingLeft = false;
                 }
                 if (C.getKey(C.LEFT_KEY))
                 {
                     isActivelyMoving = true;
+                    //xVel -= speed * Time.deltaTime;
+                    speed += accel;
+                    speed = Mathf.Min(speed, speedMax);
                     xVel -= speed * Time.deltaTime;
                     isFacingLeft = true;
                 }
@@ -183,6 +193,12 @@ public class Player : FAnimatedSprite
                         currentState = State.IDLE;
 
                     }
+                if (currentState == State.SLIDE || currentState == State.IDLE)
+                {
+                    speed *= accelDecay;
+                    if (Mathf.Abs(speed) < .1f)
+                        speed = 0;
+                }
                 if (grounded)
                     xVel *= groundFriction;
                 else
@@ -277,6 +293,7 @@ public class Player : FAnimatedSprite
                 return;
             case State.TAIL_HANG:
                 xVel = 0;
+                speed = speedMax * .5f;
                 if (C.getKey(C.JUMP_KEY) && !lastJumpPress)
                 {
                     currentState = State.JUMP;
@@ -297,7 +314,7 @@ public class Player : FAnimatedSprite
                 break;
             case State.CROUCH:
                 xVel = 0;
-               
+                speed = 0;
                 if (C.getKey(C.JUMP_KEY))
                 {
                     currentState = State.SUPERJUMP_CHARGE;
@@ -315,6 +332,7 @@ public class Player : FAnimatedSprite
             case State.SLAM_MOVE:
                 yVel = slamSpeed * maxYVel;
                 xVel = 0;
+                speed = 0;
                 if (grounded)
                 {
                     currentState = State.SLAM_LAND;
@@ -351,7 +369,7 @@ public class Player : FAnimatedSprite
                 yVel = Mathf.Max(minYVel, yVel);
             TryMoveDown();
         }
-        RXDebug.Log(currentState);
+        //RXDebug.Log(currentState);
         stateCount += Time.deltaTime;
         
         this.scaleX = isFacingLeft ? -1 : 1;
