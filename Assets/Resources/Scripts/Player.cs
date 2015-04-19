@@ -108,7 +108,7 @@ public class Player : FAnimatedSprite
     private float jumpStrength = 13;
     private float superJumpStrength = 30;
     private float hangJumpStrength = 12;
-    private float speed = 200;
+    private float speed = 180;
     private float superjumpAirSpeed = 5;
     private float gravity = -50;
     private float stateCount = 0;
@@ -208,13 +208,18 @@ public class Player : FAnimatedSprite
                 xVel *= groundFriction;
                 if (this.IsStopped)
                 {
+                    xVel = 0;
+                    C.getCameraInstance().shake(.8f, .1f);
                     Futile.stage.AddChild(extendPoleMiddle);
                     Futile.stage.AddChild(extendPoleEnd);
                     AttackExtendLength = 0;
                     currentState = State.ATTACK_THREE_EXTEND;
+
                     attackExtendTween = Go.to(this, ATTACK_THREE_EXTEND_TIME / 8, new TweenConfig().floatProp("AttackExtendLength", poleExtendLength).setEaseType(EaseType.QuartIn).onComplete(
                         (t) =>
                         {
+
+                            C.getCameraInstance().shake(.5f, .1f);
                             Go.to(this, ATTACK_THREE_TIME / 2, new TweenConfig().floatProp("AttackExtendLength", 0).setEaseType(EaseType.QuadIn).onComplete((t2) =>
                             {
                                 extendPoleEnd.RemoveFromContainer();
@@ -311,7 +316,10 @@ public class Player : FAnimatedSprite
                 yVel = slamSpeed * maxYVel;
                 xVel = 0;
                 if (grounded)
+                {
                     currentState = State.SLAM_LAND;
+                    C.getCameraInstance().shake(SLAM_LAND_SHAKE, SLAM_LAND_SHAKE_TIME);
+                }
                 break;
             case State.SLAM_LAND:
                 if (this.IsStopped)
@@ -352,6 +360,8 @@ public class Player : FAnimatedSprite
         lastDownPress = C.getKey(C.DOWN_KEY);
         lastActionPress = C.getKey(C.ACTION_KEY);
     }
+    private const float SLAM_LAND_SHAKE = 2.0f;
+    private const float SLAM_LAND_SHAKE_TIME = .2f;
     Tween attackExtendTween;
     private const float TAIL_HANG_FALL_TIME = .1f;
     public float AttackExtendLength
