@@ -22,6 +22,7 @@ public class Player : FAnimatedSprite
         ATTACK_TWO,
         ATTACK_THREE,
         ATTACK_THREE_EXTEND,
+        ATTACK_AIR,
         TAIL_HANG_TRANS_IN,
         TAIL_HANG_FALL,
         TAIL_HANG,
@@ -83,6 +84,9 @@ public class Player : FAnimatedSprite
                     case State.TAIL_HANG:
                         this.play(value.ToString(), true);
                         break;
+                    case State.ATTACK_AIR:
+                        attackAirCount = ATTACK_AIR_COUNT_VALUE;
+                        break;
                 }
                 _currentState = value;
                 stateCount = 0;
@@ -117,8 +121,12 @@ public class Player : FAnimatedSprite
     private float gravity = -50;
     private float stateCount = 0;
     private float poleExtendLength = 96;
+    private float attackAirCount = 0;
+    private bool usedDoubleJump = true;
 
     private const float ATTACK_THREE_EXTEND_TIME = .3f;
+    private const float ATTACK_AIR_YVEL = 8;
+    private const float ATTACK_AIR_COUNT_VALUE = .5f;
     public void Update()
     {
 
@@ -134,6 +142,7 @@ public class Player : FAnimatedSprite
                 {
                     if (currentState == State.JUMP)
                     {
+                        usedDoubleJump = true;
                         currentState = State.DOUBLE_JUMP;
                     }
                     if (grounded)
@@ -153,6 +162,12 @@ public class Player : FAnimatedSprite
                     if (C.getKey(C.DOWN_KEY) && !lastDownPress)
                     {
                         currentState = State.SLAM_TRANS_IN;
+                        return;
+                    }
+
+                    if (C.getKey(C.ACTION_KEY) && !lastActionPress && attackAirCount <= 0)
+                    {
+                        StartAttackAir();
                         return;
                     }
                 }
@@ -248,20 +263,23 @@ public class Player : FAnimatedSprite
             case State.ATTACK_THREE_EXTEND:
 
                 break;
+            case State.ATTACK_AIR:
+                 yVel = 0;
+                 if (stateCount > ATTACK_AIR_TIME)
+                 {
+                     if (!usedDoubleJump)
+                         currentState = State.JUMP;
+                     else
+                        currentState = State.DOUBLE_JUMP;
+                 }
+                 //if (C.getKey(C.ACTION_KEY) && !lastActionPress)
+                 //    StartAttackAir();
+                break;
             case State.SUPERJUMP_CHARGE:
-                if (!C.getKey(C.JUMP_KEY))
-                {
-                    currentState = State.IDLE;
-                    return;
-                }
-                if (C.getKey(C.JUMP_KEY))
-                {
-                    if (stateCount >= SUPERJUMP_CHARGE_TIME)
-                        currentState = State.SUPERJUMP_ABLE;
-                }
+                
                 break;
             case State.SUPERJUMP_ABLE:
-                if (!C.getKey(C.JUMP_KEY) && lastJumpPress)
+                if (!C.getKey(C.DOWN_KEY) && lastDownPress)
                 {
                     grounded = false;
                     currentState = State.SUPERJUMP;
@@ -315,13 +333,12 @@ public class Player : FAnimatedSprite
             case State.CROUCH:
                 xVel = 0;
                 speed = 0;
-                if (C.getKey(C.JUMP_KEY))
-                {
-                    currentState = State.SUPERJUMP_CHARGE;
-                }
+                if (stateCount >= SUPERJUMP_CHARGE_TIME)
+                    currentState = State.SUPERJUMP_ABLE;
                 if (!C.getKey(C.DOWN_KEY))
                 {
                     currentState = State.IDLE;
+                    return;
                 }
                 break;
          
@@ -371,6 +388,9 @@ public class Player : FAnimatedSprite
         }
         //RXDebug.Log(currentState);
         stateCount += Time.deltaTime;
+
+        if (attackAirCount > 0)
+            attackAirCount -= Time.deltaTime;
         
         this.scaleX = isFacingLeft ? -1 : 1;
         this.play(currentState.ToString());
@@ -399,14 +419,17 @@ public class Player : FAnimatedSprite
 
     private bool isAttacking()
     {
-        return currentState == State.ATTACK_ONE || currentState == State.ATTACK_TWO || currentState == State.ATTACK_THREE;
+        return currentState == State.ATTACK_ONE || currentState == State.ATTACK_TWO || currentState == State.ATTACK_THREE || currentState == State.ATTACK_AIR;
     }
     private const float ATTACK_ONE_TIME = .7f;
     private const float ATTACK_TWO_TIME = .7f;
     private const float ATTACK_THREE_TIME = .8f;
+    private const float ATTACK_AIR_TIME = .1f;
     private const float ATTACK_ONE_XVEL = 20;
     private const float ATTACK_TWO_XVEL = 30;
     private const float ATTACK_THREE_XVEL = 10;
+    private const float ATTACK_AIR_XVEL = 12;
+    private const float ATTACK_AIR_XVEL_ENDGAME = 40;
 
     public void StartAttackOne()
     {
@@ -436,6 +459,18 @@ public class Player : FAnimatedSprite
             isFacingLeft = false;
         xVel = ATTACK_THREE_XVEL * (isFacingLeft ? -1 : 1);
         this.play(State.ATTACK_THREE.ToString(), true);
+    }
+
+    public void StartAttackAir()
+    {
+        yVel = ATTACK_AIR_YVEL;
+        currentState = State.ATTACK_AIR;
+        if (C.getKey(C.LEFT_KEY))
+            isFacingLeft = true;
+        else if (C.getKey(C.RIGHT_KEY))
+            isFacingLeft = false;
+        xVel = ATTACK_AIR_XVEL * (isFacingLeft ? -1 : 1);
+        this.play(State.ATTACK_TWO.ToString(), true);
     }
 
     private const float SUPERJUMP_CHARGE_TIME = 1.5f;
@@ -484,6 +519,7 @@ public class Player : FAnimatedSprite
             if (currentState == State.TAIL_HANG_FALL)
                 currentState = State.IDLE;
             grounded = true;
+            usedDoubleJump = false;
         }
         else
         {
@@ -506,6 +542,7 @@ public class Player : FAnimatedSprite
         else
         {
             grounded = true;
+            usedDoubleJump = false;
             if (currentState == State.JUMP)
                 currentState = State.IDLE;
             yVel = 0;
