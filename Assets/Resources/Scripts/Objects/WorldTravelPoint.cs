@@ -16,12 +16,9 @@ public class WorldTravelPoint
         this.travelPointTarget = travelPointTarget;
     }
 
-    public void CheckPlayerCollision(Player p)
+    public bool CheckPlayerCollision(Player p)
     {
-        if (rect.Contains(p.GetPosition()))
-        {
-
-        }
+        return rect.Contains(p.GetPosition());
     }
 }
 
