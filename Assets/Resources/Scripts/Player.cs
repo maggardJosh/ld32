@@ -540,6 +540,9 @@ public class Player : FAnimatedSprite
             yVel = 0;
         }
     }
+    private void CheckOneWayDown()
+    {
+    }
     public void TryMoveUp()
     {
         float newY = this.y + yVel;
