@@ -279,6 +279,11 @@ public class Player : FAnimatedSprite
                 }
                 if (C.getKey(C.DOWN_KEY))
                     currentState = State.TAIL_HANG_FALL;
+                if (C.getKey(C.LEFT_KEY))
+                    isFacingLeft = true;
+                else if (C.getKey(C.RIGHT_KEY))
+                    isFacingLeft = false;
+                scaleX = isFacingLeft ? -1 : 1;
                 lastJumpPress = C.getKey(C.JUMP_KEY);
                 return;
             case State.TAIL_HANG_FALL:
