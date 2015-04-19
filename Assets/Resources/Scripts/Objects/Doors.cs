@@ -2,60 +2,54 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 
-	public class Doors : FSprite
-	{
-		private FSprite door;
-		public Doors(Boolean vert)
-		{
-			door = new FSprite("door");
-			isVertical = vert;
-			if (!isVertical)
-			{
-				door.rotation = 90f;
-			}
-		}
+public class Door : FSprite
+{
+    private enum State
+    {
+        CLOSED,
+        OPENING,
+        OPEN
+    }
+    private Boolean isVertical;
+    private State currentState;
 
-		private enum States
-		{
-			CLOSED,
-			OPENING,
-			OPEN
-		}
-		private Boolean _isVertical;
-		private Boolean isVertical
-		{
-			get { return _isVertical; }
-			set { _isVertical = value; }
-		}
-        private States _currentState;
-        private States currentState
+    string name = "";
+    public Door(float x, float y, string name, Boolean vert)
+        : base("door")
+    {
+        isVertical = vert;
+        if (!isVertical)
+            this.rotation = 90f;
+        this.x = x;
+        this.y = y;
+        this.name = name;
+    }
+
+    public bool IsTileOccupied(int x, int y, float tileWidth)
+    {
+        bool result = Mathf.FloorToInt(this.x / tileWidth) == x && Mathf.FloorToInt(this.y / tileWidth) == y;
+        if (!result)
         {
-            get { return _currentState; }
-            set { _currentState = value; }
+            if(!isVertical)
+                return Mathf.FloorToInt(this.x / tileWidth) ==( x +1) && Mathf.FloorToInt(this.y / tileWidth) == y;
+            else
+                return Mathf.FloorToInt(this.x / tileWidth) == x && Mathf.FloorToInt(this.y / tileWidth) == (y+1);
         }
-        private const float DOOR_WIDTH = 32;
-        private const float DOOR_WIDTH_HALF = DOOR_WIDTH / 2;
-
-        public void Update()
+        return result;
+    }
+    public Boolean IsPlayerColliding(Player player)
+    {
+        float xDist = Mathf.Abs(player.x - this.x);
+        float yDist = Mathf.Abs(player.y - this.y);
+        switch (currentState)
         {
+            case State.CLOSED:
+                return (isVertical ? (xDist < player.tilemap.tileWidth && yDist < player.tilemap.tileWidth * 1.5f) : (yDist < player.tilemap.tileWidth * 1.5f && xDist < player.tilemap.tileWidth));
         }
-
-		public Boolean IsPlayerColliding(Player player)
-		{
-            float xDist = player.x - door.x;
-            float yDist = player.y - door.y;
-            switch (currentState)
-            {
-                case States.CLOSED:
-                    if (xDist < (DOOR_WIDTH_HALF + player.tilemap.tileWidth))
-                        return true;
-                    else if (yDist < (DOOR_WIDTH_HALF + player.tilemap.tileHeight))
-                        return true;
-                    break;
-            }
-            return false;
-		}
-	}
+        return false;
+    }
+}
 
