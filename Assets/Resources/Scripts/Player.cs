@@ -14,7 +14,6 @@ public class Player : FAnimatedSprite
         FALL,
         DOUBLE_JUMP,
         SLIDE,
-        CROUCH,
         SUPERJUMP_CHARGE,
         SUPERJUMP_ABLE,
         SUPERJUMP,
@@ -42,28 +41,27 @@ public class Player : FAnimatedSprite
         extendPoleMiddle = new FSprite("pole_mid");
         extendPoleEnd = new FSprite("pole_end");
         //Just landing 26
-        addAnimation(new FAnimation(State.IDLE.ToString(), new int[] { 1,2,3,4,1 }, 100, false));
-        addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 5,6,7,8 }, 100, true));
+        addAnimation(new FAnimation(State.IDLE.ToString(), new int[] { 1, 2, 3, 4, 1 }, 100, false));
+        addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 5, 6, 7, 8 }, 100, true));
         addAnimation(new FAnimation(State.SLIDE.ToString(), new int[] { 9 }, 100, true));
-        addAnimation(new FAnimation(State.TAKE_DAMAGE.ToString(), new int[] { 9,10 }, 100, true));        
+        addAnimation(new FAnimation(State.TAKE_DAMAGE.ToString(), new int[] { 9, 10 }, 100, true));
         addAnimation(new FAnimation(State.JUMP.ToString(), new int[] { 21 }, 100, true));
         addAnimation(new FAnimation(State.DOUBLE_JUMP.ToString(), new int[] { 21 }, 100, true));
         addAnimation(new FAnimation(State.FALL.ToString(), new int[] { 22 }, 100, true));
-        addAnimation(new FAnimation(State.CROUCH.ToString(), new int[] { 23,24 }, 100, true));
-        addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 11,12,13,14}, 100, false));
-        addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 15,16,17 }, 100, false));
-        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 18,19 }, 50, false));
+        addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 23, 23, 23, 23, 24, 24, 24, 24, 23, 23, 23, 24, 24, 24, 23, 23, 24, 24, 23, 24, 23, 24 }, 40, false));
+        addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 11, 12, 13, 14 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 15, 16, 17 }, 100, false));
+        addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 18, 19 }, 50, false));
         addAnimation(new FAnimation(State.ATTACK_THREE_EXTEND.ToString(), new int[] { 20 }, 100, false));
         addAnimation(new FAnimation(State.TAIL_HANG_TRANS_IN.ToString(), new int[] { 27 }, 100, false));
         addAnimation(new FAnimation(State.TAIL_HANG.ToString(), new int[] { 27 }, 100, true));
-        addAnimation(new FAnimation(State.TAIL_HANG_FALL.ToString(), new int[] { 28,29,30,31}, 50, true));
-        addAnimation(new FAnimation(State.SLAM_TRANS_IN.ToString(), new int[] { 28,29,30,31,32,33 }, 20, false));
+        addAnimation(new FAnimation(State.TAIL_HANG_FALL.ToString(), new int[] { 28, 29, 30, 31 }, 50, true));
+        addAnimation(new FAnimation(State.SLAM_TRANS_IN.ToString(), new int[] { 28, 29, 30, 31, 32, 33 }, 20, false));
         addAnimation(new FAnimation(State.SLAM_MOVE.ToString(), new int[] { 34 }, 100, false));
-        addAnimation(new FAnimation(State.SLAM_LAND.ToString(), new int[] { 35,36,37,38,39 }, 50, false));
-        addAnimation(new FAnimation(State.SUPERJUMP.ToString(), new int[] { 43,44,45,46 }, 100, true));
-        addAnimation(new FAnimation(State.ATTACK_AIR.ToString(), new int[] { 40,40,40,40, 41,41,41,41,42}, 10, false));
+        addAnimation(new FAnimation(State.SLAM_LAND.ToString(), new int[] { 35, 36, 37, 38, 39 }, 50, false));
+        addAnimation(new FAnimation(State.SUPERJUMP.ToString(), new int[] { 43, 44, 45, 46 }, 100, true));
+        addAnimation(new FAnimation(State.ATTACK_AIR.ToString(), new int[] { 40, 40, 40, 40, 41, 41, 41, 41, 42 }, 10, false));
 
-        //addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 19 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_ABLE.ToString(), new int[] { 25 }, 50, true));
 
         play(State.IDLE.ToString());
@@ -88,6 +86,7 @@ public class Player : FAnimatedSprite
                     case State.SLAM_TRANS_IN:
                     case State.SLAM_LAND:
                     case State.TAIL_HANG:
+                    case State.SUPERJUMP_CHARGE:
                         this.play(value.ToString(), true);
                         break;
                     case State.ATTACK_AIR:
@@ -160,7 +159,7 @@ public class Player : FAnimatedSprite
                 }
                 if (C.getKey(C.DOWN_KEY) && (!C.getKey(C.LEFT_KEY) || !C.getKey(C.RIGHT_KEY)) && !lastDownPress && grounded)
                 {
-                    currentState = State.CROUCH;
+                    currentState = State.SUPERJUMP_CHARGE;
                     return;
                 }
                 if (currentState == State.JUMP || currentState == State.DOUBLE_JUMP)
@@ -270,19 +269,16 @@ public class Player : FAnimatedSprite
 
                 break;
             case State.ATTACK_AIR:
-                 yVel = 0;
-                 if (stateCount > ATTACK_AIR_TIME)
-                 {
-                     if (!usedDoubleJump)
-                         currentState = State.JUMP;
-                     else
+                yVel = 0;
+                if (stateCount > ATTACK_AIR_TIME)
+                {
+                    if (!usedDoubleJump)
+                        currentState = State.JUMP;
+                    else
                         currentState = State.DOUBLE_JUMP;
-                 }
-                 //if (C.getKey(C.ACTION_KEY) && !lastActionPress)
-                 //    StartAttackAir();
-                break;
-            case State.SUPERJUMP_CHARGE:
-                
+                }
+                //if (C.getKey(C.ACTION_KEY) && !lastActionPress)
+                //    StartAttackAir();
                 break;
             case State.SUPERJUMP_ABLE:
                 if (!C.getKey(C.DOWN_KEY) && lastDownPress)
@@ -336,10 +332,10 @@ public class Player : FAnimatedSprite
                 if (this.IsStopped)
                     currentState = State.JUMP;
                 break;
-            case State.CROUCH:
+            case State.SUPERJUMP_CHARGE:
                 xVel = 0;
                 speed = 0;
-                if (stateCount >= SUPERJUMP_CHARGE_TIME)
+                if(this.IsStopped)
                     currentState = State.SUPERJUMP_ABLE;
                 if (!C.getKey(C.DOWN_KEY))
                 {
@@ -397,7 +393,7 @@ public class Player : FAnimatedSprite
 
         if (attackAirCount > 0)
             attackAirCount -= Time.deltaTime;
-        
+
         this.scaleX = isFacingLeft ? -1 : 1;
         if ((currentState == State.JUMP || currentState == State.DOUBLE_JUMP) && yVel < 0)
             this.play(State.FALL.ToString());
@@ -537,7 +533,7 @@ public class Player : FAnimatedSprite
                 case State.IDLE:
                 case State.SLIDE:
                 case State.RUN:
-                case State.CROUCH:
+                case State.SUPERJUMP_CHARGE:
                     currentState = State.JUMP;
                     grounded = false;
                     break;
