@@ -142,6 +142,9 @@ public class Player : FAnimatedSprite
             case State.DOUBLE_JUMP:
             case State.RUN:
             case State.SLIDE:
+                if (currentState == State.IDLE)
+                    if (this.IsStopped && RXRandom.Float() < .2f)
+                        this.play(currentState.ToString(), true);
                 bool isActivelyMoving = false;
                 if (C.getKey(C.JUMP_KEY) && !lastJumpPress && currentState != State.DOUBLE_JUMP)
                 {
