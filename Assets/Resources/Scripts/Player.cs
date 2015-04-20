@@ -368,6 +368,12 @@ public class Player : FAnimatedSprite
                     currentState = State.SLAM_TRANS_IN;
                     return;
                 }
+                if (yVel > 0)
+                {
+                    CeilButton button = world.getCeilButton(this.x, this.y);
+                    if (button != null)
+                        world.ActivateCeilButton(button);
+                }
                 if (grounded)
                     currentState = State.IDLE;
                 break;

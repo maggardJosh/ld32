@@ -19,6 +19,7 @@ public class World : FContainer
     List<Lever> levers = new List<Lever>();
     List<BreakableWall> breakableWalls = new List<BreakableWall>();
     List<FloorButton> floorButtons = new List<FloorButton>();
+    List<CeilButton> ceilButtons = new List<CeilButton>();
     string lastMap = "";
     string lastTravelPoint = "";
     public World()
@@ -92,6 +93,11 @@ public class World : FContainer
         floorButtons.Add(button);
         background.AddChild(button);
     }
+    public void addCeilButton(CeilButton button)
+    {
+        ceilButtons.Add(button);
+        background.AddChild(button);
+    }
     public string lastWarp = "";
     private void Update()
     {
@@ -148,6 +154,15 @@ public class World : FContainer
                 return button;
         return null;
     }
+    public CeilButton getCeilButton(float x, float y)
+    {
+        int tileX = Mathf.FloorToInt(x / foregroundTilemap.tileWidth);
+        int tileY = Mathf.FloorToInt(y / foregroundTilemap.tileHeight);
+        foreach (CeilButton button in ceilButtons)
+            if (button.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                return button;
+        return null;
+    }
     private void CheckTravelPoints()
     {
         WorldTravelPoint activeTravelPoint = null;
@@ -176,6 +191,11 @@ public class World : FContainer
     }
 
     public void ActivateFloorButton(FloorButton button)
+    {
+        button.Activate();
+        OpenDoorWithCam(button.doorTarget);
+    }
+    public void ActivateCeilButton(CeilButton button)
     {
         button.Activate();
         OpenDoorWithCam(button.doorTarget);
