@@ -41,7 +41,7 @@ public class Player : FAnimatedSprite
     private bool tailGrab = true;
     private bool doubleJump = false;
     private bool levers = true;
-    private bool chargeJump = false;
+    private bool chargeJump = true;
     private bool airJumpAttack = false;
 
     public World world;
@@ -72,7 +72,7 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 15, 16, 17 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 18, 19 }, 20, false));
         addAnimation(new FAnimation(State.ATTACK_THREE_EXTEND.ToString(), new int[] { 20 }, 100, false));
-        addAnimation(new FAnimation(State.TAIL_HANG_TRANS_IN.ToString(), new int[] { 28,29,30,31 }, 50, false));
+        addAnimation(new FAnimation(State.TAIL_HANG_TRANS_IN.ToString(), new int[] { 28, 29, 30, 31 }, 50, false));
         addAnimation(new FAnimation(State.TAIL_HANG.ToString(), new int[] { 27 }, 100, true));
         addAnimation(new FAnimation(State.TAIL_HANG_FALL.ToString(), new int[] { 28, 29, 30, 31 }, 50, true));
         addAnimation(new FAnimation(State.SLAM_TRANS_IN.ToString(), new int[] { 28, 29, 30, 31, 32, 33 }, 20, false));
@@ -457,7 +457,9 @@ public class Player : FAnimatedSprite
             attackAirCount -= Time.deltaTime;
 
         this.scaleX = isFacingLeft ? -1 : 1;
-        if ((currentState == State.JUMP || currentState == State.DOUBLE_JUMP) && yVel < 0)
+        if (currentState == State.SUPERJUMP && yVel < 0)
+            this.play(State.TAIL_HANG_FALL.ToString());
+        else if ((currentState == State.JUMP || currentState == State.DOUBLE_JUMP) && yVel < 0)
             this.play(State.FALL.ToString());
         else
             this.play(currentState.ToString());
