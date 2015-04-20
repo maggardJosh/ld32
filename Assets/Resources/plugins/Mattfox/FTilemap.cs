@@ -348,6 +348,11 @@ public class FTilemap : FContainer
     {
         return getFrameNum(Mathf.FloorToInt(xPos / tileWidth), Mathf.FloorToInt(-yPos / tileHeight));
     }
+
+    public bool isDeath(float xPos, float yPos)
+    {
+        return C.DEATH_LIST.Contains(getFrameNumAt(xPos, yPos));
+    }
 	
     public bool isPassable(float xPos, float yPos)
     {

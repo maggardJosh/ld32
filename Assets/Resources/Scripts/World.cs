@@ -18,7 +18,8 @@ public class World : FContainer
     List<Door> doors = new List<Door>();
     List<Lever> levers = new List<Lever>();
     List<BreakableWall> breakableWalls = new List<BreakableWall>();
-
+    string lastMap = "";
+    string lastTravelPoint = "";
     public World()
     {
         background = new FContainer();
@@ -52,7 +53,6 @@ public class World : FContainer
         p.tilemap = this.tilemap;
         tilemap.clipNode = C.getCameraInstance();
         foregroundTilemap.clipNode = C.getCameraInstance();
-        RXDebug.Log(foregroundTilemap);
         background.AddChild(tilemap);
         foreground.AddChild(foregroundTilemap);
         MapLoader.LoadObjects(this, map.objects);
@@ -60,7 +60,10 @@ public class World : FContainer
         Futile.stage.AddChild(C.getCameraInstance());
 
     }
-
+    public void Respawn()
+    {
+        LoadAndSpawn(lastMap, lastTravelPoint);
+    }
     public void addTravelPoint(WorldTravelPoint travelPoint)
     {
 
@@ -170,6 +173,8 @@ public class World : FContainer
     }
     public void LoadAndSpawn(string mapName, string travelPoint)
     {
+        this.lastMap = mapName;
+        this.lastTravelPoint = travelPoint;
         LoadMap(mapName);
         foreach (WorldTravelPoint travelTo in travelPoints)
             if (travelTo.name == travelPoint)
