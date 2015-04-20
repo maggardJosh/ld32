@@ -146,10 +146,12 @@ public class World : FContainer
         else
             step = -1;
 
+        RXDebug.Log(lastTileX, tileX, tileY);
         for (; step > 0 ? lastTileX <= tileX : lastTileX >= tileX; lastTileX += step)
         {
-            if (!isPassable(lastTileX * tilemap.tileWidth, tileY * tilemap.tileWidth))
+            if (foregroundTilemap.getFrameNum(lastTileX, -tileY) != 8 && !isPassable(lastTileX * tilemap.tileWidth, tileY * tilemap.tileWidth))
             {
+                RXDebug.Log("HIT", lastTileX, tileX, tileY, foregroundTilemap.getFrameNum(lastTileX,- tileY) );
                 return lastTileX;
             }
         }

@@ -307,6 +307,17 @@ public class Player : FAnimatedSprite
                     attackExtendTween = Go.to(this, ATTACK_THREE_EXTEND_TIME / 8, new TweenConfig().floatProp("AttackExtendLength", poleExtend ? poleExtendLength : 0).setEaseType(EaseType.QuartIn).onComplete(
                         (t) =>
                         {
+                            int tileCollision = world.ExtendPolePassable(lastExtendPos, extendPoleEnd.GetPosition());
+                            if (tileCollision != -1)
+                            {
+
+                                float tileCollisionPos = tileCollision * tilemap.tileWidth;
+                                if (tileCollisionPos > this.x)
+                                    AttackExtendLength = Mathf.Max(0, tileCollision * tilemap.tileWidth - this.x - 32f );
+                                else
+                                    AttackExtendLength = Mathf.Max(0, this.x - 64f - tileCollision * tilemap.tileWidth);
+                                
+                            }
                             TweenExtendRetract();
                         }));
                 }
@@ -320,15 +331,13 @@ public class Player : FAnimatedSprite
                     {
 
                         attackExtendTween.pause();
-                        Go.removeTween(attackExtendTween);
+                        //Go.removeTween(attackExtendTween);
                         float tileCollisionPos = tileCollision * tilemap.tileWidth;
                         if (tileCollisionPos > this.x)
-                            AttackExtendLength = Mathf.Max(0, this.x - 48f - tileCollision * tilemap.tileWidth);
+                            AttackExtendLength = Mathf.Max(0, tileCollision * tilemap.tileWidth - this.x - 32f);
                         else
                             AttackExtendLength = Mathf.Max(0, this.x - 64f - tileCollision * tilemap.tileWidth );
                         TweenExtendRetract();
-
-
                     }
                 }
                 lastExtendPos = extendPoleEnd.GetPosition();
