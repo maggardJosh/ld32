@@ -50,6 +50,7 @@ public class Powerup : FSprite
     ShadowLabel description;
     public void ActivatePowerup(Player p)
     {
+        FSoundManager.PlaySound("Powerup");
         Futile.instance.SignalUpdate -= SpawnParticles;
         C.isTransitioning = true;
         FCamObject cam = C.getCameraInstance();

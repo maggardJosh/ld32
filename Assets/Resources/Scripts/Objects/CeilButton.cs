@@ -34,6 +34,7 @@ public class CeilButton : FSprite
     }
     public void Activate()
     {
+        FSoundManager.PlaySound("WallButton");
         Player.GetSaveStateInstance().activatedObjects.Add(this.name);
         currentState = State.ACTIVATED;
         this.SetElementByName("button_floor_on");

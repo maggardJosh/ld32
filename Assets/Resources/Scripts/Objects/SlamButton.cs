@@ -37,6 +37,7 @@ public class SlamButton : FSprite
     private const float SLAM_BUTTON_DELAY = 1.0f;
     public void Activate(Player p, Action onComplete)
     {
+        FSoundManager.PlaySound("SlamButton");
         Player.GetSaveStateInstance().activatedObjects.Add(this.name);
         currentState = State.ACTIVATED;
         p.y = this.y + 46;

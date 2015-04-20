@@ -103,6 +103,20 @@ public class Particle : FSprite
             return result;
         }
 
+        public static List<CloudParticle> GetDashParticles(Vector2 pos)
+        {
+            float xDisp = 30;
+            float yDisp = 10;
+            List<CloudParticle> result = new List<CloudParticle>();
+            for (int i = 0; i < 10; i++)
+            {
+                CloudParticle particle = CloudParticle.getParticle();
+                particle.activate(pos + new Vector2(RXRandom.Float() * xDisp - xDisp / 2, RXRandom.Float() * yDisp - yDisp / 2), new Vector2(RXRandom.Float() * 40 - 20, RXRandom.Float() * -20), new Vector2(RXRandom.Float() * 20 - 10, RXRandom.Float() * 20), RXRandom.Float() * 10, 1f, RXRandom.Float() * -.5f);
+                result.Add(particle);
+            }
+            return result;
+        }
+
         public static List<CloudParticle> GetMegaSlamParticles(Vector2 pos)
         {
             float xDisp = 20;

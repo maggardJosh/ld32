@@ -26,14 +26,14 @@ public class Player : FAnimatedSprite
         public SaveState(SaveState stateToCopy)
         {
             this.thirdCombo = stateToCopy.thirdCombo;
-            this.poleExtend = stateToCopy.thirdCombo;
-            this.tailGrab = stateToCopy.thirdCombo;
-            this.doubleJump = stateToCopy.thirdCombo;
-            this.levers = stateToCopy.thirdCombo;
-            this.chargeJump = stateToCopy.thirdCombo;
-            this.airJumpAttack = stateToCopy.thirdCombo;
-            this.slam = stateToCopy.thirdCombo;
-            this.airAttackEndGame = stateToCopy.thirdCombo;
+            this.poleExtend = stateToCopy.poleExtend;
+            this.tailGrab = stateToCopy.tailGrab;
+            this.doubleJump = stateToCopy.doubleJump;
+            this.levers = stateToCopy.levers;
+            this.chargeJump = stateToCopy.chargeJump;
+            this.airJumpAttack = stateToCopy.airJumpAttack;
+            this.slam = stateToCopy.slam;
+            this.airAttackEndGame = stateToCopy.airAttackEndGame;
 
 
             this.activatedObjects = new List<string>();
@@ -113,7 +113,7 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.SLIDE.ToString(), new int[] { 9 }, 100, true));
         addAnimation(new FAnimation(State.TAKE_DAMAGE.ToString(), new int[] { 9, 10 }, 100, true));
         addAnimation(new FAnimation(State.JUMP.ToString(), new int[] { 21 }, 100, true));
-        addAnimation(new FAnimation(State.DOUBLE_JUMP.ToString(), new int[] { 21 }, 100, true));
+        addAnimation(new FAnimation(State.DOUBLE_JUMP.ToString(), new int[] { 28, 29, 30, 31, 21 }, 100, false));
         addAnimation(new FAnimation(State.FALL.ToString(), new int[] { 22 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 23, 23, 23, 23, 24, 24, 24, 24, 23, 23, 23, 24, 24, 24, 23, 23, 24, 24, 23, 24, 23, 24 }, 40, false));
         addAnimation(new FAnimation(State.INTERACT_LEVER.ToString(), new int[] { 15, 16, 17 }, 300, false));
@@ -242,16 +242,19 @@ public class Player : FAnimatedSprite
                         foreach (Particle p in Particle.CloudParticle.GetDoubleJumpParticles(this.GetPosition()))
                             Futile.stage.AddChild(p);
                         yVel = jumpStrength;
+                        FSoundManager.PlaySound("DoubleJump");
                     }
                     if (grounded)
                     {
                         grounded = false;
                         currentState = State.JUMP;
                         yVel = jumpStrength;
+                        FSoundManager.PlaySound("Jump");
                     }
                 }
                 if (C.getKey(C.DOWN_KEY) && (!C.getKey(C.LEFT_KEY) || !C.getKey(C.RIGHT_KEY)) && !lastDownPress && grounded && GetSaveStateInstance().chargeJump)
                 {
+                    FSoundManager.PlaySound("Crouch");
                     currentState = State.SUPERJUMP_CHARGE;
                     return;
                 }
@@ -405,6 +408,9 @@ public class Player : FAnimatedSprite
                 break;
             case State.ATTACK_AIR:
                 yVel = 0;
+
+                    foreach (Particle p in Particle.CloudParticle.GetDashParticles(this.GetPosition()))
+                        Futile.stage.AddChild(p);
                 if (stateCount > ATTACK_AIR_TIME)
                 {
                     if (!usedDoubleJump)
@@ -412,8 +418,6 @@ public class Player : FAnimatedSprite
                     else
                         currentState = State.DOUBLE_JUMP;
                 }
-                //if (C.getKey(C.ACTION_KEY) && !lastActionPress)
-                //    StartAttackAir();
                 break;
             case State.DYING:
                 this.isVisible = false;
@@ -430,6 +434,7 @@ public class Player : FAnimatedSprite
                 if (!C.getKey(C.DOWN_KEY) && lastDownPress)
                 {
                     grounded = false;
+                    FSoundManager.PlaySound("SuperJump");
                     currentState = State.SUPERJUMP;
                     yVel = superJumpStrength;
                 }
@@ -490,7 +495,10 @@ public class Player : FAnimatedSprite
                 xVel = 0;
                 speed = 0;
                 if (this.IsStopped)
+                {
                     currentState = State.SUPERJUMP_ABLE;
+                    FSoundManager.PlaySound("Charge");
+                }
                 if (!C.getKey(C.DOWN_KEY))
                 {
                     currentState = State.IDLE;
@@ -617,7 +625,7 @@ public class Player : FAnimatedSprite
             world.ActivatePowerup(p);
         }
     }
-    
+
     private void CheckPowerupKeys()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -693,6 +701,7 @@ public class Player : FAnimatedSprite
 
     public void StartAttackOne()
     {
+        FSoundManager.PlaySound("AttackOne");
         currentState = State.ATTACK_ONE;
         xVel = ATTACK_ONE_XVEL * (isFacingLeft ? -1 : 1);
         this.play(State.ATTACK_ONE.ToString(), true);
@@ -701,6 +710,7 @@ public class Player : FAnimatedSprite
 
     public void StartAttackTwo()
     {
+        FSoundManager.PlaySound("attackTwo");
         currentState = State.ATTACK_TWO;
         if (C.getKey(C.LEFT_KEY))
             isFacingLeft = true;
@@ -712,6 +722,7 @@ public class Player : FAnimatedSprite
 
     public void StartAttackThree()
     {
+        FSoundManager.PlaySound("attackThree");
         currentState = State.ATTACK_THREE;
         if (C.getKey(C.LEFT_KEY))
             isFacingLeft = true;
@@ -729,6 +740,8 @@ public class Player : FAnimatedSprite
             isFacingLeft = true;
         else if (C.getKey(C.RIGHT_KEY))
             isFacingLeft = false;
+
+        FSoundManager.PlaySound("airAttack");
         xVel = (GetSaveStateInstance().airAttackEndGame ? ATTACK_AIR_XVEL_ENDGAME : ATTACK_AIR_XVEL) * (isFacingLeft ? -1 : 1);
         this.play(currentState.ToString(), true);
     }
@@ -829,6 +842,7 @@ public class Player : FAnimatedSprite
     }
     public void Kill()
     {
+        FSoundManager.PlaySound("death");
         currentState = State.DYING;
         foreach (Particle particle in Particle.CloudParticle.GetDoubleJumpParticles(this.GetPosition()))
             Futile.stage.AddChild(particle);
