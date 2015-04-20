@@ -43,7 +43,7 @@ public class Player : FAnimatedSprite
     private bool levers = true;
     private bool chargeJump = true;
     private bool airJumpAttack = false;
-    private bool slam = false;
+    private bool slam = true;
 
     public World world;
     private Lever interactLever;
@@ -304,8 +304,9 @@ public class Player : FAnimatedSprite
                     attackExtendTween = Go.to(this, ATTACK_THREE_EXTEND_TIME / 8, new TweenConfig().floatProp("AttackExtendLength", poleExtend ? poleExtendLength : 0).setEaseType(EaseType.QuartIn).onComplete(
                         (t) =>
                         {
-
-                            C.getCameraInstance().shake(1.0f, .1f);
+                            foreach (Particle p in Particle.CloudParticle.GetThirdAttackParticles(this.GetPosition(), isFacingLeft))
+                                Futile.stage.AddChild(p);
+                            C.getCameraInstance().shake(1.0f, .2f);
                             Go.to(this, ATTACK_THREE_TIME / 2, new TweenConfig().floatProp("AttackExtendLength", 0).setEaseType(EaseType.QuadIn).onComplete((t2) =>
                             {
                                 extendPoleEnd.RemoveFromContainer();
@@ -417,13 +418,21 @@ public class Player : FAnimatedSprite
                 speed = 0;
                 if (grounded)
                 {
+                    float floorY = Mathf.FloorToInt((this.y) / tilemap.tileHeight) * tilemap.tileHeight;
+                    if (world.isPassable(this.x, floorY-tilemap.tileHeight/2f))
+                        floorY -= tilemap.tileHeight;
+                    //floorY -= tilemap.tileHeight f;
+                    foreach (Particle p in Particle.CloudParticle.GetSlamParticles(new Vector2(this.x, floorY)))
+                        Futile.stage.AddChild(p);
                     currentState = State.SLAM_LAND;
                     C.getCameraInstance().shake(SLAM_LAND_SHAKE, SLAM_LAND_SHAKE_TIME);
                 }
                 break;
             case State.SLAM_LAND:
                 if (this.IsStopped)
+                {
                     currentState = State.IDLE;
+                }
                 break;
         }
 
