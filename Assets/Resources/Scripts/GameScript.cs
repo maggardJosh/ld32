@@ -23,8 +23,8 @@ public class GameScript : MonoBehaviour
         Futile.stage.AddChild(world);
 
         Futile.atlasManager.LoadFont(C.smallFontName, "debugFont_0", "Atlases/debugFont", 0, 0);
-        FLabel versionLabel = new FLabel(C.smallFontName, C.versionNumber);
-        versionLabel.y = -Futile.screen.height / 2 + versionLabel.textRect.height;
+        ShadowLabel versionLabel = new ShadowLabel(C.versionNumber);
+        versionLabel.y = -Futile.screen.height / 2 + versionLabel.whiteFont.textRect.height;
         C.getCameraInstance().AddChild(versionLabel);
         C.getCameraInstance().MoveToFront();
         Go.to(versionLabel, 6.0f, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadIn));
