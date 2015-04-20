@@ -24,6 +24,7 @@ public class World : FContainer
     List<Powerup> powerups = new List<Powerup>();
     List<WallButton> wallButtons = new List<WallButton>();
     List<TutorialText> tutorialTexts = new List<TutorialText>();
+    List<Fireball> fireballs = new List<Fireball>();
     string lastMap = "";
     string lastTravelPoint = "";
     public World()
@@ -55,6 +56,9 @@ public class World : FContainer
         ceilButtons.Clear();
         wallButtons.Clear();
         slamButtons.Clear();
+        foreach (Fireball f in fireballs)
+            f.InstaDie();
+        fireballs.Clear();
         powerups.Clear();
         foreach (TutorialText text in tutorialTexts)
             text.RemoveFromContainer();
@@ -142,6 +146,26 @@ public class World : FContainer
     {
         CheckTravelPoints();
 
+    }
+    public void addFireball(Fireball f)
+    {
+        fireballs.Add(f);
+        background.AddChild(f);
+    }
+    public void CheckFireball(Fireball f)
+    {
+        if (!isPassable(f.x, f.y))
+            f.Die();
+        if (!p.IsDying())
+        {
+
+            float xDiff = Mathf.Abs(f.x - p.x);
+            float yDiff = Mathf.Abs(f.y - p.y);
+            if (xDiff < 30 && yDiff < 30)
+            {
+                p.Kill();
+            }
+        }
     }
     public void tryBreakWall(Vector2 lastPos, Vector2 position)
     {

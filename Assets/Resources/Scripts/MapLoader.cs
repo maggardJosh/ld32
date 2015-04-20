@@ -176,7 +176,7 @@ public class MapLoader
                             case "INTERVAL": float.TryParse(property.attributes["value"], out interval); break;
                         }
                     }
-                    world.addJadeDragon(new JadeDragon(x + 16, -y - 16, delay, interval));
+                    world.addJadeDragon(new JadeDragon(x + 16, -y - 16, delay, interval, world));
                     break;
             }
     }

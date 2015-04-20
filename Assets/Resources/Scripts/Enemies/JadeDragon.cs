@@ -10,12 +10,14 @@ public class JadeDragon : FSprite
     float delay;
     float count;
     bool hasStarted = false;
-    public JadeDragon(float x, float y, float delay, float interval) : base("dragon")
+    World world;
+    public JadeDragon(float x, float y, float delay, float interval, World world) : base("dragon")
     {
         this.delay = delay;
         this.interval = interval;
         this.x = x;
         this.y = y;
+        this.world = world;
         count = 0;
     }
 
@@ -54,10 +56,25 @@ public class JadeDragon : FSprite
     }
     private void SpawnFireballs()
     {
-        FSprite fireball = new FSprite ("flame_01");
-        fireball.SetPosition(this.GetPosition());
-        Go.to(fireball, 1.0f, new TweenConfig().floatProp("x", 100, true));
-        Futile.stage.AddChild(fireball);
+        float angle = 0;
+        float speed = 200;
+        for (int i = 0; i < 8; i++)
+        {
+            Vector2 vel = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
+            Vector2 futurePos =  this.GetPosition() + vel * 32;
+            if(!world.isPassable(futurePos.x, futurePos.y))
+            {
+            angle += Mathf.PI/4f;
+                continue;
+            }
+            vel *= speed;
+            Fireball f = new Fireball(vel, this.world);
+            f.rotation = 180+angle *(180f/Mathf.PI);
+            angle += Mathf.PI/4f;
+            f.SetPosition(this.GetPosition());
+            world.addFireball(f);
+            
+        }
     }
 }
 

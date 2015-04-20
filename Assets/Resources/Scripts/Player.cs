@@ -803,9 +803,7 @@ public class Player : FAnimatedSprite
             this.y = newY;
             if (world.isDeath(this.x, this.y - tilemap.tileHeight / 2))
             {
-                currentState = State.DYING;
-                foreach (Particle particle in Particle.CloudParticle.GetDoubleJumpParticles(this.GetPosition()))
-                    Futile.stage.AddChild(particle);
+                Kill();
                 return;
             }
         }
@@ -823,6 +821,16 @@ public class Player : FAnimatedSprite
         FloorButton button = world.getFloorButton(this.x, this.y);
         if (button != null)
             this.y = button.y + 6;
+    }
+    public bool IsDying()
+    {
+        return currentState == State.DYING;
+    }
+    public void Kill()
+    {
+        currentState = State.DYING;
+        foreach (Particle particle in Particle.CloudParticle.GetDoubleJumpParticles(this.GetPosition()))
+            Futile.stage.AddChild(particle);
     }
     private void CheckHookUp()
     {
