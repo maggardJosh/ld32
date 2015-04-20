@@ -44,6 +44,7 @@ public class Player : FAnimatedSprite
     private bool chargeJump = true;
     private bool airJumpAttack = false;
     private bool slam = true;
+    private bool airAttackEndGame = true;
 
     public World world;
     private Lever interactLever;
@@ -157,6 +158,8 @@ public class Player : FAnimatedSprite
     private Vector2 lastExtendPos = Vector2.zero;
     public void Update()
     {
+        if (C.isDebug)
+            CheckPowerupKeys();
         if (C.isTransitioning)
             return;
         switch (currentState)
@@ -490,6 +493,25 @@ public class Player : FAnimatedSprite
         lastDownPress = C.getKey(C.DOWN_KEY);
         lastActionPress = C.getKey(C.ACTION_KEY);
     }
+    private void CheckPowerupKeys()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            thirdCombo = !thirdCombo;
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            tailGrab = !tailGrab;
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+            slam = !slam;
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+            doubleJump = !doubleJump;
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+            poleExtend = !poleExtend;
+        if (Input.GetKeyDown(KeyCode.Alpha6))
+            levers = !levers;
+        if (Input.GetKeyDown(KeyCode.Alpha7))
+            chargeJump = !chargeJump;
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+            airAttackEndGame = !airAttackEndGame;
+    }
     private void CheckInteractableObjects()
     {
         if (levers)
@@ -582,7 +604,7 @@ public class Player : FAnimatedSprite
             isFacingLeft = true;
         else if (C.getKey(C.RIGHT_KEY))
             isFacingLeft = false;
-        xVel = ATTACK_AIR_XVEL * (isFacingLeft ? -1 : 1);
+        xVel = (airAttackEndGame ? ATTACK_AIR_XVEL_ENDGAME : ATTACK_AIR_XVEL) * (isFacingLeft ? -1 : 1);
         this.play(currentState.ToString(), true);
     }
 
