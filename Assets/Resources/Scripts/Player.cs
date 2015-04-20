@@ -8,15 +8,15 @@ public class Player : FAnimatedSprite
 {
     public class SaveState
     {
-        public bool thirdCombo = true;
-        public bool poleExtend = true;
-        public bool tailGrab = true;
-        public bool doubleJump = true;
-        public bool levers = true;
+        public bool thirdCombo = false;
+        public bool poleExtend = false;
+        public bool tailGrab = false;
+        public bool doubleJump = false;
+        public bool levers = false;
         public bool chargeJump = false;
         public bool airJumpAttack = false;
-        public bool slam = true;
-        public bool airAttackEndGame = true;
+        public bool slam = false;
+        public bool airAttackEndGame = false;
 
         public List<string> activatedObjects = new List<string>();
         public SaveState()
