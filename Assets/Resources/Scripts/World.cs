@@ -15,6 +15,7 @@ public class World : FContainer
     List<WorldTravelPoint> travelPoints = new List<WorldTravelPoint>();
     List<Door> doors = new List<Door>();
     List<Lever> levers = new List<Lever>();
+    List<BreakableWall> breakableWalls = new List<BreakableWall>();
 
     public World()
     {
@@ -36,6 +37,8 @@ public class World : FContainer
 
         travelPoints.Clear();
         doors.Clear();
+        levers.Clear();
+        breakableWalls.Clear();
         this.map = new FTmxMap();
         this.map.LoadTMX("Maps/" + mapName);
         tilemap = (FTilemap)this.map.getLayerNamed("tilemap");
@@ -59,6 +62,11 @@ public class World : FContainer
         levers.Add(lever);
         background.AddChild(lever);
     }
+    public void addBreakableWall(BreakableWall wall)
+    {
+        breakableWalls.Add(wall);
+        background.AddChild(wall);
+    }
 
     public void addDoor(Door door)
     {
@@ -71,15 +79,36 @@ public class World : FContainer
         CheckTravelPoints();
 
     }
+    public void tryBreakWall(Vector2 lastPos, Vector2 position)
+    {
+        int lastTileX = Mathf.FloorToInt(lastPos.x / tilemap.tileWidth);
+        int tileX = Mathf.FloorToInt(position.x / tilemap.tileWidth);
+        int tileY = Mathf.FloorToInt(position.y / tilemap.tileHeight);
+        if (lastTileX < tileX)
+        {
+            int temp = tileX;
+            tileX = lastTileX;
+            lastTileX = temp;
+        }
+        foreach (BreakableWall wall in breakableWalls)
+            for (; tileX <= lastTileX; tileX++)
+                if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                    wall.Open();
+    }
     public bool isPassable(float x, float y)
     {
         bool result = tilemap.isPassable(x, y);
         int tileX = Mathf.FloorToInt(x / tilemap.tileWidth);
         int tileY = Mathf.FloorToInt(y / tilemap.tileHeight);
-        if (result)
-            foreach (Door door in doors)
-                if (door.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
-                    return false;
+        if (!result)
+            return result;
+
+        foreach (Door door in doors)
+            if (door.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                return false;
+        foreach (BreakableWall wall in breakableWalls)
+            if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                return false;
 
         return result;
     }
@@ -107,14 +136,14 @@ public class World : FContainer
     public void ActivateLever(Lever lever)
     {
         lever.Activate();
-        foreach(Door d in doors)
+        foreach (Door d in doors)
             if (d.name == lever.doorTarget)
             {
                 FNode node = new FNode();
                 node.SetPosition(p.GetPosition());
                 C.getCameraInstance().follow(node);
                 C.isTransitioning = true;
-                Go.to(node, .7f, new TweenConfig().floatProp("x", d.x).floatProp("y", d.y).setEaseType(EaseType.QuadOut).onComplete((t) => 
+                Go.to(node, .7f, new TweenConfig().floatProp("x", d.x).floatProp("y", d.y).setEaseType(EaseType.QuadOut).onComplete((t) =>
                 {
                     d.Open(() => { Go.to(node, .7f, new TweenConfig().floatProp("x", p.x).floatProp("y", p.y).setEaseType(EaseType.QuadOut).onComplete((t2) => { C.getCameraInstance().follow(p); C.isTransitioning = false; })); });
                 }));
@@ -125,7 +154,7 @@ public class World : FContainer
     {
         foreach (Lever lever in levers)
         {
-            if(lever.IsTileOccupied(Mathf.FloorToInt(p.x/tilemap.tileWidth), Mathf.FloorToInt(p.y/tilemap.tileHeight),tilemap.tileWidth))
+            if (lever.IsTileOccupied(Mathf.FloorToInt(p.x / tilemap.tileWidth), Mathf.FloorToInt(p.y / tilemap.tileHeight), tilemap.tileWidth))
                 return lever;
         }
         return null;

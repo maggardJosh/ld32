@@ -64,6 +64,12 @@ public class MapLoader
                     }
                     world.addLever(new Lever(x + 16, -y - 16, name, target));
                     break;
+                case "BREAKABLEWALL":
+                    name = node.attributes["name"];
+                    float.TryParse(node.attributes["x"], out x);
+                    float.TryParse(node.attributes["y"], out y);
+                    world.addBreakableWall(new BreakableWall(x + 16, -y - 32, name));
+                    break;
             }
     }
 }
