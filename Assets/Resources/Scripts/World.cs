@@ -23,6 +23,7 @@ public class World : FContainer
     List<SlamButton> slamButtons = new List<SlamButton>();
     List<Powerup> powerups = new List<Powerup>();
     List<WallButton> wallButtons = new List<WallButton>();
+    List<TutorialText> tutorialTexts = new List<TutorialText>();
     string lastMap = "";
     string lastTravelPoint = "";
     public World()
@@ -55,6 +56,9 @@ public class World : FContainer
         wallButtons.Clear();
         slamButtons.Clear();
         powerups.Clear();
+        foreach (TutorialText text in tutorialTexts)
+            text.RemoveFromContainer();
+        tutorialTexts.Clear();
         this.map = new FTmxMap();
         this.map.LoadTMX("Maps/" + mapName);
         tilemap = (FTilemap)this.map.getLayerNamed("tilemap");
@@ -90,6 +94,11 @@ public class World : FContainer
             return;
         breakableWalls.Add(wall);
         background.AddChild(wall);
+    }
+    public void addTutorialText(TutorialText text)
+    {
+        tutorialTexts.Add(text);
+        C.getCameraInstance().AddChild(text);
     }
 
     public void addDoor(Door door)
@@ -281,6 +290,11 @@ public class World : FContainer
         {
             LoadAndSpawn(activeTravelPoint.mapToLoad, activeTravelPoint.travelPointTarget);
         }
+    }
+    public void CheckTutorialText()
+    {
+        foreach (TutorialText text in tutorialTexts)
+            text.CheckInText(p);
     }
     public void ActivateLever(Lever lever)
     {

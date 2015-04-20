@@ -580,6 +580,7 @@ public class Player : FAnimatedSprite
 
         CheckInteractableObjects();
         CheckPowerupCollision();
+        world.CheckTutorialText();
 
         lastJumpPress = C.getKey(C.JUMP_KEY);
         lastDownPress = C.getKey(C.DOWN_KEY);
@@ -612,6 +613,7 @@ public class Player : FAnimatedSprite
             world.ActivatePowerup(p);
         }
     }
+    
     private void CheckPowerupKeys()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))

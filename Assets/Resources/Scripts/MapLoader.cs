@@ -142,6 +142,25 @@ public class MapLoader
                     float.TryParse(node.attributes["y"], out y);
                     world.addBreakableWall(new BreakableWall(x + 16, -y - 32, name));
                     break;
+                case "TUTORIALTEXT":
+                    name = node.attributes["name"];
+                    float.TryParse(node.attributes["x"], out x);
+                    float.TryParse(node.attributes["y"], out y);
+                    float.TryParse(node.attributes["width"], out width);
+                    float.TryParse(node.attributes["height"], out height);
+                    string text = "";
+                    powerup = 0;
+                      foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                    {
+                        switch (property.attributes["name"].ToUpper())
+                        {
+                            case "POWERUP": int.TryParse(property.attributes["value"], out powerup); break;
+                            case "TEXT": text = property.attributes["value"]; break;
+                        }
+                    }
+                      RXDebug.Log(x, y, width, height);
+                      world.addTutorialText(new TutorialText(text, powerup, new Rect(x, -y-height, width, height)));
+                    break;
             }
     }
 }
