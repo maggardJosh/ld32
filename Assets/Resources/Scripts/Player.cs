@@ -39,7 +39,7 @@ public class Player : FAnimatedSprite
     private bool thirdCombo = true;
     private bool poleExtend = false;
     private bool tailGrab = true;
-    private bool doubleJump = false;
+    private bool doubleJump = true;
     private bool levers = true;
     private bool chargeJump = true;
     private bool airJumpAttack = false;
