@@ -6,15 +6,15 @@ using UnityEngine;
 
 public class ShadowLabel : FContainer
 {
-    public FLabel whiteFont;
+    public FLabel label;
     private FLabel shadow;
     public ShadowLabel(string text)
     {
-        whiteFont = new FLabel(C.smallFontName, text);
+        label = new FLabel(C.smallFontName, text);
         shadow = new FLabel(C.smallFontName, text);
         shadow.color = Color.black;
         this.AddChild(shadow);
-        this.AddChild(whiteFont);
+        this.AddChild(label);
         shadow.x = 1;
         shadow.y = -1;
     }
