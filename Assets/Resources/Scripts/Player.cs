@@ -37,7 +37,7 @@ public class Player : FAnimatedSprite
     private FSprite extendPoleEnd;
 
     private bool thirdCombo = true;
-    private bool poleExtend = false;
+    private bool poleExtend = true;
     private bool tailGrab = true;
     private bool doubleJump = true;
     private bool levers = true;
@@ -664,6 +664,9 @@ public class Player : FAnimatedSprite
             this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileWidth / 2;
         }
         CheckHookDown();
+        FloorButton button = world.getFloorButton(this.x, this.y);
+        if (button != null)
+            this.y = button.y + 5;
     }
     private void CheckHookUp()
     {

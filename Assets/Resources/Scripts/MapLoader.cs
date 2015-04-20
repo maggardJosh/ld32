@@ -64,6 +64,20 @@ public class MapLoader
                     }
                     world.addLever(new Lever(x + 16, -y - 16, name, target));
                     break;
+                case "FLOORBUTTON":
+                    name = node.attributes["name"];
+                    float.TryParse(node.attributes["x"], out x);
+                    float.TryParse(node.attributes["y"], out y);
+                    target = "";
+                    foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                    {
+                        switch (property.attributes["name"].ToUpper())
+                        {
+                            case "DOOR": target = property.attributes["value"]; break;
+                        }
+                    }
+                    world.addFloorButton(new FloorButton(x, -y - 16, name, target));
+                    break;
                 case "BREAKABLEWALL":
                     name = node.attributes["name"];
                     float.TryParse(node.attributes["x"], out x);

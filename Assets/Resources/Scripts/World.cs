@@ -18,6 +18,7 @@ public class World : FContainer
     List<Door> doors = new List<Door>();
     List<Lever> levers = new List<Lever>();
     List<BreakableWall> breakableWalls = new List<BreakableWall>();
+    List<FloorButton> floorButtons = new List<FloorButton>();
     string lastMap = "";
     string lastTravelPoint = "";
     public World()
@@ -45,6 +46,7 @@ public class World : FContainer
         doors.Clear();
         levers.Clear();
         breakableWalls.Clear();
+        floorButtons.Clear();
         this.map = new FTmxMap();
         this.map.LoadTMX("Maps/" + mapName);
         tilemap = (FTilemap)this.map.getLayerNamed("tilemap");
@@ -84,6 +86,11 @@ public class World : FContainer
     {
         doors.Add(door);
         background.AddChild(door);
+    }
+    public void addFloorButton(FloorButton button)
+    {
+        floorButtons.Add(button);
+        background.AddChild(button);
     }
     public string lastWarp = "";
     private void Update()
@@ -131,6 +138,15 @@ public class World : FContainer
     public bool isOneWay(float x, float y)
     {
         return foregroundTilemap.isOneWay(x, y);
+    }
+    public FloorButton getFloorButton(float x, float y)
+    { 
+        int tileX = Mathf.FloorToInt(x / foregroundTilemap.tileWidth);
+        int tileY = Mathf.FloorToInt(y / foregroundTilemap.tileHeight);
+        foreach (FloorButton button in floorButtons)
+            if (button.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                return button;
+        return null;
     }
     private void CheckTravelPoints()
     {
