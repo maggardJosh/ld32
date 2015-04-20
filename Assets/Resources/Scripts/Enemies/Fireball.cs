@@ -33,6 +33,7 @@ using UnityEngine;
         }
         public void Die()
         {
+            FSoundManager.PlaySound("FireballDie");
             foreach (Particle p in Particle.CloudParticle.GetDoubleJumpParticles(this.GetPosition()))
                 Futile.stage.AddChild(p);
             this.RemoveFromContainer();

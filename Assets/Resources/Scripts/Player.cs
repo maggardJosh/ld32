@@ -521,6 +521,7 @@ public class Player : FAnimatedSprite
                     foreach (Particle p in Particle.CloudParticle.GetSlamParticles(new Vector2(this.x, floorY)))
                         Futile.stage.AddChild(p);
                     currentState = State.SLAM_LAND;
+                    FSoundManager.PlaySound("Slam");
                     this.y = floorY;
                     FloorButton button = world.getFloorButton(this.x, floorY);
                     if (button != null)

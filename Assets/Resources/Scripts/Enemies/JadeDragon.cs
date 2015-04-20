@@ -41,6 +41,7 @@ public class JadeDragon : FSprite
         {
             if (count >= delay)
             {
+                hasStarted = true;
                 count -= delay;
                 SpawnFireballs();
             }
@@ -58,6 +59,7 @@ public class JadeDragon : FSprite
     {
         float angle = 0;
         float speed = 200;
+        FSoundManager.PlaySound("DragonFireballSpawn");
         for (int i = 0; i < 8; i++)
         {
             Vector2 vel = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));

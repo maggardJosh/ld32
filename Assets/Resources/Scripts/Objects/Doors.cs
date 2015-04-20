@@ -37,6 +37,7 @@ public class Door : FSprite
 
     public void Open(Action onCompleteAction)
     {
+        FSoundManager.PlaySound("DoorOpen");
         Player.GetSaveStateInstance().activatedObjects.Add(this.name);
         currentState = State.OPEN;
         C.getCameraInstance().shake(1.0f, 1.0f);
