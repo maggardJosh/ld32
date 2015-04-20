@@ -28,18 +28,26 @@ public class Player : FAnimatedSprite
         SLAM_TRANS_IN,
         SLAM_MOVE,
         SLAM_LAND,
-        TAKE_DAMAGE
+        TAKE_DAMAGE,
+        INTERACT_LEVER
 
     }
     private FSprite extendPoleMiddle;
     private FSprite extendPoleEnd;
     public World world;
-
+    private Lever interactLever;
+    public FSprite indication;
+    private float indYDiff = 0;
+    private const float MAX_IND_Y_DIFF = 20;
+    public float IndicationY { get { return indYDiff; } set { indYDiff = value; indication.SetPosition(this.GetPosition() + Vector2.up * (indYDiff+ 30f)); indication.scale = .6f + (indYDiff / MAX_IND_Y_DIFF) * .3f; } }
     public Player()
         : base("player")
     {
         extendPoleMiddle = new FSprite("pole_mid");
         extendPoleEnd = new FSprite("pole_end");
+        indication = new FSprite("indication");
+        Go.to(this, 1.0f, new TweenConfig().floatProp("IndicationY", MAX_IND_Y_DIFF).setEaseType(EaseType.QuadIn).setIterations(-1, LoopType.PingPong));
+
         //Just landing 26
         addAnimation(new FAnimation(State.IDLE.ToString(), new int[] { 1, 2, 3, 4, 1 }, 100, false));
         addAnimation(new FAnimation(State.RUN.ToString(), new int[] { 5, 6, 7, 8 }, 100, true));
@@ -49,6 +57,7 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.DOUBLE_JUMP.ToString(), new int[] { 21 }, 100, true));
         addAnimation(new FAnimation(State.FALL.ToString(), new int[] { 22 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 23, 23, 23, 23, 24, 24, 24, 24, 23, 23, 23, 24, 24, 24, 23, 23, 24, 24, 23, 24, 23, 24 }, 40, false));
+        addAnimation(new FAnimation(State.INTERACT_LEVER.ToString(), new int[] { 15, 16, 17 }, 300, false));
         addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 11, 12, 13, 14 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 15, 16, 17 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 18, 19 }, 50, false));
@@ -87,6 +96,7 @@ public class Player : FAnimatedSprite
                     case State.SLAM_LAND:
                     case State.TAIL_HANG:
                     case State.SUPERJUMP_CHARGE:
+                    case State.INTERACT_LEVER:
                         this.play(value.ToString(), true);
                         break;
                     case State.ATTACK_AIR:
@@ -134,7 +144,8 @@ public class Player : FAnimatedSprite
     private const float ATTACK_AIR_COUNT_VALUE = .5f;
     public void Update()
     {
-
+        if (C.isTransitioning)
+            return;
         switch (currentState)
         {
             case State.IDLE:
@@ -142,6 +153,12 @@ public class Player : FAnimatedSprite
             case State.DOUBLE_JUMP:
             case State.RUN:
             case State.SLIDE:
+                if (C.getKey(C.ACTION_KEY) && !lastActionPress && interactLever != null)
+                {
+                    currentState = State.INTERACT_LEVER;
+                    this.SetPosition(interactLever.GetPosition());
+                    return;
+                }
                 if (currentState == State.IDLE)
                     if (this.IsStopped && RXRandom.Float() < .2f)
                         this.play(currentState.ToString(), true);
@@ -229,6 +246,13 @@ public class Player : FAnimatedSprite
                 if (Mathf.Abs(xVel) < .1f)
                     xVel = 0;
                 break;
+            case State.INTERACT_LEVER:
+                if (this.IsStopped)
+                {
+                    world.ActivateLever(interactLever);
+                    currentState = State.IDLE;
+                }
+                return;
             case State.ATTACK_ONE:
                 xVel *= groundFriction;
                 if (stateCount > ATTACK_ONE_TIME)
@@ -338,7 +362,7 @@ public class Player : FAnimatedSprite
             case State.SUPERJUMP_CHARGE:
                 xVel = 0;
                 speed = 0;
-                if(this.IsStopped)
+                if (this.IsStopped)
                     currentState = State.SUPERJUMP_ABLE;
                 if (!C.getKey(C.DOWN_KEY))
                 {
@@ -402,9 +426,29 @@ public class Player : FAnimatedSprite
             this.play(State.FALL.ToString());
         else
             this.play(currentState.ToString());
+
+        CheckInteractableObjects();
+
         lastJumpPress = C.getKey(C.JUMP_KEY);
         lastDownPress = C.getKey(C.DOWN_KEY);
         lastActionPress = C.getKey(C.ACTION_KEY);
+    }
+    private void CheckInteractableObjects()
+    {
+        Lever interactableLever = world.GetInteractableLever();
+        if (this.interactLever == null && interactableLever != null)
+        {
+            this.interactLever = interactableLever;
+            Futile.stage.AddChild(indication);
+        }
+        else
+        {
+            if (this.interactLever != null && interactableLever == null)
+            {
+                this.interactLever = null;
+                indication.RemoveFromContainer();
+            }
+        }
     }
     private const float SLAM_LAND_SHAKE = 2.0f;
     private const float SLAM_LAND_SHAKE_TIME = .2f;

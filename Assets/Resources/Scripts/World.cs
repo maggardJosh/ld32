@@ -14,6 +14,7 @@ public class World : FContainer
 
     List<WorldTravelPoint> travelPoints = new List<WorldTravelPoint>();
     List<Door> doors = new List<Door>();
+    List<Lever> levers = new List<Lever>();
 
     public World()
     {
@@ -44,6 +45,7 @@ public class World : FContainer
         background.AddChild(tilemap);
         MapLoader.LoadObjects(this, map.objects);
         C.getCameraInstance().setWorldBounds(new Rect(0, -tilemap.height, tilemap.width, tilemap.height));
+        Futile.stage.AddChild(C.getCameraInstance());
 
     }
 
@@ -51,6 +53,11 @@ public class World : FContainer
     {
 
         travelPoints.Add(travelPoint);
+    }
+    public void addLever(Lever lever)
+    {
+        levers.Add(lever);
+        background.AddChild(lever);
     }
 
     public void addDoor(Door door)
@@ -96,6 +103,25 @@ public class World : FContainer
         {
             LoadAndSpawn(activeTravelPoint.mapToLoad, activeTravelPoint.travelPointTarget);
         }
+    }
+    public void ActivateLever(Lever lever)
+    {
+        lever.Activate();
+        foreach(Door d in doors)
+            if (d.name == lever.doorTarget)
+            {
+                d.Open();
+                break;
+            }
+    }
+    public Lever GetInteractableLever()
+    {
+        foreach (Lever lever in levers)
+        {
+            if(lever.IsTileOccupied(Mathf.FloorToInt(p.x/tilemap.tileWidth), Mathf.FloorToInt(p.y/tilemap.tileHeight),tilemap.tileWidth))
+                return lever;
+        }
+        return null;
     }
     public void LoadAndSpawn(string mapName, string travelPoint)
     {

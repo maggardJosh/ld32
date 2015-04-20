@@ -26,6 +26,7 @@ public class GameScript : MonoBehaviour
         FLabel versionLabel = new FLabel(C.smallFontName, C.versionNumber);
         versionLabel.y = -Futile.screen.height / 2 + versionLabel.textRect.height;
         C.getCameraInstance().AddChild(versionLabel);
+        C.getCameraInstance().MoveToFront();
         Go.to(versionLabel, 6.0f, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadIn));
 
     }

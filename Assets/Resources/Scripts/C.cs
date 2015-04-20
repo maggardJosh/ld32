@@ -18,7 +18,7 @@ public class C
     public static readonly List<int> HOOK_LIST = new List<int> { 37,38,39,40 };
     public static readonly List<int> ONE_WAY_LIST = new List<int> { 50 };
 
-    public const string versionNumber = "v0.2";
+    public const string versionNumber = "v0.3";
 
     public static bool isTransitioning = false;
 

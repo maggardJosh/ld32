@@ -10,13 +10,12 @@ public class Door : FSprite
     private enum State
     {
         CLOSED,
-        OPENING,
         OPEN
     }
     private Boolean isVertical;
     private State currentState;
 
-    string name = "";
+    public string name = "";
     public Door(float x, float y, string name, Boolean vert)
         : base("door")
     {
@@ -28,8 +27,18 @@ public class Door : FSprite
         this.name = name;
     }
 
+    public void Open()
+    {
+        currentState = State.OPEN;
+        C.isTransitioning = true;
+        C.getCameraInstance().shake(1.0f, 1.0f);
+        Go.to(this, 1.0f, new TweenConfig().floatProp("y", 64, true).setEaseType(EaseType.QuadIn).onComplete((t) => { C.isTransitioning = false; }));
+    }
+
     public bool IsTileOccupied(int x, int y, float tileWidth)
     {
+        if (currentState == State.OPEN)
+            return false;
         bool result = Mathf.FloorToInt(this.x / tileWidth) == x && Mathf.FloorToInt(this.y / tileWidth) == y;
         if (!result)
         {

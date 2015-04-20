@@ -8,13 +8,14 @@ public class MapLoader
 {
     public static void LoadObjects(World world, List<XMLNode> objects)
     {
+                    string name = "";
+                    string mapTarget = "";
+                    string target = "";
         foreach (XMLNode node in objects)
             switch (node.attributes["type"].ToUpper())
             {
                 case "TRAVELPOINT":
-                    string name = node.attributes["name"];
-                    string mapTarget = "";
-                    string target = "";
+                    name = node.attributes["name"];
                     float x, y, width, height;
                     float.TryParse(node.attributes["x"], out x);
                     float.TryParse(node.attributes["y"], out y);
@@ -48,6 +49,20 @@ public class MapLoader
                     }
 
                     world.addDoor(new Door(x, y, name, width < height));
+                    break;
+                case "LEVER":
+                    name = node.attributes["name"];
+                    float.TryParse(node.attributes["x"], out x);
+                    float.TryParse(node.attributes["y"], out y);
+                    target = "";
+                    foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                    {
+                        switch (property.attributes["name"].ToUpper())
+                        {
+                            case "DOOR": target = property.attributes["value"]; break;
+                        }
+                    }
+                    world.addLever(new Lever(x + 16, -y - 16, name, target));
                     break;
             }
     }
