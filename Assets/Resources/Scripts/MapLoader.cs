@@ -8,9 +8,9 @@ public class MapLoader
 {
     public static void LoadObjects(World world, List<XMLNode> objects)
     {
-                    string name = "";
-                    string mapTarget = "";
-                    string target = "";
+        string name = "";
+        string mapTarget = "";
+        string target = "";
         foreach (XMLNode node in objects)
             switch (node.attributes["type"].ToUpper())
             {
@@ -90,7 +90,7 @@ public class MapLoader
                             case "DOOR": target = property.attributes["value"]; break;
                         }
                     }
-                    world.addSlamButton(new SlamButton(x+64, -y - 16, name, target));
+                    world.addSlamButton(new SlamButton(x + 64, -y - 16, name, target));
                     break;
                 case "CEILBUTTON":
                     name = node.attributes["name"];
@@ -135,7 +135,7 @@ public class MapLoader
                         }
                     }
                     world.addPowerup(new Powerup(x + 16, -y - 16, powerup));
-                    break; 
+                    break;
                 case "BREAKABLEWALL":
                     name = node.attributes["name"];
                     float.TryParse(node.attributes["x"], out x);

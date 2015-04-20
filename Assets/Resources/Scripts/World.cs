@@ -139,10 +139,9 @@ public class World : FContainer
             tileX = lastTileX;
             lastTileX = temp;
         }
-        RXDebug.Log(tileX, lastTileX, tileY);
-        
-        foreach (BreakableWall wall in breakableWalls)
-            for (; tileX <= lastTileX; tileX++)
+
+        for (; tileX <= lastTileX; tileX++)
+            foreach (BreakableWall wall in breakableWalls)
                 if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                     wall.Open();
     }
@@ -201,10 +200,10 @@ public class World : FContainer
         foreach (Door door in doors)
             if (door.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                 return false;
-        if(checkBreakableWalls)
-        foreach (BreakableWall wall in breakableWalls)
-            if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
-                return false;
+        if (checkBreakableWalls)
+            foreach (BreakableWall wall in breakableWalls)
+                if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                    return false;
         foreach (SlamButton button in slamButtons)
             if (button.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                 return false;
