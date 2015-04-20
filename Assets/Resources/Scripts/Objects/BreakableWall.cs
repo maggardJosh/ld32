@@ -20,6 +20,8 @@ public class BreakableWall : FSprite
     public void Open()
     {
         C.getCameraInstance().shake(1.0f, .5f);
+        foreach(Particle p in Particle.CloudParticle.GetBreakableParticles(this.GetPosition()))
+            Futile.stage.AddChild(p);
         this.isVisible = false;
     }
 

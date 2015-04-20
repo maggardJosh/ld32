@@ -9,8 +9,10 @@ public class World : FContainer
     FTmxMap map;
     Player p;
     FTilemap tilemap;
+    FTilemap foregroundTilemap;
     FContainer background;
     FContainer playerLayer;
+    FContainer foreground;
 
     List<WorldTravelPoint> travelPoints = new List<WorldTravelPoint>();
     List<Door> doors = new List<Door>();
@@ -21,6 +23,7 @@ public class World : FContainer
     {
         background = new FContainer();
         playerLayer = new FContainer();
+        foreground = new FContainer();
         this.p = new Player();
         this.p.world = this;
         C.getCameraInstance().follow(p);
@@ -29,11 +32,13 @@ public class World : FContainer
         playerLayer.AddChild(p);
         this.AddChild(background);
         this.AddChild(playerLayer);
+        this.AddChild(foreground);
         Futile.instance.SignalUpdate += Update;
     }
     public void LoadMap(string mapName)
     {
         background.RemoveAllChildren();
+        foreground.RemoveAllChildren();
 
         travelPoints.Clear();
         doors.Clear();
@@ -42,10 +47,14 @@ public class World : FContainer
         this.map = new FTmxMap();
         this.map.LoadTMX("Maps/" + mapName);
         tilemap = (FTilemap)this.map.getLayerNamed("tilemap");
+        foregroundTilemap = (FTilemap)this.map.getLayerNamed("foreground");
 
         p.tilemap = this.tilemap;
         tilemap.clipNode = C.getCameraInstance();
+        foregroundTilemap.clipNode = C.getCameraInstance();
+        RXDebug.Log(foregroundTilemap);
         background.AddChild(tilemap);
+        foreground.AddChild(foregroundTilemap);
         MapLoader.LoadObjects(this, map.objects);
         C.getCameraInstance().setWorldBounds(new Rect(0, -tilemap.height, tilemap.width, tilemap.height));
         Futile.stage.AddChild(C.getCameraInstance());

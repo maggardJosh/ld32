@@ -172,6 +172,8 @@ public class Player : FAnimatedSprite
                     {
                         usedDoubleJump = true;
                         currentState = State.DOUBLE_JUMP;
+                        foreach (Particle p in Particle.CloudParticle.GetDoubleJumpParticles(this.GetPosition()))
+                            Futile.stage.AddChild(p);
                     }
                     if (grounded)
                     {
