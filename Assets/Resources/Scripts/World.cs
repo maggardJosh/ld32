@@ -146,16 +146,38 @@ public class World : FContainer
         else
             step = -1;
 
-        RXDebug.Log(lastTileX, tileX, tileY);
-        for (; step > 0 ? lastTileX <= tileX : lastTileX >= tileX; lastTileX += step)
+        for (lastTileX = Mathf.FloorToInt(lastPos.x / tilemap.tileWidth); step > 0 ? lastTileX <= tileX : lastTileX >= tileX; lastTileX += step)
         {
+
             if (foregroundTilemap.getFrameNum(lastTileX, -tileY) != 8 && !isPassable(lastTileX * tilemap.tileWidth, tileY * tilemap.tileWidth))
             {
-                RXDebug.Log("HIT", lastTileX, tileX, tileY, foregroundTilemap.getFrameNum(lastTileX,- tileY) );
                 return lastTileX;
             }
         }
         return -1;
+    }
+
+    public bool CheckWallButton(Vector2 lastPos, Vector2 position)
+    {
+        int lastTileX = Mathf.FloorToInt(lastPos.x / tilemap.tileWidth);
+        int tileX = Mathf.FloorToInt(position.x / tilemap.tileWidth);
+        int tileY = Mathf.FloorToInt(position.y / tilemap.tileHeight);
+        int step;
+        if (lastTileX < tileX)
+            step = 1;
+        else
+            step = -1;
+
+        foreach (WallButton button in wallButtons)
+            for (lastTileX = Mathf.FloorToInt(lastPos.x / tilemap.tileWidth); step > 0 ? lastTileX <= tileX : lastTileX >= tileX; lastTileX += step)
+            {
+                if (button.IsTileOccupied(lastTileX, tileY, tilemap.tileWidth))
+                {
+                    ActivateWallButton(button);
+                    return true;
+                }
+            }
+        return false;
     }
     public bool isPassable(float x, float y)
     {
@@ -241,7 +263,11 @@ public class World : FContainer
         lever.Activate();
         OpenDoorWithCam(lever.doorTarget);
     }
-
+    public void ActivateWallButton(WallButton button)
+    {
+        button.Activate();
+        OpenDoorWithCam(button.doorTarget);
+    }
     public void ActivateFloorButton(FloorButton button)
     {
         button.Activate();

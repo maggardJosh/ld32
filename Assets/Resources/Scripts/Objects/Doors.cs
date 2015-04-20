@@ -31,7 +31,10 @@ public class Door : FSprite
     {
         currentState = State.OPEN;
         C.getCameraInstance().shake(1.0f, 1.0f);
-        Go.to(this, 1.0f, new TweenConfig().floatProp("y", 64, true).setEaseType(EaseType.QuadIn).onComplete((t) => { onCompleteAction.Invoke(); }));
+        if (this.isVertical)
+            Go.to(this, 1.0f, new TweenConfig().floatProp("y", 64, true).setEaseType(EaseType.QuadIn).onComplete((t) => { onCompleteAction.Invoke(); }));
+        else
+            Go.to(this, 1.0f, new TweenConfig().floatProp("x", 64, true).setEaseType(EaseType.QuadIn).onComplete((t) => { onCompleteAction.Invoke(); }));
     }
 
     public bool IsTileOccupied(int x, int y, float tileWidth)
@@ -41,10 +44,10 @@ public class Door : FSprite
         bool result = Mathf.FloorToInt(this.x / tileWidth) == x && Mathf.FloorToInt(this.y / tileWidth) == y;
         if (!result)
         {
-            if(!isVertical)
-                return Mathf.FloorToInt(this.x / tileWidth) ==( x +1) && Mathf.FloorToInt(this.y / tileWidth) == y;
+            if (!isVertical)
+                return Mathf.FloorToInt(this.x / tileWidth) == (x + 1) && Mathf.FloorToInt(this.y / tileWidth) == y;
             else
-                return Mathf.FloorToInt(this.x / tileWidth) == x && Mathf.FloorToInt(this.y / tileWidth) == (y+1);
+                return Mathf.FloorToInt(this.x / tileWidth) == x && Mathf.FloorToInt(this.y / tileWidth) == (y + 1);
         }
         return result;
     }
