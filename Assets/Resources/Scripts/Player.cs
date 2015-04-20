@@ -425,6 +425,10 @@ public class Player : FAnimatedSprite
                     foreach (Particle p in Particle.CloudParticle.GetSlamParticles(new Vector2(this.x, floorY)))
                         Futile.stage.AddChild(p);
                     currentState = State.SLAM_LAND;
+                    this.y = floorY;
+                    FloorButton button = world.getFloorButton(this.x, floorY);
+                    if (button != null)
+                        world.ActivateFloorButton(button);
                     C.getCameraInstance().shake(SLAM_LAND_SHAKE, SLAM_LAND_SHAKE_TIME);
                 }
                 break;
@@ -666,7 +670,7 @@ public class Player : FAnimatedSprite
         CheckHookDown();
         FloorButton button = world.getFloorButton(this.x, this.y);
         if (button != null)
-            this.y = button.y + 5;
+            this.y = button.y + 6;
     }
     private void CheckHookUp()
     {

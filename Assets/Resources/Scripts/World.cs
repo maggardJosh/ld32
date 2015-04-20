@@ -140,7 +140,7 @@ public class World : FContainer
         return foregroundTilemap.isOneWay(x, y);
     }
     public FloorButton getFloorButton(float x, float y)
-    { 
+    {
         int tileX = Mathf.FloorToInt(x / foregroundTilemap.tileWidth);
         int tileY = Mathf.FloorToInt(y / foregroundTilemap.tileHeight);
         foreach (FloorButton button in floorButtons)
@@ -172,8 +172,18 @@ public class World : FContainer
     public void ActivateLever(Lever lever)
     {
         lever.Activate();
+        OpenDoorWithCam(lever.doorTarget);
+    }
+
+    public void ActivateFloorButton(FloorButton button)
+    {
+        button.Activate();
+        OpenDoorWithCam(button.doorTarget);
+    }
+    private void OpenDoorWithCam(string doorName)
+    {
         foreach (Door d in doors)
-            if (d.name == lever.doorTarget)
+            if (d.name == doorName)
             {
                 FNode node = new FNode();
                 node.SetPosition(p.GetPosition());
