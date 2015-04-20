@@ -72,7 +72,7 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 15, 16, 17 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 18, 19 }, 20, false));
         addAnimation(new FAnimation(State.ATTACK_THREE_EXTEND.ToString(), new int[] { 20 }, 100, false));
-        addAnimation(new FAnimation(State.TAIL_HANG_TRANS_IN.ToString(), new int[] { 27 }, 100, false));
+        addAnimation(new FAnimation(State.TAIL_HANG_TRANS_IN.ToString(), new int[] { 28,29,30,31 }, 50, false));
         addAnimation(new FAnimation(State.TAIL_HANG.ToString(), new int[] { 27 }, 100, true));
         addAnimation(new FAnimation(State.TAIL_HANG_FALL.ToString(), new int[] { 28, 29, 30, 31 }, 50, true));
         addAnimation(new FAnimation(State.SLAM_TRANS_IN.ToString(), new int[] { 28, 29, 30, 31, 32, 33 }, 20, false));
@@ -663,7 +663,7 @@ public class Player : FAnimatedSprite
             yVel = 0;
         }
     }
-    private const float TRANS_HOOK_TIME = .05f;
+    private const float TRANS_HOOK_TIME = .2f;
     private void CheckHookDown()
     {
         if (!tailGrab || C.getKey(C.DOWN_KEY) || currentState == State.TAIL_HANG_FALL)
