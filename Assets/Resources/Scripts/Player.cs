@@ -43,6 +43,7 @@ public class Player : FAnimatedSprite
     private bool levers = true;
     private bool chargeJump = true;
     private bool airJumpAttack = false;
+    private bool slam = false;
 
     public World world;
     private Lever interactLever;
@@ -199,7 +200,7 @@ public class Player : FAnimatedSprite
                 }
                 if (currentState == State.JUMP || currentState == State.DOUBLE_JUMP)
                 {
-                    if (C.getKey(C.DOWN_KEY) && !lastDownPress)
+                    if (slam && C.getKey(C.DOWN_KEY) && !lastDownPress)
                     {
                         currentState = State.SLAM_TRANS_IN;
                         return;
@@ -361,7 +362,7 @@ public class Player : FAnimatedSprite
                     xVel -= superjumpAirSpeed * Time.deltaTime;
                     isFacingLeft = true;
                 }
-                if (C.getKey(C.DOWN_KEY) && !lastDownPress && yVel <= 0)
+                if (slam && C.getKey(C.DOWN_KEY) && !lastDownPress && yVel <= 0)
                 {
                     currentState = State.SLAM_TRANS_IN;
                     return;
