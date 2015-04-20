@@ -20,7 +20,9 @@ public class World : FContainer
     List<BreakableWall> breakableWalls = new List<BreakableWall>();
     List<FloorButton> floorButtons = new List<FloorButton>();
     List<CeilButton> ceilButtons = new List<CeilButton>();
+    List<SlamButton> slamButtons = new List<SlamButton>();
     List<Powerup> powerups = new List<Powerup>();
+    List<WallButton> wallButtons = new List<WallButton>();
     string lastMap = "";
     string lastTravelPoint = "";
     public World()
@@ -50,6 +52,8 @@ public class World : FContainer
         breakableWalls.Clear();
         floorButtons.Clear();
         ceilButtons.Clear();
+        wallButtons.Clear();
+        slamButtons.Clear();
         powerups.Clear();
         this.map = new FTmxMap();
         this.map.LoadTMX("Maps/" + mapName);
@@ -82,6 +86,8 @@ public class World : FContainer
     }
     public void addBreakableWall(BreakableWall wall)
     {
+        if (Player.GetSaveStateInstance().activatedObjects.Contains(wall.name))
+            return;
         breakableWalls.Add(wall);
         background.AddChild(wall);
     }
@@ -96,9 +102,19 @@ public class World : FContainer
         floorButtons.Add(button);
         background.AddChild(button);
     }
+    public void addSlamButton(SlamButton button)
+    {
+        slamButtons.Add(button);
+        background.AddChild(button);
+    }
     public void addCeilButton(CeilButton button)
     {
         ceilButtons.Add(button);
+        background.AddChild(button);
+    }
+    public void addWallButton(WallButton button)
+    {
+        wallButtons.Add(button);
         background.AddChild(button);
     }
     public void addPowerup(Powerup powerup)
@@ -123,12 +139,58 @@ public class World : FContainer
             tileX = lastTileX;
             lastTileX = temp;
         }
+        RXDebug.Log(tileX, lastTileX, tileY);
+        
         foreach (BreakableWall wall in breakableWalls)
             for (; tileX <= lastTileX; tileX++)
                 if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                     wall.Open();
     }
-    public bool isPassable(float x, float y)
+    public int ExtendPolePassable(Vector2 lastPos, Vector2 position)
+    {
+        int lastTileX = Mathf.FloorToInt(lastPos.x / tilemap.tileWidth);
+        int tileX = Mathf.FloorToInt(position.x / tilemap.tileWidth);
+        int tileY = Mathf.FloorToInt(position.y / tilemap.tileHeight) + 1;
+        int step;
+        if (lastTileX < tileX)
+            step = 1;
+        else
+            step = -1;
+
+        for (lastTileX = Mathf.FloorToInt(lastPos.x / tilemap.tileWidth); step > 0 ? lastTileX <= tileX : lastTileX >= tileX; lastTileX += step)
+        {
+
+            if (foregroundTilemap.getFrameNum(lastTileX, -tileY) != 8 && !isPassable(lastTileX * tilemap.tileWidth, tileY * tilemap.tileWidth, false))
+            {
+                return lastTileX;
+            }
+        }
+        return -1;
+    }
+
+    public bool CheckWallButton(Vector2 lastPos, Vector2 position)
+    {
+        int lastTileX = Mathf.FloorToInt(lastPos.x / tilemap.tileWidth);
+        int tileX = Mathf.FloorToInt(position.x / tilemap.tileWidth);
+        int tileY = Mathf.FloorToInt(position.y / tilemap.tileHeight);
+        int step;
+        if (lastTileX < tileX)
+            step = 1;
+        else
+            step = -1;
+
+        foreach (WallButton button in wallButtons)
+            for (lastTileX = Mathf.FloorToInt(lastPos.x / tilemap.tileWidth); step > 0 ? lastTileX <= tileX : lastTileX >= tileX; lastTileX += step)
+            {
+                if (button.IsTileOccupied(lastTileX, tileY, tilemap.tileWidth))
+                {
+                    ActivateWallButton(button);
+                    return true;
+                }
+            }
+        return false;
+    }
+    public bool isPassable(float x, float y, bool checkBreakableWalls = true)
     {
         bool result = foregroundTilemap.isPassable(x, y);
         int tileX = Mathf.FloorToInt(x / foregroundTilemap.tileWidth);
@@ -139,8 +201,12 @@ public class World : FContainer
         foreach (Door door in doors)
             if (door.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                 return false;
+        if(checkBreakableWalls)
         foreach (BreakableWall wall in breakableWalls)
             if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                return false;
+        foreach (SlamButton button in slamButtons)
+            if (button.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                 return false;
 
         return result;
@@ -158,6 +224,16 @@ public class World : FContainer
         int tileX = Mathf.FloorToInt(x / foregroundTilemap.tileWidth);
         int tileY = Mathf.FloorToInt(y / foregroundTilemap.tileHeight);
         foreach (FloorButton button in floorButtons)
+            if (button.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                return button;
+        return null;
+    }
+
+    public SlamButton getSlamButton(float x, float y)
+    {
+        int tileX = Mathf.FloorToInt(x / foregroundTilemap.tileWidth);
+        int tileY = Mathf.FloorToInt(y / foregroundTilemap.tileHeight);
+        foreach (SlamButton button in slamButtons)
             if (button.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                 return button;
         return null;
@@ -212,11 +288,20 @@ public class World : FContainer
         lever.Activate();
         OpenDoorWithCam(lever.doorTarget);
     }
-
+    public void ActivateWallButton(WallButton button)
+    {
+        button.Activate();
+        OpenDoorWithCam(button.doorTarget);
+    }
     public void ActivateFloorButton(FloorButton button)
     {
         button.Activate();
         OpenDoorWithCam(button.doorTarget);
+    }
+    public void ActivateSlamButton(SlamButton button)
+    {
+        C.isTransitioning = true;
+        button.Activate(p, () => { OpenDoorWithCam(button.doorTarget); });
     }
     public void ActivateCeilButton(CeilButton button)
     {
@@ -250,6 +335,7 @@ public class World : FContainer
     }
     public void LoadAndSpawn(string mapName, string travelPoint)
     {
+        Player.SaveRoom();
         this.lastMap = mapName;
         this.lastTravelPoint = travelPoint;
         LoadMap(mapName);

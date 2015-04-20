@@ -6,6 +6,40 @@ using UnityEngine;
 
 public class Player : FAnimatedSprite
 {
+    public class SaveState
+    {
+        public bool thirdCombo = true;
+        public bool poleExtend = true;
+        public bool tailGrab = true;
+        public bool doubleJump = true;
+        public bool levers = true;
+        public bool chargeJump = true;
+        public bool airJumpAttack = false;
+        public bool slam = true;
+        public bool airAttackEndGame = true;
+
+        public List<string> activatedObjects = new List<string>();
+        public SaveState()
+        {
+
+        }
+        public SaveState(SaveState stateToCopy)
+        {
+            this.thirdCombo = stateToCopy.thirdCombo;
+            this.poleExtend = stateToCopy.thirdCombo;
+            this.tailGrab = stateToCopy.thirdCombo;
+            this.doubleJump = stateToCopy.thirdCombo;
+            this.levers = stateToCopy.thirdCombo;
+            this.chargeJump = stateToCopy.thirdCombo;
+            this.airJumpAttack = stateToCopy.thirdCombo;
+            this.slam = stateToCopy.thirdCombo;
+            this.airAttackEndGame = stateToCopy.thirdCombo;
+
+
+            this.activatedObjects = new List<string>();
+            this.activatedObjects.AddRange(stateToCopy.activatedObjects);
+        }
+    }
     private enum State
     {
         IDLE,
@@ -36,16 +70,29 @@ public class Player : FAnimatedSprite
     private FSprite extendPoleMiddle;
     private FSprite extendPoleEnd;
 
-    public bool thirdCombo = true;
-    public bool poleExtend = true;
-    public bool tailGrab = true;
-    public bool doubleJump = true;
-    public bool levers = true;
-    public bool chargeJump = true;
-    public bool airJumpAttack = false;
-    public bool slam = true;
-    public bool airAttackEndGame = true;
+    private static SaveState saveState;
+    private static SaveState lastRoomSaveState;
+    public static void ResetSaveState()
+    {
+        saveState = new SaveState(GetLastRoomSaveStateInstance());
+    }
+    public static SaveState GetSaveStateInstance()
+    {
+        if (saveState == null)
+            saveState = new SaveState();
+        return saveState;
+    }
+    public static SaveState GetLastRoomSaveStateInstance()
+    {
+        if (lastRoomSaveState == null)
+            lastRoomSaveState = new SaveState(GetSaveStateInstance());
+        return lastRoomSaveState;
+    }
 
+    public static void SaveRoom()
+    {
+        lastRoomSaveState = new SaveState(GetSaveStateInstance());
+    }
     public World world;
     private Lever interactLever;
     public FSprite indication;
@@ -156,6 +203,10 @@ public class Player : FAnimatedSprite
     private const float ATTACK_AIR_COUNT_VALUE = .5f;
     private const float DEATH_TIME = 1.0f;
     private Vector2 lastExtendPos = Vector2.zero;
+    private float slamDist = 0;
+    private float slamStart = 0;
+    private float SLAM_BUTTON_DIST = 32 * 10;
+    private float SLAM_PARTICLE_DIST = 32 * 7;
     public void Update()
     {
         if (C.isDebug)
@@ -181,7 +232,7 @@ public class Player : FAnimatedSprite
                 bool isActivelyMoving = false;
                 if (C.getKey(C.JUMP_KEY) && !lastJumpPress && currentState != State.DOUBLE_JUMP)
                 {
-                    if (currentState == State.JUMP && doubleJump)
+                    if (currentState == State.JUMP && GetSaveStateInstance().doubleJump)
                     {
                         usedDoubleJump = true;
                         currentState = State.DOUBLE_JUMP;
@@ -196,14 +247,14 @@ public class Player : FAnimatedSprite
                         yVel = jumpStrength;
                     }
                 }
-                if (C.getKey(C.DOWN_KEY) && (!C.getKey(C.LEFT_KEY) || !C.getKey(C.RIGHT_KEY)) && !lastDownPress && grounded && chargeJump)
+                if (C.getKey(C.DOWN_KEY) && (!C.getKey(C.LEFT_KEY) || !C.getKey(C.RIGHT_KEY)) && !lastDownPress && grounded && GetSaveStateInstance().chargeJump)
                 {
                     currentState = State.SUPERJUMP_CHARGE;
                     return;
                 }
                 if (currentState == State.JUMP || currentState == State.DOUBLE_JUMP)
                 {
-                    if (slam && C.getKey(C.DOWN_KEY) && !lastDownPress)
+                    if (GetSaveStateInstance().slam && C.getKey(C.DOWN_KEY) && !lastDownPress)
                     {
                         currentState = State.SLAM_TRANS_IN;
                         return;
@@ -281,7 +332,7 @@ public class Player : FAnimatedSprite
                 break;
             case State.ATTACK_TWO:
                 xVel *= groundFriction;
-                if (thirdCombo)
+                if (GetSaveStateInstance().thirdCombo)
                 {
                     if (stateCount > ATTACK_TWO_TIME)
                         currentState = State.IDLE;
@@ -299,28 +350,52 @@ public class Player : FAnimatedSprite
                 if (this.IsStopped)
                 {
                     xVel = 0;
-                    Futile.stage.AddChild(extendPoleMiddle);
-                    Futile.stage.AddChild(extendPoleEnd);
+                    this.container.AddChild(extendPoleMiddle);
+                    this.container.AddChild(extendPoleEnd);
                     AttackExtendLength = 0;
                     currentState = State.ATTACK_THREE_EXTEND;
-
-                    attackExtendTween = Go.to(this, ATTACK_THREE_EXTEND_TIME / 8, new TweenConfig().floatProp("AttackExtendLength", poleExtend ? poleExtendLength : 0).setEaseType(EaseType.QuartIn).onComplete(
+                    lastExtendPos = this.GetPosition();
+                    attackExtendTween = Go.to(this, ATTACK_THREE_EXTEND_TIME / 8, new TweenConfig().floatProp("AttackExtendLength", GetSaveStateInstance().poleExtend ? poleExtendLength : 0).setEaseType(EaseType.QuartIn).onComplete(
                         (t) =>
                         {
-                            foreach (Particle p in Particle.CloudParticle.GetThirdAttackParticles(this.GetPosition(), isFacingLeft))
-                                Futile.stage.AddChild(p);
-                            C.getCameraInstance().shake(1.0f, .2f);
-                            Go.to(this, ATTACK_THREE_TIME / 2, new TweenConfig().floatProp("AttackExtendLength", 0).setEaseType(EaseType.QuadIn).onComplete((t2) =>
+                            world.tryBreakWall(lastExtendPos, extendPoleEnd.GetPosition());
+                            int tileCollision = world.ExtendPolePassable(lastExtendPos, extendPoleEnd.GetPosition());
+                            if (tileCollision != -1)
                             {
-                                extendPoleEnd.RemoveFromContainer();
-                                extendPoleMiddle.RemoveFromContainer();
-                                currentState = State.IDLE;
-                            }));
+
+                                float tileCollisionPos = tileCollision * tilemap.tileWidth;
+                                if (tileCollisionPos > this.x)
+                                    AttackExtendLength = Mathf.Max(0, tileCollision * tilemap.tileWidth - this.x - 32f);
+                                else
+                                    AttackExtendLength = Mathf.Max(0, this.x - 64f - tileCollision * tilemap.tileWidth);
+
+                            }
+                            world.CheckWallButton(lastExtendPos, extendPoleEnd.GetPosition());
+                            TweenExtendRetract();
                         }));
                 }
                 break;
             case State.ATTACK_THREE_EXTEND:
                 world.tryBreakWall(lastExtendPos, extendPoleEnd.GetPosition());
+                if (attackExtendTween.state == TweenState.Running)
+                {
+                    int tileCollision = world.ExtendPolePassable(lastExtendPos, extendPoleEnd.GetPosition());
+                    if (tileCollision != -1)
+                    {
+
+                        attackExtendTween.pause();
+                        //Go.removeTween(attackExtendTween);
+                        float tileCollisionPos = tileCollision * tilemap.tileWidth;
+                        if (tileCollisionPos > this.x)
+                            AttackExtendLength = Mathf.Max(0, tileCollision * tilemap.tileWidth - this.x - 32f);
+                        else
+                            AttackExtendLength = Mathf.Max(0, this.x - 64f - tileCollision * tilemap.tileWidth);
+                        world.CheckWallButton(lastExtendPos, extendPoleEnd.GetPosition());
+                        TweenExtendRetract();
+                    }
+                }
+                if (retractTween != null && retractTween.state == TweenState.Paused && !C.isTransitioning)
+                    retractTween.play();
                 lastExtendPos = extendPoleEnd.GetPosition();
                 break;
             case State.ATTACK_AIR:
@@ -340,6 +415,7 @@ public class Player : FAnimatedSprite
                 stateCount += Time.deltaTime;
                 if (stateCount > DEATH_TIME)
                 {
+                    Player.ResetSaveState();
                     world.Respawn();
                     currentState = State.IDLE;
                     this.isVisible = true;
@@ -366,7 +442,7 @@ public class Player : FAnimatedSprite
                     xVel -= superjumpAirSpeed * Time.deltaTime;
                     isFacingLeft = true;
                 }
-                if (slam && C.getKey(C.DOWN_KEY) && !lastDownPress && yVel <= 0)
+                if (GetSaveStateInstance().slam && C.getKey(C.DOWN_KEY) && !lastDownPress && yVel <= 0)
                 {
                     currentState = State.SLAM_TRANS_IN;
                     return;
@@ -420,11 +496,17 @@ public class Player : FAnimatedSprite
             case State.SLAM_TRANS_IN:
                 if (this.IsStopped)
                     currentState = State.SLAM_MOVE;
+                slamDist = 0;
+                slamStart = this.y;
                 return;
             case State.SLAM_MOVE:
                 yVel = slamSpeed * maxYVel;
                 xVel = 0;
                 speed = 0;
+                slamDist = slamStart - this.y;
+                if (slamDist > SLAM_PARTICLE_DIST)
+                    foreach (Particle p in Particle.CloudParticle.GetMegaSlamParticles(this.GetPosition()))
+                        Futile.stage.AddChild(p);
                 if (grounded)
                 {
                     float floorY = Mathf.FloorToInt((this.y) / tilemap.tileHeight) * tilemap.tileHeight;
@@ -438,6 +520,13 @@ public class Player : FAnimatedSprite
                     FloorButton button = world.getFloorButton(this.x, floorY);
                     if (button != null)
                         world.ActivateFloorButton(button);
+                    if (slamDist >= SLAM_BUTTON_DIST)
+                    {
+
+                        SlamButton slamButton = world.getSlamButton(this.x, floorY - tilemap.tileHeight / 2);
+                        if (slamButton != null)
+                            world.ActivateSlamButton(slamButton);
+                    }
                     C.getCameraInstance().shake(SLAM_LAND_SHAKE, SLAM_LAND_SHAKE_TIME);
                 }
                 break;
@@ -494,6 +583,21 @@ public class Player : FAnimatedSprite
         lastDownPress = C.getKey(C.DOWN_KEY);
         lastActionPress = C.getKey(C.ACTION_KEY);
     }
+    Tween retractTween;
+    private void TweenExtendRetract()
+    {
+        foreach (Particle p in Particle.CloudParticle.GetThirdAttackParticles(this.GetPosition(), isFacingLeft))
+            Futile.stage.AddChild(p);
+        C.getCameraInstance().shake(1.0f, .2f);
+        retractTween = Go.to(this, ATTACK_THREE_TIME / 3, new TweenConfig().floatProp("AttackExtendLength", 0).setEaseType(EaseType.QuadIn).onComplete((t2) =>
+        {
+            extendPoleEnd.RemoveFromContainer();
+            extendPoleMiddle.RemoveFromContainer();
+            currentState = State.IDLE;
+        }));
+        if (C.isTransitioning)
+            retractTween.pause();
+    }
     private void CheckPowerupCollision()
     {
         Powerup p = world.getPowerup(this.x, this.y);
@@ -509,25 +613,25 @@ public class Player : FAnimatedSprite
     private void CheckPowerupKeys()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
-            thirdCombo = !thirdCombo;
+            GetSaveStateInstance().thirdCombo = !GetSaveStateInstance().thirdCombo;
         if (Input.GetKeyDown(KeyCode.Alpha2))
-            tailGrab = !tailGrab;
+            GetSaveStateInstance().tailGrab = !GetSaveStateInstance().tailGrab;
         if (Input.GetKeyDown(KeyCode.Alpha3))
-            slam = !slam;
+            GetSaveStateInstance().slam = !GetSaveStateInstance().slam;
         if (Input.GetKeyDown(KeyCode.Alpha4))
-            doubleJump = !doubleJump;
+            GetSaveStateInstance().doubleJump = !GetSaveStateInstance().doubleJump;
         if (Input.GetKeyDown(KeyCode.Alpha5))
-            poleExtend = !poleExtend;
+            GetSaveStateInstance().poleExtend = !GetSaveStateInstance().poleExtend;
         if (Input.GetKeyDown(KeyCode.Alpha6))
-            levers = !levers;
+            GetSaveStateInstance().levers = !GetSaveStateInstance().levers;
         if (Input.GetKeyDown(KeyCode.Alpha7))
-            chargeJump = !chargeJump;
+            GetSaveStateInstance().chargeJump = !GetSaveStateInstance().chargeJump;
         if (Input.GetKeyDown(KeyCode.Alpha8))
-            airAttackEndGame = !airAttackEndGame;
+            GetSaveStateInstance().airAttackEndGame = !GetSaveStateInstance().airAttackEndGame;
     }
     private void CheckInteractableObjects()
     {
-        if (levers)
+        if (GetSaveStateInstance().levers)
         {
 
             Lever interactableLever = world.GetInteractableLever();
@@ -617,7 +721,7 @@ public class Player : FAnimatedSprite
             isFacingLeft = true;
         else if (C.getKey(C.RIGHT_KEY))
             isFacingLeft = false;
-        xVel = (airAttackEndGame ? ATTACK_AIR_XVEL_ENDGAME : ATTACK_AIR_XVEL) * (isFacingLeft ? -1 : 1);
+        xVel = (GetSaveStateInstance().airAttackEndGame ? ATTACK_AIR_XVEL_ENDGAME : ATTACK_AIR_XVEL) * (isFacingLeft ? -1 : 1);
         this.play(currentState.ToString(), true);
     }
 
@@ -715,7 +819,7 @@ public class Player : FAnimatedSprite
     }
     private void CheckHookUp()
     {
-        if (tailGrab && tilemap.isHook(this.x, this.y))
+        if (GetSaveStateInstance().tailGrab && tilemap.isHook(this.x, this.y))
         {
             currentState = State.TAIL_HANG_TRANS_IN;
             Go.to(this, TRANS_HOOK_TIME, new TweenConfig().floatProp("x", Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2).floatProp("y", Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileHeight / 2).setEaseType(EaseType.Linear).onComplete((t) => { currentState = State.TAIL_HANG; }));
@@ -726,7 +830,7 @@ public class Player : FAnimatedSprite
     private const float TRANS_HOOK_TIME = .2f;
     private void CheckHookDown()
     {
-        if (!tailGrab || C.getKey(C.DOWN_KEY) || currentState == State.TAIL_HANG_FALL)
+        if (!GetSaveStateInstance().tailGrab || C.getKey(C.DOWN_KEY) || currentState == State.TAIL_HANG_FALL)
             return;
         if (tilemap.isHook(this.x, this.y))
         {

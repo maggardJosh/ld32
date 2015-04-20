@@ -46,6 +46,8 @@ public class Particle : FSprite
     }
     public void Update()
     {
+      //  if (C.isTransitioning)
+      //      return;
         this.x += vel.x * Time.deltaTime;
         this.y += vel.y * Time.deltaTime;
         vel += accel * Time.deltaTime;
@@ -101,6 +103,20 @@ public class Particle : FSprite
             return result;
         }
 
+        public static List<CloudParticle> GetMegaSlamParticles(Vector2 pos)
+        {
+            float xDisp = 20;
+            float yDisp = 100;
+            List<CloudParticle> result = new List<CloudParticle>();
+            for (int i = 0; i < 20; i++)
+            {
+                CloudParticle particle = CloudParticle.getParticle();
+                particle.activate(pos + new Vector2(RXRandom.Float() * xDisp - xDisp / 2, RXRandom.Float() * yDisp - yDisp / 2), new Vector2(RXRandom.Float() * 40 - 20, RXRandom.Float() * 20), new Vector2(RXRandom.Float() * 20 - 10, RXRandom.Float() * 0), RXRandom.Float() * 50, 1f + RXRandom.Float() * .5f, RXRandom.Float() * -.5f);
+                result.Add(particle);
+            }
+            return result;
+        }
+
         public static List<CloudParticle> GetSlamParticles(Vector2 pos)
         {
             float xDisp = 30;
@@ -111,7 +127,7 @@ public class Particle : FSprite
             for (int i = 0; i < 30; i++)
             {
                 CloudParticle particle = CloudParticle.getParticle();
-                particle.activate(pos + new Vector2(RXRandom.Float() * xDisp - xDisp / 2, RXRandom.Float() * yDisp - yDisp / 2), new Vector2(RXRandom.Float() * xVelDisp - xVelDisp/2f, RXRandom.Float() * -20), new Vector2(RXRandom.Float() * 20 - 10, RXRandom.Float() * 20), RXRandom.Float() * 10, 1f, RXRandom.Float() * -.5f);
+                particle.activate(pos + new Vector2(RXRandom.Float() * xDisp - xDisp / 2, RXRandom.Float() * yDisp - yDisp / 2), new Vector2(RXRandom.Float() * xVelDisp - xVelDisp/2f, RXRandom.Float() * 20), new Vector2(RXRandom.Float() * 20 - 10, RXRandom.Float() * 20), RXRandom.Float() * 10, 1f, RXRandom.Float() * -.5f);
                 result.Add(particle);
             }
             return result;
