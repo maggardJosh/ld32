@@ -320,6 +320,8 @@ public class Player : FAnimatedSprite
                 if (this.IsStopped)
                 {
                     world.ActivateLever(interactLever);
+                    interactLever = null;
+                    indication.RemoveFromContainer();
                     currentState = State.IDLE;
                 }
                 return;

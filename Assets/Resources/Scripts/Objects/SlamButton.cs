@@ -23,12 +23,21 @@ public class SlamButton : FSprite
         this.y = y;
         this.name = name;
         this.doorTarget = door;
-        currentState = State.INACTIVE;
+        if (!Player.GetSaveStateInstance().activatedObjects.Contains(this.name))
+            currentState = State.INACTIVE;
+        else
+        {
+            currentState = State.ACTIVATED;
+            this.SetElementByName("button_slam_on");
+            this.y -= 32;
+        }
+
     }
     private const float SLAM_BUTTON_TIME = 1.5f;
     private const float SLAM_BUTTON_DELAY = 1.0f;
     public void Activate(Player p, Action onComplete)
     {
+        Player.GetSaveStateInstance().activatedObjects.Add(this.name);
         currentState = State.ACTIVATED;
         p.y = this.y + 46;
         C.getCameraInstance().shake(2.0f, SLAM_BUTTON_DELAY + SLAM_BUTTON_TIME);

@@ -58,7 +58,7 @@
     <property name="target" value="mapTwoDoorOne"/>
    </properties>
   </object>
-  <object name="mapOneSpawn" type="TravelPoint" x="160" y="64" width="64" height="32">
+  <object name="mapOneSpawn" type="TravelPoint" x="192" y="512" width="64" height="32">
    <properties>
     <property name="map" value=""/>
     <property name="target" value=""/>
