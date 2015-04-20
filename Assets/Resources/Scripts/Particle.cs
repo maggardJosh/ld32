@@ -187,4 +187,59 @@ public class Particle : FSprite
             
         }
     }
+
+    public override void HandleAddedToStage()
+    {
+        base.HandleAddedToStage();
+    }
+
+    public class PowerupParticle : Particle
+    {
+
+        private static PowerupParticle[] particleList;
+        const int MAX_PARTICLES = 100;
+        public static PowerupParticle getParticle()
+        {
+
+            if (particleList == null)
+                particleList = new PowerupParticle[MAX_PARTICLES];
+            for (int x = 0; x < particleList.Length; x++)
+            {
+                if (particleList[x] == null)
+                {
+                    PowerupParticle p = new PowerupParticle();
+                    particleList[x] = p;
+                    return p;
+                }
+                else if (!particleList[x].isActive)
+                {
+                    return particleList[x];
+                }
+            }
+            return particleList[RXRandom.Int(MAX_PARTICLES)];
+        }
+
+        public static List<PowerupParticle> GetPowerupParticle(Vector2 pos)
+        {
+            float xDisp = 10;
+            float yDisp = 10;
+            float xVelDisp = 10;
+            
+            List<PowerupParticle> result = new List<PowerupParticle>();
+            for (int i = 0; i < 1; i++)
+            {
+                PowerupParticle particle = PowerupParticle.getParticle();
+                particle.activate(pos + new Vector2(RXRandom.Float() * xDisp - xDisp / 2, RXRandom.Float() * yDisp - yDisp / 2), new Vector2(RXRandom.Float() * xVelDisp  - xVelDisp/2f, RXRandom.Float() * 30 - 15), new Vector2(RXRandom.Float() * 20 - 10, RXRandom.Float() * 20), RXRandom.Float() * 10, 2f, RXRandom.Float() * -.5f);
+                result.Add(particle);
+            }
+            return result;
+        }
+
+        private PowerupParticle()
+            : base("powerupParticle_0" + (RXRandom.Int(3) + 1))
+        {
+
+
+        }
+    }
 }

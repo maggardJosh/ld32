@@ -36,15 +36,15 @@ public class Player : FAnimatedSprite
     private FSprite extendPoleMiddle;
     private FSprite extendPoleEnd;
 
-    private bool thirdCombo = true;
-    private bool poleExtend = true;
-    private bool tailGrab = true;
-    private bool doubleJump = true;
-    private bool levers = true;
-    private bool chargeJump = true;
-    private bool airJumpAttack = false;
-    private bool slam = true;
-    private bool airAttackEndGame = true;
+    public bool thirdCombo = true;
+    public bool poleExtend = true;
+    public bool tailGrab = true;
+    public bool doubleJump = true;
+    public bool levers = true;
+    public bool chargeJump = true;
+    public bool airJumpAttack = false;
+    public bool slam = true;
+    public bool airAttackEndGame = true;
 
     public World world;
     private Lever interactLever;
@@ -276,7 +276,7 @@ public class Player : FAnimatedSprite
                 xVel *= groundFriction;
                 if (stateCount > ATTACK_ONE_TIME)
                     currentState = State.IDLE;
-                if (C.getKey(C.ACTION_KEY) && !lastActionPress)
+                if (stateCount > .15f && C.getKey(C.ACTION_KEY) && !lastActionPress)
                     StartAttackTwo();
                 break;
             case State.ATTACK_TWO:
@@ -428,7 +428,7 @@ public class Player : FAnimatedSprite
                 if (grounded)
                 {
                     float floorY = Mathf.FloorToInt((this.y) / tilemap.tileHeight) * tilemap.tileHeight;
-                    if (world.isPassable(this.x, floorY-tilemap.tileHeight/2f))
+                    if (world.isPassable(this.x, floorY - tilemap.tileHeight / 2f))
                         floorY -= tilemap.tileHeight;
                     //floorY -= tilemap.tileHeight f;
                     foreach (Particle p in Particle.CloudParticle.GetSlamParticles(new Vector2(this.x, floorY)))
@@ -488,10 +488,23 @@ public class Player : FAnimatedSprite
             this.play(currentState.ToString());
 
         CheckInteractableObjects();
+        CheckPowerupCollision();
 
         lastJumpPress = C.getKey(C.JUMP_KEY);
         lastDownPress = C.getKey(C.DOWN_KEY);
         lastActionPress = C.getKey(C.ACTION_KEY);
+    }
+    private void CheckPowerupCollision()
+    {
+        Powerup p = world.getPowerup(this.x, this.y);
+        if (p != null)
+        {
+            this.SetPosition(p.GetPosition());
+            this.play(State.IDLE.ToString(), true);
+            yVel = -16; //Move to the pedestal
+            TryMoveDown();
+            world.ActivatePowerup(p);
+        }
     }
     private void CheckPowerupKeys()
     {

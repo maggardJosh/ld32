@@ -20,6 +20,7 @@ public class World : FContainer
     List<BreakableWall> breakableWalls = new List<BreakableWall>();
     List<FloorButton> floorButtons = new List<FloorButton>();
     List<CeilButton> ceilButtons = new List<CeilButton>();
+    List<Powerup> powerups = new List<Powerup>();
     string lastMap = "";
     string lastTravelPoint = "";
     public World()
@@ -48,6 +49,8 @@ public class World : FContainer
         levers.Clear();
         breakableWalls.Clear();
         floorButtons.Clear();
+        ceilButtons.Clear();
+        powerups.Clear();
         this.map = new FTmxMap();
         this.map.LoadTMX("Maps/" + mapName);
         tilemap = (FTilemap)this.map.getLayerNamed("tilemap");
@@ -97,6 +100,11 @@ public class World : FContainer
     {
         ceilButtons.Add(button);
         background.AddChild(button);
+    }
+    public void addPowerup(Powerup powerup)
+    {
+        powerups.Add(powerup);
+        background.AddChild(powerup);
     }
     public string lastWarp = "";
     private void Update()
@@ -162,6 +170,21 @@ public class World : FContainer
             if (button.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                 return button;
         return null;
+    }
+
+    public Powerup getPowerup(float x, float y)
+    {
+        int tileX = Mathf.FloorToInt(x / foregroundTilemap.tileWidth);
+        int tileY = Mathf.FloorToInt(y / foregroundTilemap.tileHeight);
+        foreach (Powerup powerup in powerups)
+            if (powerup.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                return powerup;
+        return null;
+    }
+    public void ActivatePowerup(Powerup p)
+    {
+        powerups.Remove(p);
+        p.ActivatePowerup(this.p);
     }
     private void CheckTravelPoints()
     {

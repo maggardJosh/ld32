@@ -91,6 +91,20 @@ public class MapLoader
                         }
                     }
                     world.addCeilButton(new CeilButton(x, -y - 16, name, target));
+                    break;
+                case "POWERUP":
+                    float.TryParse(node.attributes["x"], out x);
+                    float.TryParse(node.attributes["y"], out y);
+                    int powerup = 1;
+                    target = "";
+                    foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                    {
+                        switch (property.attributes["name"].ToUpper())
+                        {
+                            case "POWERUP": int.TryParse(property.attributes["value"], out powerup); break;
+                        }
+                    }
+                    world.addPowerup(new Powerup(x + 16, -y - 16, powerup));
                     break; 
                 case "BREAKABLEWALL":
                     name = node.attributes["name"];
