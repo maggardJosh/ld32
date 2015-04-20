@@ -110,7 +110,14 @@ public class World : FContainer
         foreach(Door d in doors)
             if (d.name == lever.doorTarget)
             {
-                d.Open();
+                FNode node = new FNode();
+                node.SetPosition(p.GetPosition());
+                C.getCameraInstance().follow(node);
+                C.isTransitioning = true;
+                Go.to(node, .7f, new TweenConfig().floatProp("x", d.x).floatProp("y", d.y).setEaseType(EaseType.QuadOut).onComplete((t) => 
+                {
+                    d.Open(() => { Go.to(node, .7f, new TweenConfig().floatProp("x", p.x).floatProp("y", p.y).setEaseType(EaseType.QuadOut).onComplete((t2) => { C.getCameraInstance().follow(p); C.isTransitioning = false; })); });
+                }));
                 break;
             }
     }

@@ -356,6 +356,8 @@ public class Player : FAnimatedSprite
                 lastJumpPress = C.getKey(C.JUMP_KEY);
                 return;
             case State.TAIL_HANG_FALL:
+                if (stateCount > .1f)
+                    currentState = State.JUMP;
                 if (this.IsStopped)
                     currentState = State.JUMP;
                 break;

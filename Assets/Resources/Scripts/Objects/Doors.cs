@@ -27,12 +27,11 @@ public class Door : FSprite
         this.name = name;
     }
 
-    public void Open()
+    public void Open(Action onCompleteAction)
     {
         currentState = State.OPEN;
-        C.isTransitioning = true;
         C.getCameraInstance().shake(1.0f, 1.0f);
-        Go.to(this, 1.0f, new TweenConfig().floatProp("y", 64, true).setEaseType(EaseType.QuadIn).onComplete((t) => { C.isTransitioning = false; }));
+        Go.to(this, 1.0f, new TweenConfig().floatProp("y", 64, true).setEaseType(EaseType.QuadIn).onComplete((t) => { onCompleteAction.Invoke(); }));
     }
 
     public bool IsTileOccupied(int x, int y, float tileWidth)
