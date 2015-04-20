@@ -303,24 +303,34 @@ public class Player : FAnimatedSprite
                     Futile.stage.AddChild(extendPoleEnd);
                     AttackExtendLength = 0;
                     currentState = State.ATTACK_THREE_EXTEND;
-
+                    lastExtendPos = this.GetPosition();
                     attackExtendTween = Go.to(this, ATTACK_THREE_EXTEND_TIME / 8, new TweenConfig().floatProp("AttackExtendLength", poleExtend ? poleExtendLength : 0).setEaseType(EaseType.QuartIn).onComplete(
                         (t) =>
                         {
-                            foreach (Particle p in Particle.CloudParticle.GetThirdAttackParticles(this.GetPosition(), isFacingLeft))
-                                Futile.stage.AddChild(p);
-                            C.getCameraInstance().shake(1.0f, .2f);
-                            Go.to(this, ATTACK_THREE_TIME / 2, new TweenConfig().floatProp("AttackExtendLength", 0).setEaseType(EaseType.QuadIn).onComplete((t2) =>
-                            {
-                                extendPoleEnd.RemoveFromContainer();
-                                extendPoleMiddle.RemoveFromContainer();
-                                currentState = State.IDLE;
-                            }));
+                            TweenExtendRetract();
                         }));
                 }
                 break;
             case State.ATTACK_THREE_EXTEND:
                 world.tryBreakWall(lastExtendPos, extendPoleEnd.GetPosition());
+                if (attackExtendTween.state == TweenState.Running)
+                {
+                    int tileCollision = world.ExtendPolePassable(lastExtendPos, extendPoleEnd.GetPosition());
+                    if (tileCollision != -1)
+                    {
+
+                        attackExtendTween.pause();
+                        Go.removeTween(attackExtendTween);
+                        float tileCollisionPos = tileCollision * tilemap.tileWidth;
+                        if (tileCollisionPos > this.x)
+                            AttackExtendLength = Mathf.Max(0, this.x - 48f - tileCollision * tilemap.tileWidth);
+                        else
+                            AttackExtendLength = Mathf.Max(0, this.x - 64f - tileCollision * tilemap.tileWidth );
+                        TweenExtendRetract();
+
+
+                    }
+                }
                 lastExtendPos = extendPoleEnd.GetPosition();
                 break;
             case State.ATTACK_AIR:
@@ -493,6 +503,18 @@ public class Player : FAnimatedSprite
         lastJumpPress = C.getKey(C.JUMP_KEY);
         lastDownPress = C.getKey(C.DOWN_KEY);
         lastActionPress = C.getKey(C.ACTION_KEY);
+    }
+    private void TweenExtendRetract()
+    {
+        foreach (Particle p in Particle.CloudParticle.GetThirdAttackParticles(this.GetPosition(), isFacingLeft))
+            Futile.stage.AddChild(p);
+        C.getCameraInstance().shake(1.0f, .2f);
+        Go.to(this, ATTACK_THREE_TIME / 2, new TweenConfig().floatProp("AttackExtendLength", 0).setEaseType(EaseType.QuadIn).onComplete((t2) =>
+        {
+            extendPoleEnd.RemoveFromContainer();
+            extendPoleMiddle.RemoveFromContainer();
+            currentState = State.IDLE;
+        }));
     }
     private void CheckPowerupCollision()
     {

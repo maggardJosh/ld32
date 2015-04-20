@@ -92,6 +92,22 @@ public class MapLoader
                     }
                     world.addCeilButton(new CeilButton(x, -y - 16, name, target));
                     break;
+                case "WALLBUTTON":
+                    name = node.attributes["name"];
+                    float.TryParse(node.attributes["x"], out x);
+                    float.TryParse(node.attributes["y"], out y);
+                    target = "";
+                    bool faceLeft = false;
+                    foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                    {
+                        switch (property.attributes["name"].ToUpper())
+                        {
+                            case "DOOR": target = property.attributes["value"]; break;
+                            case "LEFT": bool.TryParse(property.attributes["value"], out faceLeft); break;
+                        }
+                    }
+                    world.addWallButton(new WallButton(x + 16, -y - 16, name, target, faceLeft));
+                    break;
                 case "POWERUP":
                     float.TryParse(node.attributes["x"], out x);
                     float.TryParse(node.attributes["y"], out y);

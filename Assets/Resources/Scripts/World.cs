@@ -21,6 +21,7 @@ public class World : FContainer
     List<FloorButton> floorButtons = new List<FloorButton>();
     List<CeilButton> ceilButtons = new List<CeilButton>();
     List<Powerup> powerups = new List<Powerup>();
+    List<WallButton> wallButtons = new List<WallButton>();
     string lastMap = "";
     string lastTravelPoint = "";
     public World()
@@ -50,6 +51,7 @@ public class World : FContainer
         breakableWalls.Clear();
         floorButtons.Clear();
         ceilButtons.Clear();
+        wallButtons.Clear();
         powerups.Clear();
         this.map = new FTmxMap();
         this.map.LoadTMX("Maps/" + mapName);
@@ -101,6 +103,11 @@ public class World : FContainer
         ceilButtons.Add(button);
         background.AddChild(button);
     }
+    public void addWallButton(WallButton button)
+    {
+        wallButtons.Add(button);
+        background.AddChild(button);
+    }
     public void addPowerup(Powerup powerup)
     {
         powerups.Add(powerup);
@@ -127,6 +134,26 @@ public class World : FContainer
             for (; tileX <= lastTileX; tileX++)
                 if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                     wall.Open();
+    }
+    public int ExtendPolePassable(Vector2 lastPos, Vector2 position)
+    {
+        int lastTileX = Mathf.FloorToInt(lastPos.x / tilemap.tileWidth);
+        int tileX = Mathf.FloorToInt(position.x / tilemap.tileWidth);
+        int tileY = Mathf.FloorToInt(position.y / tilemap.tileHeight) + 1;
+        int step;
+        if (lastTileX < tileX)
+            step = 1;
+        else
+            step = -1;
+
+        for (; step > 0 ? lastTileX <= tileX : lastTileX >= tileX; lastTileX += step)
+        {
+            if (!isPassable(lastTileX * tilemap.tileWidth, tileY * tilemap.tileWidth))
+            {
+                return lastTileX;
+            }
+        }
+        return -1;
     }
     public bool isPassable(float x, float y)
     {
