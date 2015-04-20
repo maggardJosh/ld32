@@ -25,9 +25,14 @@ public class SlamButton : FSprite
         this.doorTarget = door;
         currentState = State.INACTIVE;
     }
-    public void Activate()
+    private const float SLAM_BUTTON_TIME = 1.5f;
+    private const float SLAM_BUTTON_DELAY = 1.0f;
+    public void Activate(Player p, Action onComplete)
     {
         currentState = State.ACTIVATED;
+        p.y = this.y + 46;
+        C.getCameraInstance().shake(2.0f, SLAM_BUTTON_DELAY + SLAM_BUTTON_TIME);
+        Go.to(this, SLAM_BUTTON_TIME, new TweenConfig().floatProp("y", -32, true).setDelay(SLAM_BUTTON_DELAY).onStart((t) => { Go.to(p, SLAM_BUTTON_TIME, new TweenConfig().floatProp("y", -32, true)); }).onComplete((t2) => { onComplete.Invoke(); }));
         this.SetElementByName("button_slam_on");
     }
     public bool IsTileOccupied(int x, int y, float tileWidth)

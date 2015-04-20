@@ -26,17 +26,22 @@ public class WallButton : FSprite
         this.doorTarget = door;
         this.faceLeft = faceLeft;
         this.rotation = faceLeft ? 180 : 0;
-        currentState = State.INACTIVE;
+        if (!Player.GetSaveStateInstance().activatedObjects.Contains(this.name))
+            currentState = State.INACTIVE;
+        else
+        {
+            currentState = State.ACTIVATED;
+            this.SetElementByName("button_wall_on");
+        }
     }
     public void Activate()
     {
+        Player.GetSaveStateInstance().activatedObjects.Add(this.name);
         currentState = State.ACTIVATED;
         this.SetElementByName("button_wall_on");
     }
     public bool IsTileOccupied(int x, int y, float tileWidth)
     {
-        RXDebug.Log(x, y, this.x/tileWidth, this.y/tileWidth);
-        RXDebug.Log(((Mathf.FloorToInt((this.x) / tileWidth) == x)) && Mathf.FloorToInt(this.y / tileWidth) == y);
         return currentState == State.INACTIVE && ((Mathf.FloorToInt((this.x) / tileWidth) == x)) && Mathf.FloorToInt(this.y / tileWidth) == y;
     }
 }

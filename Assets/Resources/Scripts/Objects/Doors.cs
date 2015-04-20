@@ -25,10 +25,19 @@ public class Door : FSprite
         this.x = x;
         this.y = y;
         this.name = name;
+        if (Player.GetSaveStateInstance().activatedObjects.Contains(this.name))
+        {
+            currentState = State.OPEN;
+            if (this.isVertical)
+                this.y += 64;
+            else
+                this.x += 64;
+        }
     }
 
     public void Open(Action onCompleteAction)
     {
+        Player.GetSaveStateInstance().activatedObjects.Add(this.name);
         currentState = State.OPEN;
         C.getCameraInstance().shake(1.0f, 1.0f);
         if (this.isVertical)

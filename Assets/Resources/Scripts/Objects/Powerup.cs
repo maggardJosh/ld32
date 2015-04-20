@@ -70,7 +70,7 @@ public class Powerup : FSprite
     Player p;
     private void WaitForKey()
     {
-        if (C.getKeyDown(C.ACTION_KEY))
+        if (C.getKeyDown(C.ACTION_KEY) || C.getKeyDown(C.JUMP_KEY))
         {
             Futile.instance.SignalUpdate -= WaitForKey;
             Go.to(this, .5f, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadOut));
@@ -81,14 +81,14 @@ public class Powerup : FSprite
     {
         switch (powerupName)
         {
-            case Name.THREE_HIT_COMBO: p.thirdCombo = true; break;
-            case Name.TAIL_HANG: p.tailGrab = true; break;
-            case Name.SLAM: p.slam = true; break;
-            case Name.DOUBLE_JUMP: p.doubleJump = true; break;
-            case Name.POLE_EXTEND: p.poleExtend = true; break;
-            case Name.LEVER: p.levers = true; break;
-            case Name.CHARGE_JUMP: p.chargeJump = true; break;
-            case Name.SUPER_AIR_ATTACK: p.airAttackEndGame = true; break;
+            case Name.THREE_HIT_COMBO: Player.GetSaveStateInstance().thirdCombo = true; break;
+            case Name.TAIL_HANG: Player.GetSaveStateInstance().tailGrab = true; break;
+            case Name.SLAM: Player.GetSaveStateInstance().slam = true; break;
+            case Name.DOUBLE_JUMP: Player.GetSaveStateInstance().doubleJump = true; break;
+            case Name.POLE_EXTEND: Player.GetSaveStateInstance().poleExtend = true; break;
+            case Name.LEVER: Player.GetSaveStateInstance().levers = true; break;
+            case Name.CHARGE_JUMP: Player.GetSaveStateInstance().chargeJump = true; break;
+            case Name.SUPER_AIR_ATTACK: Player.GetSaveStateInstance().airAttackEndGame = true; break;
         }
     }
     public string GetDescription()
