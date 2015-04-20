@@ -29,7 +29,7 @@ public class MapLoader
                             case "TARGET": target = property.attributes["value"]; break;
                         }
                     }
-                    world.addTravelPoint(new WorldTravelPoint(new Rect(x, -y - 32, width, height), name, mapTarget, target));
+                    world.addTravelPoint(new WorldTravelPoint(new Rect(x, -y - height, width, height), name, mapTarget, target));
                     break;
                 case "DOOR":
                     name = node.attributes["name"];
