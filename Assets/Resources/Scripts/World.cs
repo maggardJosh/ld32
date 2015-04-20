@@ -101,6 +101,12 @@ public class World : FContainer
         C.getCameraInstance().AddChild(text);
     }
 
+    public void addJadeDragon(JadeDragon jadeDragon)
+    {
+
+        background.AddChild(jadeDragon);
+    }
+
     public void addDoor(Door door)
     {
         doors.Add(door);

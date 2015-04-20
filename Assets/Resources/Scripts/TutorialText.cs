@@ -22,7 +22,7 @@ public class TutorialText : ShadowLabel
     {
      
         //We have the powerup check if we want to display it
-        if (HasPowerup() && rect.Contains(p.GetPosition()))
+        if (HasPowerup(requiredPowerup) && rect.Contains(p.GetPosition()))
         {
             if (this.alpha < 1)
                 this.alpha += 1.0f * Time.deltaTime;
@@ -33,7 +33,7 @@ public class TutorialText : ShadowLabel
                 this.alpha -= 1.0f * Time.deltaTime;
         }
     }
-    private bool HasPowerup()
+    public static bool HasPowerup(int requiredPowerup)
     {
         switch ((Powerup.Name)requiredPowerup)
         {

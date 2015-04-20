@@ -134,7 +134,8 @@ public class MapLoader
                             case "POWERUP": int.TryParse(property.attributes["value"], out powerup); break;
                         }
                     }
-                    world.addPowerup(new Powerup(x + 16, -y - 16, powerup));
+                    if (!TutorialText.HasPowerup(powerup))
+                        world.addPowerup(new Powerup(x + 16, -y - 16, powerup));
                     break;
                 case "BREAKABLEWALL":
                     name = node.attributes["name"];
@@ -150,7 +151,7 @@ public class MapLoader
                     float.TryParse(node.attributes["height"], out height);
                     string text = "";
                     powerup = 0;
-                      foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                    foreach (XMLNode property in ((XMLNode)node.children[0]).children)
                     {
                         switch (property.attributes["name"].ToUpper())
                         {
@@ -158,8 +159,24 @@ public class MapLoader
                             case "TEXT": text = property.attributes["value"]; break;
                         }
                     }
-                      RXDebug.Log(x, y, width, height);
-                      world.addTutorialText(new TutorialText(text, powerup, new Rect(x, -y-height, width, height)));
+                    RXDebug.Log(x, y, width, height);
+                    world.addTutorialText(new TutorialText(text, powerup, new Rect(x, -y - height, width, height)));
+                    break;
+                case "JADEDRAGON":
+                    
+                    float.TryParse(node.attributes["x"], out x);
+                    float.TryParse(node.attributes["y"], out y);
+                    float delay = 1;
+                    float interval = 1;
+                    foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                    {
+                        switch (property.attributes["name"].ToUpper())
+                        {
+                            case "DELAY": float.TryParse(property.attributes["value"], out delay); break;
+                            case "INTERVAL": float.TryParse(property.attributes["value"], out interval); break;
+                        }
+                    }
+                    world.addJadeDragon(new JadeDragon(x + 16, -y - 16, delay, interval));
                     break;
             }
     }

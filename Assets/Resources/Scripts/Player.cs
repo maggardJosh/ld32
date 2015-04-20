@@ -13,7 +13,7 @@ public class Player : FAnimatedSprite
         public bool tailGrab = true;
         public bool doubleJump = true;
         public bool levers = true;
-        public bool chargeJump = true;
+        public bool chargeJump = false;
         public bool airJumpAttack = false;
         public bool slam = true;
         public bool airAttackEndGame = true;
@@ -160,6 +160,9 @@ public class Player : FAnimatedSprite
                         break;
                     case State.ATTACK_AIR:
                         attackAirCount = ATTACK_AIR_COUNT_VALUE;
+                        break;
+                    case State.DYING:
+                        C.getCameraInstance().shake(5.0f, .2f);
                         break;
                 }
                 _currentState = value;
