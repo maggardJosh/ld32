@@ -16,8 +16,8 @@ public class C
 
     public static readonly List<int> WALL_LIST = new List<int> { -1, 1,4,5,6,7,10,11,12,13,16,17,18,19,20,21,22,23,24,26,28,30,31,32,33,34,35,36,49,51};
     public static readonly List<int> HOOK_LIST = new List<int> { 37,38,39,40 };
-    public static readonly List<int> ONE_WAY_LIST = new List<int> { 1 };
-    public static readonly List<int> DEATH_LIST = new List<int> { 50 };
+    public static readonly List<int> ONE_WAY_LIST = new List<int> { 50 };
+    public static readonly List<int> DEATH_LIST = new List<int> { 52 };
 
     public const string versionNumber = "v0.3";
 

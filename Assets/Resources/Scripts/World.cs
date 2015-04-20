@@ -109,9 +109,9 @@ public class World : FContainer
     }
     public bool isPassable(float x, float y)
     {
-        bool result = tilemap.isPassable(x, y);
-        int tileX = Mathf.FloorToInt(x / tilemap.tileWidth);
-        int tileY = Mathf.FloorToInt(y / tilemap.tileHeight);
+        bool result = foregroundTilemap.isPassable(x, y);
+        int tileX = Mathf.FloorToInt(x / foregroundTilemap.tileWidth);
+        int tileY = Mathf.FloorToInt(y / foregroundTilemap.tileHeight);
         if (!result)
             return result;
 
@@ -123,6 +123,14 @@ public class World : FContainer
                 return false;
 
         return result;
+    }
+    public bool isDeath(float x, float y)
+    {
+        return foregroundTilemap.isDeath(x, y);
+    }
+    public bool isOneWay(float x, float y)
+    {
+        return foregroundTilemap.isOneWay(x, y);
     }
     private void CheckTravelPoints()
     {

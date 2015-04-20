@@ -36,11 +36,11 @@ public class Player : FAnimatedSprite
     private FSprite extendPoleMiddle;
     private FSprite extendPoleEnd;
 
-    private bool thirdCombo = false;
+    private bool thirdCombo = true;
     private bool poleExtend = false;
-    private bool tailGrab = false;
+    private bool tailGrab = true;
     private bool doubleJump = false;
-    private bool levers = false;
+    private bool levers = true;
     private bool chargeJump = false;
     private bool airJumpAttack = false;
 
@@ -605,8 +605,8 @@ public class Player : FAnimatedSprite
         float rightX = this.x + tilemap.tileWidth / 4;
         if ((!world.isPassable(leftX, newY - tilemap.tileWidth) ||
             !world.isPassable(rightX, newY - tilemap.tileWidth)) ||
-            (tilemap.isOneWay(leftX, newY - tilemap.tileWidth) ||
-            tilemap.isOneWay(rightX, newY - tilemap.tileWidth)))
+            (world.isOneWay(leftX, newY - tilemap.tileWidth) ||
+            world.isOneWay(rightX, newY - tilemap.tileWidth)))
         {
 
             if (currentState == State.TAIL_HANG_FALL)
@@ -629,11 +629,11 @@ public class Player : FAnimatedSprite
         }
         if ((world.isPassable(leftX, newY - tilemap.tileWidth / 2) &&
             world.isPassable(rightX, newY - tilemap.tileWidth / 2)) &&
-            !(tilemap.isOneWay(leftX, newY - tilemap.tileWidth / 2) &&
-            tilemap.isOneWay(rightX, newY - tilemap.tileWidth / 2)))
+            !(world.isOneWay(leftX, newY - tilemap.tileWidth / 2) &&
+            world.isOneWay(rightX, newY - tilemap.tileWidth / 2)))
         {
             this.y = newY;
-            if (tilemap.isDeath(this.x, this.y - tilemap.tileHeight / 2))
+            if (world.isDeath(this.x, this.y - tilemap.tileHeight / 2))
             {
                 currentState = State.DYING;
                 foreach (Particle particle in Particle.CloudParticle.GetDoubleJumpParticles(this.GetPosition()))
