@@ -51,16 +51,5 @@ public class Door : FSprite
         }
         return result;
     }
-    public Boolean IsPlayerColliding(Player player)
-    {
-        float xDist = Mathf.Abs(player.x - this.x);
-        float yDist = Mathf.Abs(player.y - this.y);
-        switch (currentState)
-        {
-            case State.CLOSED:
-                return (isVertical ? (xDist < player.tilemap.tileWidth && yDist < player.tilemap.tileWidth * 1.5f) : (yDist < player.tilemap.tileWidth * 1.5f && xDist < player.tilemap.tileWidth));
-        }
-        return false;
-    }
 }
 

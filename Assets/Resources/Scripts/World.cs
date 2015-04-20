@@ -20,6 +20,7 @@ public class World : FContainer
     List<BreakableWall> breakableWalls = new List<BreakableWall>();
     List<FloorButton> floorButtons = new List<FloorButton>();
     List<CeilButton> ceilButtons = new List<CeilButton>();
+    List<SlamButton> slamButtons = new List<SlamButton>();
     List<Powerup> powerups = new List<Powerup>();
     List<WallButton> wallButtons = new List<WallButton>();
     string lastMap = "";
@@ -52,6 +53,7 @@ public class World : FContainer
         floorButtons.Clear();
         ceilButtons.Clear();
         wallButtons.Clear();
+        slamButtons.Clear();
         powerups.Clear();
         this.map = new FTmxMap();
         this.map.LoadTMX("Maps/" + mapName);
@@ -96,6 +98,11 @@ public class World : FContainer
     public void addFloorButton(FloorButton button)
     {
         floorButtons.Add(button);
+        background.AddChild(button);
+    }
+    public void addSlamButton(SlamButton button)
+    {
+        slamButtons.Add(button);
         background.AddChild(button);
     }
     public void addCeilButton(CeilButton button)
@@ -192,6 +199,9 @@ public class World : FContainer
                 return false;
         foreach (BreakableWall wall in breakableWalls)
             if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                return false;
+        foreach (SlamButton button in slamButtons)
+            if (button.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                 return false;
 
         return result;

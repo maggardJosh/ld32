@@ -46,6 +46,8 @@ public class Particle : FSprite
     }
     public void Update()
     {
+        if (C.isTransitioning)
+            return;
         this.x += vel.x * Time.deltaTime;
         this.y += vel.y * Time.deltaTime;
         vel += accel * Time.deltaTime;
