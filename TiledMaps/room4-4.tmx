@@ -101,7 +101,7 @@
   <object name="room4-4WallButtonOne" type="wallButton" x="1120" y="608" width="32" height="32">
    <properties>
     <property name="door" value="room4-4DoorOne"/>
-    <property name="left" value="false"/>
+    <property name="left" value="true"/>
    </properties>
   </object>
   <object name="room4-4DoorOne" type="door" x="960" y="640" width="64" height="32"/>

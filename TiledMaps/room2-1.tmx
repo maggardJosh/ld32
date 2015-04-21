@@ -95,5 +95,11 @@
     <property name="target" value="room0-4to2-1"/>
    </properties>
   </object>
+  <object type="tutorialtext" x="416" y="160" width="160" height="128">
+   <properties>
+    <property name="powerup" value="3"/>
+    <property name="text" value="Press down while in the\nair to perform a slam."/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
