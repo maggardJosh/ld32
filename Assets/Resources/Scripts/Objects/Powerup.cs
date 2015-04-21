@@ -109,7 +109,7 @@ public class Powerup : FSprite
         {
             case Name.CHARGE_JUMP: return "Sage's Soul\n\nThe soul of this great sage\nfills you with new power!\n\nThough, we're pretty sure he was\njust a frog who could jump really high.";
             case Name.SUPER_AIR_ATTACK: return "Rock Feather\n\nThis really heavy rock that looks\nlike a feather makes your air\nattack carry you further.\n\nWe don't get it either.";
-            case Name.LEVER: return "Lever Instructions\n\nThese instructions show\nyou how to use levers\n\n'Press X'\n\nWow! Simple!";
+            case Name.LEVER: return "Lever Instructions\n\nThese instructions show\nyou how to use levers\n\n'Press Z'\n\nWow! Simple!";
             case Name.POLE_EXTEND: return "Extension Orb\n\nThe power radiating from the orb\nfills your pole staff with\nelastic energy!\n\nYour staff will now extend\nat the end of your combo!";
             case Name.DOUBLE_JUMP: return "Cloud In A Bottle\n\nThe cloud contained in this bottle\nwill allow you to jump a second time\nwhile in the air!\n\n...Nimbus, is that you?";
             case Name.SLAM: return "Slam Arts Scroll\n\nThe technique described by\nthe scroll teaches you how to slam\ninto the ground with great force!";
