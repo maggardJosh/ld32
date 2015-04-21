@@ -143,13 +143,13 @@
   <object type="jadedragon" x="128" y="672" width="32" height="32">
    <properties>
     <property name="delay" value=".5"/>
-    <property name="interval" value=".5"/>
+    <property name="interval" value="2"/>
    </properties>
   </object>
   <object type="jadedragon" x="864" y="544" width="32" height="32">
    <properties>
     <property name="delay" value="0"/>
-    <property name="interval" value=".75"/>
+    <property name="interval" value="2"/>
    </properties>
   </object>
  </objectgroup>
