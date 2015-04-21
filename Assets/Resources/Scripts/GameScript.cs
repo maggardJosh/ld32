@@ -19,11 +19,7 @@ public class GameScript : MonoBehaviour
         Futile.atlasManager.LoadAtlas("Atlases/inGameAtlas");
 
         Futile.atlasManager.LoadFont(C.smallFontName, "debugFont_0", "Atlases/debugFont", 0, 0);
-<<<<<<< HEAD
-        world = new World();
-        world.LoadAndSpawn("room7-0", "mapOneSpawn");
-        Futile.stage.AddChild(world);
-=======
+
         MainMenu menu = new MainMenu(() => 
         {
             world = new World();
@@ -33,7 +29,6 @@ public class GameScript : MonoBehaviour
         });
         Futile.stage.AddChild(menu);
 
->>>>>>> 60f13ef3f9ea42d758ace00009f2d0c6aba799e9
 
         ShadowLabel versionLabel = new ShadowLabel(C.versionNumber);
         versionLabel.y = -Futile.screen.height / 2 + versionLabel.label.textRect.height;
