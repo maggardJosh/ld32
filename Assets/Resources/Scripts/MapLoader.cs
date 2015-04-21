@@ -76,7 +76,7 @@ public class MapLoader
                             case "DOOR": target = property.attributes["value"]; break;
                         }
                     }
-                    world.addFloorButton(new FloorButton(x, -y - 16, name, target));
+                    world.addFloorButton(new FloorButton(x+32, -y - 16, name, target));
                     break;
                 case "SLAMBUTTON":
                     name = node.attributes["name"];
@@ -104,7 +104,7 @@ public class MapLoader
                             case "DOOR": target = property.attributes["value"]; break;
                         }
                     }
-                    world.addCeilButton(new CeilButton(x, -y - 16, name, target));
+                    world.addCeilButton(new CeilButton(x+32, -y - 16, name, target));
                     break;
                 case "WALLBUTTON":
                     name = node.attributes["name"];

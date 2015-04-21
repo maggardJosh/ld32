@@ -87,7 +87,7 @@
   <object name="room7-0to4-0" type="TravelPoint" x="0" y="352" width="32" height="64">
    <properties>
     <property name="map" value="room4-0"/>
-    <property name="taret" value="room4-0to7-0"/>
+    <property name="target" value="room4-0to7-0"/>
    </properties>
   </object>
  </objectgroup>
