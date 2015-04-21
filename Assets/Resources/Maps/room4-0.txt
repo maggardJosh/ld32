@@ -150,25 +150,25 @@
   <object type="jadedragon" x="864" y="352" width="32" height="32">
    <properties>
     <property name="delay" value="0"/>
-    <property name="interval" value="1"/>
+    <property name="interval" value="2"/>
    </properties>
   </object>
   <object type="jadedragon" x="672" y="352" width="32" height="32">
    <properties>
     <property name="delay" value="0"/>
-    <property name="interval" value="1"/>
+    <property name="interval" value="2"/>
    </properties>
   </object>
   <object type="jadedragon" x="512" y="544" width="32" height="32">
    <properties>
     <property name="delay" value=".5"/>
-    <property name="interval" value="1"/>
+    <property name="interval" value="2"/>
    </properties>
   </object>
   <object type="jadedragon" x="1024" y="544" width="32" height="32">
    <properties>
     <property name="delay" value=".5"/>
-    <property name="interval" value="1"/>
+    <property name="interval" value="2"/>
    </properties>
   </object>
  </objectgroup>

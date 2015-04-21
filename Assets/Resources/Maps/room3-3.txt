@@ -78,7 +78,7 @@
  <objectgroup name="objects" width="38" height="32">
   <object type="jadedragon" x="96" y="96" width="32" height="32">
    <properties>
-    <property name="delay" value=".5"/>
+    <property name="delay" value=".25"/>
     <property name="interval" value="1"/>
    </properties>
   </object>
@@ -115,7 +115,7 @@
   </object>
   <object type="jadedragon" x="96" y="384" width="32" height="32">
    <properties>
-    <property name="delay" value=".5"/>
+    <property name="delay" value=".25"/>
     <property name="interval" value="1"/>
    </properties>
   </object>
