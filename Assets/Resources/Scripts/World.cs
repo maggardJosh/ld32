@@ -45,6 +45,16 @@ public class World : FContainer
     }
     public void LoadMap(string mapName)
     {
+        if (mapName.ToUpper() == "ENDING")
+        {
+            if (C.isTransitioning)
+                return;
+            this.RemoveFromContainer();
+            C.isTransitioning = true;
+            Ending newEnding = new Ending();
+           C.getCameraInstance().AddChild(new Ending());
+            return;
+        }
         background.RemoveAllChildren();
         foreground.RemoveAllChildren();
 
