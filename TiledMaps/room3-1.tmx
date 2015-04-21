@@ -59,7 +59,7 @@
   <object name="wallButton" type="jadedragon" x="480" y="224" width="32" height="32">
    <properties>
     <property name="delay" value=".5"/>
-    <property name="interval" value="1.0"/>
+    <property name="interval" value="1.5"/>
    </properties>
   </object>
   <object name="room3-1to3-0" type="TravelPoint" x="0" y="160" width="32" height="64">

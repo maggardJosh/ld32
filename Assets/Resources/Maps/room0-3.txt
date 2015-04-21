@@ -57,7 +57,7 @@
   <object name="dragon" type="jadedragon" x="352" y="224" width="32" height="32">
    <properties>
     <property name="delay" value="1.0"/>
-    <property name="interval" value="1.0"/>
+    <property name="interval" value="1.5"/>
    </properties>
   </object>
   <object name="room0-3to0-2" type="TravelPoint" x="1056" y="256" width="32" height="64">

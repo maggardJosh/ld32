@@ -63,7 +63,7 @@
   <object name="f" type="jadedragon" x="512" y="480" width="32" height="32">
    <properties>
     <property name="delay" value=".5"/>
-    <property name="interval" value="1.0"/>
+    <property name="interval" value=".7"/>
    </properties>
   </object>
   <object name="room2-0to0-4" type="TravelPoint" x="864" y="352" width="32" height="64">
@@ -81,19 +81,19 @@
   <object name="f" type="jadedragon" x="288" y="416" width="32" height="32">
    <properties>
     <property name="delay" value=".5"/>
-    <property name="interval" value="1.0"/>
+    <property name="interval" value="1.5"/>
    </properties>
   </object>
   <object name="f" type="jadedragon" x="288" y="544" width="32" height="32">
    <properties>
     <property name="delay" value=".5"/>
-    <property name="interval" value="1.0"/>
+    <property name="interval" value="1.5"/>
    </properties>
   </object>
   <object name="f" type="jadedragon" x="96" y="480" width="32" height="32">
    <properties>
     <property name="delay" value="1.0"/>
-    <property name="interval" value="1.0"/>
+    <property name="interval" value="1.5"/>
    </properties>
   </object>
  </objectgroup>
