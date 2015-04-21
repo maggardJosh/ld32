@@ -185,7 +185,7 @@
   <object type="tutorialtext" x="32" y="32" width="320" height="96">
    <properties>
     <property name="powerup" value="0"/>
-    <property name="text" value="You can only travel up\nthrough wooden bridges."/>
+    <property name="text" value="You can only travel up/nthrough wooden bridges."/>
    </properties>
   </object>
  </objectgroup>
