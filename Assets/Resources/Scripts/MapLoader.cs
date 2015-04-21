@@ -159,7 +159,6 @@ public class MapLoader
                             case "TEXT": text = property.attributes["value"]; break;
                         }
                     }
-                    RXDebug.Log(x, y, width, height);
                     world.addTutorialText(new TutorialText(text, powerup, new Rect(x, -y - height, width, height)));
                     break;
                 case "JADEDRAGON":
