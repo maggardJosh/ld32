@@ -151,7 +151,7 @@
   <object type="tutorialtext" x="832" y="960" width="256" height="160">
    <properties>
     <property name="powerup" value="7"/>
-    <property name="text" value="Hold down to charge your jump."/>
+    <property name="text" value="Hold down to charge your jump!"/>
    </properties>
   </object>
  </objectgroup>
