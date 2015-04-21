@@ -116,7 +116,7 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.DOUBLE_JUMP.ToString(), new int[] { 28, 29, 30, 31, 21 }, 100, false));
         addAnimation(new FAnimation(State.FALL.ToString(), new int[] { 22 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 23, 23, 23, 23, 24, 24, 24, 24, 23, 23, 23, 24, 24, 24, 23, 23, 24, 24, 23, 24, 23, 24 }, 40, false));
-        addAnimation(new FAnimation(State.INTERACT_LEVER.ToString(), new int[] { 15, 16, 17 }, 300, false));
+        addAnimation(new FAnimation(State.INTERACT_LEVER.ToString(), new int[] { 47,48,49,50,51,52,53,54,55,56,57,58,59,60 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 11, 12, 13, 14 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 15, 16, 17 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 18, 19 }, 20, false));
@@ -214,7 +214,7 @@ public class Player : FAnimatedSprite
     {
         if (C.isDebug)
             CheckPowerupKeys();
-        if (C.isTransitioning)
+        if (C.isTransitioning && currentState != State.INTERACT_LEVER)
             return;
         switch (currentState)
         {
@@ -226,6 +226,7 @@ public class Player : FAnimatedSprite
                 if (C.getKey(C.ACTION_KEY) && !lastActionPress && interactLever != null)
                 {
                     currentState = State.INTERACT_LEVER;
+                    C.isTransitioning = true;
                     this.SetPosition(interactLever.GetPosition());
                     return;
                 }

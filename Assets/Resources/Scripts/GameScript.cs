@@ -23,7 +23,7 @@ public class GameScript : MonoBehaviour
         MainMenu menu = new MainMenu(() => 
         {
             world = new World();
-            world.LoadAndSpawn("room0-0", "room0-0Spawn");
+            world.LoadAndSpawn("room0-2", "room0-2Entrance");
             Futile.stage.AddChild(world);
             C.getCameraInstance().MoveToFront();
         });

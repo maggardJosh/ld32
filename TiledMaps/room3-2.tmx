@@ -76,7 +76,7 @@
     <property name="target" value="room3-1to3-2"/>
    </properties>
   </object>
-  <object name="room3-2DoorOneButton" type="ceilbutton" x="128" y="288" width="64" height="32">
+  <object name="room3-2DoorOneButton" type="floorbutton" x="128" y="288" width="64" height="32">
    <properties>
     <property name="door" value="room3-2DoorOne"/>
    </properties>

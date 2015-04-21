@@ -103,7 +103,11 @@
    </properties>
   </object>
   <object name="room5-2doorOne" type="door" x="96" y="224" width="32" height="64"/>
-  <object name="room5-2doorOneButton" type="ceilbutton" x="192" y="96" width="64" height="32"/>
+  <object name="room5-2doorOneButton" type="ceilbutton" x="192" y="96" width="64" height="32">
+   <properties>
+    <property name="door" value="room5-2doorOne"/>
+   </properties>
+  </object>
   <object name="room5-2doorTwo" type="door" x="1280" y="320" width="64" height="32"/>
   <object name="room5-2doorTwoLever" type="lever" x="1280" y="480" width="32" height="32">
    <properties>

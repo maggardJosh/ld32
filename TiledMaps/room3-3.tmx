@@ -53,8 +53,8 @@
 5,5,5,13,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,5,5,5,6,0,0,0,0,0,0,0,0,0,0,0,
 11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,11,12,0,0,0,0,0,0,0,0,0,0,0,
 11,11,11,13,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,11,11,5,5,5,5,5,5,5,5,5,5,5,
-11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
-11,11,11,5,5,5,5,5,5,5,5,6,0,0,0,4,5,5,5,5,5,5,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
+11,11,12,0,0,0,0,0,0,0,0,43,44,44,44,45,0,0,0,0,0,0,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
+11,11,11,5,5,5,5,5,5,5,5,49,50,50,50,51,5,5,5,5,5,5,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
 11,11,11,11,11,11,11,11,11,11,11,12,0,0,0,16,17,17,17,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
 11,11,11,11,11,11,11,11,11,11,11,12,0,0,0,0,0,0,0,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
 11,11,11,11,11,11,11,11,11,11,11,12,0,0,0,0,0,0,0,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
@@ -79,12 +79,12 @@
   <object type="jadedragon" x="96" y="96" width="32" height="32">
    <properties>
     <property name="delay" value=".25"/>
-    <property name="interval" value="1"/>
+    <property name="interval" value="2"/>
    </properties>
   </object>
   <object name="room3-3to1-0" type="travelPoint" x="0" y="224" width="32" height="64">
    <properties>
-    <property name="map" value="1-0"/>
+    <property name="map" value="room1-0"/>
     <property name="target" value="room1-0to3-3"/>
    </properties>
   </object>
@@ -116,19 +116,19 @@
   <object type="jadedragon" x="96" y="384" width="32" height="32">
    <properties>
     <property name="delay" value=".25"/>
-    <property name="interval" value="1"/>
+    <property name="interval" value="2"/>
    </properties>
   </object>
   <object type="jadedragon" x="96" y="320" width="32" height="32">
    <properties>
     <property name="delay" value="0"/>
-    <property name="interval" value="1"/>
+    <property name="interval" value="2"/>
    </properties>
   </object>
   <object type="jadedragon" x="96" y="160" width="32" height="32">
    <properties>
     <property name="delay" value="0"/>
-    <property name="interval" value="1"/>
+    <property name="interval" value="2"/>
    </properties>
   </object>
  </objectgroup>

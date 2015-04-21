@@ -47,7 +47,7 @@ public class FAnimatedSprite : FSprite {
 	
 	// Update is called once per frame
 	virtual public void Update () {
-		if (_currentAnim != null && !_pause && !C.isTransitioning) {
+		if (_currentAnim != null && !_pause && (this is Player && this.currentAnim.name == "INTERACT_LEVER") || !C.isTransitioning) {
 			_time += Time.deltaTime;
 		
 			while (_time > (float)_currentAnim.delay / 1000.0f) { // looping this way will skip frames if needed

@@ -44,12 +44,6 @@
 </data>
  </layer>
  <objectgroup name="objects" width="32" height="16">
-  <object type="jadedragon" x="256" y="288" width="32" height="32">
-   <properties>
-    <property name="delay" value=".3"/>
-    <property name="interval" value="1.0"/>
-   </properties>
-  </object>
   <object name="room3-0to0-2" type="TravelPoint" x="0" y="96" width="32" height="64">
    <properties>
     <property name="map" value="room0-2"/>
@@ -59,12 +53,6 @@
   <object type="jadedragon" x="448" y="96" width="32" height="32">
    <properties>
     <property name="delay" value=".6"/>
-    <property name="interval" value="1.0"/>
-   </properties>
-  </object>
-  <object type="jadedragon" x="608" y="288" width="32" height="32">
-   <properties>
-    <property name="delay" value=".9"/>
     <property name="interval" value="1.0"/>
    </properties>
   </object>
