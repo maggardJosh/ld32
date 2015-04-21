@@ -45,7 +45,6 @@ public class World : FContainer
     }
     public void LoadMap(string mapName)
     {
-        RXDebug.Log(mapName);
         if (mapName.ToUpper() == "ENDING")
         {
             if (C.isTransitioning)
@@ -172,7 +171,7 @@ public class World : FContainer
 
             float xDiff = Mathf.Abs(f.x - p.x);
             float yDiff = Mathf.Abs(f.y - p.y);
-            if (xDiff < 30 && yDiff < 30)
+            if (xDiff < 16 && yDiff < 16)
             {
                 p.Kill();
             }
