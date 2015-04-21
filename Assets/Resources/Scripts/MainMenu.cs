@@ -17,7 +17,7 @@ using System.Text;
             this.AddChild(background);
             
             logo = new FSprite("MainMenuLogo");
-            logo.y = Futile.screen.halfHeight + logo.height;
+            logo.y = Futile.screen.halfHeight + logo.height ;
             this.AddChild(logo);
 
             wukong = new FAnimatedSprite("player");
@@ -27,16 +27,16 @@ using System.Text;
             wukong.y = -Futile.screen.halfHeight + 48f;
             this.AddChild(wukong);
 
-
             pressButton = new FSprite("PressButton");
+            pressButton.y = -50;
             pressButton.alpha = 0;
             this.AddChild(pressButton);
 
-            Go.to(logo, 2.0f, new TweenConfig().floatProp("y", Futile.screen.halfHeight / 2f).setDelay(4.0f).setEaseType(EaseType.BounceOut));
+            Go.to(logo, 2.0f, new TweenConfig().floatProp("y", Futile.screen.halfHeight / 3f).setDelay(3.0f).setEaseType(EaseType.BounceOut));
             wukong.play("run");
             Go.to(wukong, 1.5f, new TweenConfig().floatProp("x", 0).onComplete((t) => { wukong.play("idle"); }));
 
-            Go.to(pressButton, 1.0f, new TweenConfig().floatProp("alpha", 1).setDelay(6f).setEaseType(EaseType.QuadIn));
+            Go.to(pressButton, 1.0f, new TweenConfig().floatProp("alpha", 1).setDelay(6f).setEaseType(EaseType.QuadIn).onComplete((t2) => { Go.to(pressButton, 1.0f, new TweenConfig().floatProp("y", 7, true).setEaseType(EaseType.QuadOut).setIterations(-1, LoopType.PingPong)); }));
 
             Futile.instance.SignalUpdate += Update;   
         }
