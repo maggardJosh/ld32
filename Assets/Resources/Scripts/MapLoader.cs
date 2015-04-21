@@ -8,9 +8,9 @@ public class MapLoader
 {
     public static void LoadObjects(World world, List<XMLNode> objects)
     {
-                    string name = "";
-                    string mapTarget = "";
-                    string target = "";
+        string name = "";
+        string mapTarget = "";
+        string target = "";
         foreach (XMLNode node in objects)
             switch (node.attributes["type"].ToUpper())
             {
@@ -90,7 +90,7 @@ public class MapLoader
                             case "DOOR": target = property.attributes["value"]; break;
                         }
                     }
-                    world.addSlamButton(new SlamButton(x+64, -y - 16, name, target));
+                    world.addSlamButton(new SlamButton(x + 64, -y - 16, name, target));
                     break;
                 case "CEILBUTTON":
                     name = node.attributes["name"];
@@ -134,13 +134,48 @@ public class MapLoader
                             case "POWERUP": int.TryParse(property.attributes["value"], out powerup); break;
                         }
                     }
-                    world.addPowerup(new Powerup(x + 16, -y - 16, powerup));
-                    break; 
+                    if (!TutorialText.HasPowerup(powerup))
+                        world.addPowerup(new Powerup(x + 16, -y - 16, powerup));
+                    break;
                 case "BREAKABLEWALL":
                     name = node.attributes["name"];
                     float.TryParse(node.attributes["x"], out x);
                     float.TryParse(node.attributes["y"], out y);
                     world.addBreakableWall(new BreakableWall(x + 16, -y - 32, name));
+                    break;
+                case "TUTORIALTEXT":
+                    name = node.attributes["name"];
+                    float.TryParse(node.attributes["x"], out x);
+                    float.TryParse(node.attributes["y"], out y);
+                    float.TryParse(node.attributes["width"], out width);
+                    float.TryParse(node.attributes["height"], out height);
+                    string text = "";
+                    powerup = 0;
+                    foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                    {
+                        switch (property.attributes["name"].ToUpper())
+                        {
+                            case "POWERUP": int.TryParse(property.attributes["value"], out powerup); break;
+                            case "TEXT": text = property.attributes["value"]; break;
+                        }
+                    }
+                    world.addTutorialText(new TutorialText(text, powerup, new Rect(x, -y - height, width, height)));
+                    break;
+                case "JADEDRAGON":
+                    
+                    float.TryParse(node.attributes["x"], out x);
+                    float.TryParse(node.attributes["y"], out y);
+                    float delay = 1;
+                    float interval = 1;
+                    foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                    {
+                        switch (property.attributes["name"].ToUpper())
+                        {
+                            case "DELAY": float.TryParse(property.attributes["value"], out delay); break;
+                            case "INTERVAL": float.TryParse(property.attributes["value"], out interval); break;
+                        }
+                    }
+                    world.addJadeDragon(new JadeDragon(x + 16, -y - 16, delay, interval, world));
                     break;
             }
     }

@@ -12,7 +12,7 @@ public class CeilButton : FSprite
         ACTIVATED,
         INACTIVE
     }
-     State currentState;
+    State currentState;
 
     public string name = "";
     public string doorTarget = "";
@@ -24,16 +24,24 @@ public class CeilButton : FSprite
         this.name = name;
         this.doorTarget = door;
         this.rotation = 180;
-        currentState = State.INACTIVE;
+        if (!Player.GetSaveStateInstance().activatedObjects.Contains(this.name))
+            currentState = State.INACTIVE;
+        else
+        {
+            currentState = State.ACTIVATED;
+            this.SetElementByName("button_floor_on");
+        }
     }
     public void Activate()
     {
+        FSoundManager.PlaySound("WallButton");
+        Player.GetSaveStateInstance().activatedObjects.Add(this.name);
         currentState = State.ACTIVATED;
         this.SetElementByName("button_floor_on");
     }
     public bool IsTileOccupied(int x, int y, float tileWidth)
     {
-        return currentState == State.INACTIVE && ((Mathf.FloorToInt((this.x-tileWidth/2) / tileWidth) == x) || (Mathf.FloorToInt((this.x + tileWidth/2) / tileWidth) == x)) && Mathf.FloorToInt(this.y / tileWidth) == y;
+        return currentState == State.INACTIVE && ((Mathf.FloorToInt((this.x - tileWidth / 2) / tileWidth) == x) || (Mathf.FloorToInt((this.x + tileWidth / 2) / tileWidth) == x)) && Mathf.FloorToInt(this.y / tileWidth) == y;
     }
 }
 

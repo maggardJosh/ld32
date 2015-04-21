@@ -23,6 +23,8 @@ public class World : FContainer
     List<SlamButton> slamButtons = new List<SlamButton>();
     List<Powerup> powerups = new List<Powerup>();
     List<WallButton> wallButtons = new List<WallButton>();
+    List<TutorialText> tutorialTexts = new List<TutorialText>();
+    List<Fireball> fireballs = new List<Fireball>();
     string lastMap = "";
     string lastTravelPoint = "";
     public World()
@@ -54,7 +56,13 @@ public class World : FContainer
         ceilButtons.Clear();
         wallButtons.Clear();
         slamButtons.Clear();
+        foreach (Fireball f in fireballs)
+            f.InstaDie();
+        fireballs.Clear();
         powerups.Clear();
+        foreach (TutorialText text in tutorialTexts)
+            text.RemoveFromContainer();
+        tutorialTexts.Clear();
         this.map = new FTmxMap();
         this.map.LoadTMX("Maps/" + mapName);
         tilemap = (FTilemap)this.map.getLayerNamed("tilemap");
@@ -90,6 +98,17 @@ public class World : FContainer
             return;
         breakableWalls.Add(wall);
         background.AddChild(wall);
+    }
+    public void addTutorialText(TutorialText text)
+    {
+        tutorialTexts.Add(text);
+        C.getCameraInstance().AddChild(text);
+    }
+
+    public void addJadeDragon(JadeDragon jadeDragon)
+    {
+
+        background.AddChild(jadeDragon);
     }
 
     public void addDoor(Door door)
@@ -128,6 +147,26 @@ public class World : FContainer
         CheckTravelPoints();
 
     }
+    public void addFireball(Fireball f)
+    {
+        fireballs.Add(f);
+        background.AddChild(f);
+    }
+    public void CheckFireball(Fireball f)
+    {
+        if (!isPassable(f.x, f.y))
+            f.Die();
+        if (!p.IsDying())
+        {
+
+            float xDiff = Mathf.Abs(f.x - p.x);
+            float yDiff = Mathf.Abs(f.y - p.y);
+            if (xDiff < 30 && yDiff < 30)
+            {
+                p.Kill();
+            }
+        }
+    }
     public void tryBreakWall(Vector2 lastPos, Vector2 position)
     {
         int lastTileX = Mathf.FloorToInt(lastPos.x / tilemap.tileWidth);
@@ -139,10 +178,9 @@ public class World : FContainer
             tileX = lastTileX;
             lastTileX = temp;
         }
-        RXDebug.Log(tileX, lastTileX, tileY);
-        
-        foreach (BreakableWall wall in breakableWalls)
-            for (; tileX <= lastTileX; tileX++)
+
+        for (; tileX <= lastTileX; tileX++)
+            foreach (BreakableWall wall in breakableWalls)
                 if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                     wall.Open();
     }
@@ -201,10 +239,10 @@ public class World : FContainer
         foreach (Door door in doors)
             if (door.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                 return false;
-        if(checkBreakableWalls)
-        foreach (BreakableWall wall in breakableWalls)
-            if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
-                return false;
+        if (checkBreakableWalls)
+            foreach (BreakableWall wall in breakableWalls)
+                if (wall.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
+                    return false;
         foreach (SlamButton button in slamButtons)
             if (button.IsTileOccupied(tileX, tileY, tilemap.tileWidth))
                 return false;
@@ -282,6 +320,11 @@ public class World : FContainer
         {
             LoadAndSpawn(activeTravelPoint.mapToLoad, activeTravelPoint.travelPointTarget);
         }
+    }
+    public void CheckTutorialText()
+    {
+        foreach (TutorialText text in tutorialTexts)
+            text.CheckInText(p);
     }
     public void ActivateLever(Lever lever)
     {

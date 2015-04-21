@@ -18,9 +18,16 @@ public class Powerup : FSprite
         SUPER_AIR_ATTACK = 8
     }
     public Name powerupName;
+    private FSprite background;
     public Powerup(float x, float y, int powerup)
         : base("powerup_0" + powerup)
     {
+        background = new FSprite(Futile.whiteElement);
+        background.width = Futile.screen.width;
+        background.height = Futile.screen.halfHeight;
+        background.color = Color.black;
+        background.y = -Futile.screen.halfHeight / 2;
+        background.alpha = 0;
         this.powerupName = (Name)powerup;
         this.x = x - 2.5f;
         this.y = y;
@@ -32,11 +39,13 @@ public class Powerup : FSprite
     public override void HandleAddedToContainer(FContainer container)
     {
         parent = container;
+        parent.AddChild(background);
         base.HandleAddedToContainer(container);
     }
     public override void HandleRemovedFromContainer()
     {
         parent = null;
+        background.RemoveFromContainer();
         base.HandleRemovedFromContainer();
     }
     private void SpawnParticles()
@@ -50,6 +59,7 @@ public class Powerup : FSprite
     ShadowLabel description;
     public void ActivatePowerup(Player p)
     {
+        FSoundManager.PlaySound("Powerup");
         Futile.instance.SignalUpdate -= SpawnParticles;
         C.isTransitioning = true;
         FCamObject cam = C.getCameraInstance();
@@ -62,8 +72,9 @@ public class Powerup : FSprite
         description = new ShadowLabel(GetDescription());
         description.alpha = 0;
         cam.AddChild(description);
-        description.y = -Futile.screen.halfHeight / 2;
+        description.y = -Futile.screen.halfHeight *.6f;
         Go.to(description, .5f, new TweenConfig().floatProp("alpha", 1).setDelay(.4f).setEaseType(EaseType.QuadOut).onComplete((t) => { Futile.instance.SignalUpdate += WaitForKey; }));
+        Go.to(background, .4f, new TweenConfig().floatProp("alpha", .7f).setEaseType(EaseType.QuadOut));
 
         this.p = p;
     }
@@ -75,6 +86,7 @@ public class Powerup : FSprite
             Futile.instance.SignalUpdate -= WaitForKey;
             Go.to(this, .5f, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadOut));
             Go.to(description, .5f, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadOut).onComplete((t) => { ApplyPowerup(this.p); C.isTransitioning = false; }));
+            Go.to(background, .3f, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadOut).setDelay(.2f));
         }
     }
     private void ApplyPowerup(Player p)
@@ -95,7 +107,15 @@ public class Powerup : FSprite
     {
         switch (powerupName)
         {
-            case Name.CHARGE_JUMP: return "Charge Jump\nLaunch to the heavens and beyond!";
+            case Name.CHARGE_JUMP: return "Sage's Soul\n\nThe soul of this great sage\nfills you with new power!\n\nThough, we're pretty sure he was\njust a frog who could jump really high.";
+            case Name.SUPER_AIR_ATTACK: return "Rock Feather\n\nThis really heavy rock that looks\nlike a feather makes your air\nattack carry you further.\n\nWe don't get it either.";
+            case Name.LEVER: return "Lever Instructions\n\nThese instructions show\nyou how to use levers\n\n'Press X'\n\nWow! Simple!";
+            case Name.POLE_EXTEND: return "Extension Orb\n\nThe power radiating from the orb\nfills your pole staff with\nelastic energy!\n\nYour staff will now extend\nat the end of your combo!";
+            case Name.DOUBLE_JUMP: return "Cloud In A Bottle\n\nThe cloud contained in this bottle\nwill allow you to jump a second time\nwhile in the air!\n\n...Nimbus, is that you?";
+            case Name.SLAM: return "Slam Arts Scroll\n\nThe technique described by\nthe scroll teaches you how to slam\ninto the ground with great force!";
+            case Name.TAIL_HANG: return "Monkey Idol\n\nYour primal instincts are awakened!\n\nYou can now hang by your tail!";
+            case Name.THREE_HIT_COMBO: return "Smash Orb\n\nThe power radiating from\nthe orb gives you strength!\n\nCombo increased by one and\nyou can now break certain walls!";
+                
             default: return "Wat";
         }
     }

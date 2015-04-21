@@ -19,6 +19,7 @@ public class BreakableWall : FSprite
 
     public void Open()
     {
+        FSoundManager.PlaySound("WallBreak");
         Player.GetSaveStateInstance().activatedObjects.Add(this.name);
         C.getCameraInstance().shake(1.0f, .5f);
         foreach(Particle p in Particle.IceParticle.GetBreakableParticles(this.GetPosition()))
@@ -28,7 +29,6 @@ public class BreakableWall : FSprite
 
     public bool IsTileOccupied(int x, int y, float tileWidth)
     {
-        RXDebug.Log(this.isVisible, Mathf.FloorToInt(this.x / tileWidth), Mathf.FloorToInt((this.y - tileWidth / 2) / tileWidth), x, y);
         return this.isVisible && (Mathf.FloorToInt(this.x / tileWidth) == x && Mathf.FloorToInt((this.y - tileWidth/2) / tileWidth) == y || Mathf.FloorToInt(this.x / tileWidth) == x && Mathf.FloorToInt((this.y + tileWidth/2) / tileWidth) == y);
     }
 }
