@@ -8,14 +8,19 @@ public class TutorialText : ShadowLabel
 {
     int requiredPowerup = 1;
     Rect rect;
+    FSprite background;
     public TutorialText(string text, int powerup, Rect rect)
         : base(text)
     {
-
+        background = new FSprite(Futile.whiteElement);
+        background.width = Futile.screen.width;
+        background.color = Color.black;
+        background.height = this.label.textRect.height + 20;
         this.rect = rect;
         this.requiredPowerup = powerup;
         this.alpha = 0;
-        this.y = -Futile.screen.halfHeight / 2f;
+        this.y = -Futile.screen.halfHeight *.7f;
+        background.y = this.y;
     }
 
     public void CheckInText(Player p)
@@ -32,6 +37,18 @@ public class TutorialText : ShadowLabel
             if (this.alpha > 0)
                 this.alpha -= 1.0f * Time.deltaTime;
         }
+        background.alpha = this.alpha * .4f;
+    }
+    public override void HandleAddedToContainer(FContainer container)
+    {
+        container.AddChild(background);
+        base.HandleAddedToContainer(container);
+    }
+
+    public override void HandleRemovedFromContainer()
+    {
+        background.RemoveFromContainer();
+        base.HandleRemovedFromContainer();
     }
     public static bool HasPowerup(int requiredPowerup)
     {
