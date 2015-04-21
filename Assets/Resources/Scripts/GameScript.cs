@@ -28,7 +28,6 @@ public class GameScript : MonoBehaviour
         });
         Futile.stage.AddChild(menu);
 
-     
 
         ShadowLabel versionLabel = new ShadowLabel(C.versionNumber);
         versionLabel.y = -Futile.screen.height / 2 + versionLabel.label.textRect.height;
