@@ -19,6 +19,7 @@ public class BreakableWall : FSprite
 
     public void Open()
     {
+        FSoundManager.PlaySound("WallBreak");
         Player.GetSaveStateInstance().activatedObjects.Add(this.name);
         C.getCameraInstance().shake(1.0f, .5f);
         foreach(Particle p in Particle.IceParticle.GetBreakableParticles(this.GetPosition()))

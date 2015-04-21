@@ -248,6 +248,9 @@ public class Player : FAnimatedSprite
                     {
                         grounded = false;
                         currentState = State.JUMP;
+                        for (int i = 0; i < 3; i++)
+                            foreach (Particle p in Particle.CloudParticle.GetRunParticles(this.GetPosition()))
+                                Futile.stage.AddChild(p);
                         yVel = jumpStrength;
                         FSoundManager.PlaySound("Jump");
                     }
@@ -409,8 +412,8 @@ public class Player : FAnimatedSprite
             case State.ATTACK_AIR:
                 yVel = 0;
 
-                    foreach (Particle p in Particle.CloudParticle.GetDashParticles(this.GetPosition()))
-                        Futile.stage.AddChild(p);
+                foreach (Particle p in Particle.CloudParticle.GetDashParticles(this.GetPosition()))
+                    Futile.stage.AddChild(p);
                 if (stateCount > ATTACK_AIR_TIME)
                 {
                     if (!usedDoubleJump)
@@ -815,6 +818,8 @@ public class Player : FAnimatedSprite
             world.isOneWay(rightX, newY - tilemap.tileWidth / 2)))
         {
             this.y = newY;
+
+
             if (world.isDeath(this.x, this.y - tilemap.tileHeight / 2))
             {
                 Kill();
@@ -823,13 +828,20 @@ public class Player : FAnimatedSprite
         }
         else
         {
-
+            if (xVel != 0 && RXRandom.Float() < .2f)
+                foreach (Particle p in Particle.CloudParticle.GetRunParticles(this.GetPosition()))
+                    Futile.stage.AddChild(p);
+            bool land = yVel < -2;
             grounded = true;
             usedDoubleJump = false;
             if (currentState == State.JUMP)
                 currentState = State.IDLE;
             yVel = 0;
             this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileWidth / 2;
+            if (land)
+                for (int i = 0; i < 3; i++ )
+                    foreach (Particle p in Particle.CloudParticle.GetRunParticles(this.GetPosition()))
+                        Futile.stage.AddChild(p);
         }
         CheckHookDown();
         FloorButton button = world.getFloorButton(this.x, this.y);
