@@ -19,7 +19,7 @@ public class GameScript : MonoBehaviour
         Futile.atlasManager.LoadAtlas("Atlases/inGameAtlas");
 
         world = new World();
-        world.LoadAndSpawn("mapOne", "mapOneSpawn");
+        world.LoadAndSpawn("room4-4", "mapOneSpawn");
         Futile.stage.AddChild(world);
 
         Futile.atlasManager.LoadFont(C.smallFontName, "debugFont_0", "Atlases/debugFont", 0, 0);
