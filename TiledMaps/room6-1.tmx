@@ -80,7 +80,7 @@
 11,11,11,11,11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,
 11,11,11,11,11,11,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,
 11,11,11,11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,
-17,11,11,11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,
+11,11,11,11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,
 17,17,17,17,17,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,29,0,0,0,4,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,
@@ -92,55 +92,61 @@
 </data>
  </layer>
  <objectgroup name="objects" width="50" height="40">
-  <object name="room6-1WallButtonOne" type="wallbutton" x="704" y="544" width="32" height="32">
+  <object name="room6-1to6-0" type="TravelPoint" x="0" y="1056" width="32" height="64">
    <properties>
-    <property name="door" value="room6-1DoorOne"/>
-    <property name="left" value="true"/>
+    <property name="map" value="room6-0"/>
+    <property name="target" value="room6-0to6-1"/>
    </properties>
   </object>
-  <object name="room6-1TravelPointOne" type="TravelPoint" x="0" y="1056" width="32" height="64">
-   <properties>
-    <property name="map" value=""/>
-    <property name="target" value=""/>
-   </properties>
-  </object>
-  <object name="room6-1TravelPointTwo" type="TravelPoint" x="0" y="1152" width="32" height="64">
+  <object name="room6-1to7-0" type="TravelPoint" x="0" y="1152" width="32" height="64">
    <properties>
     <property name="map" value="room7-0"/>
-    <property name="target" value="room7-0TravelPointOne"/>
+    <property name="target" value="room7-0to6-1"/>
    </properties>
   </object>
-  <object name="room6-1SlamButtonOne" type="slamButton" x="1376" y="1120" width="128" height="32">
+  <object name="room6-1door5button" type="slamButton" x="1376" y="1120" width="128" height="32">
    <properties>
-    <property name="door" value="room6-1DoorFive"/>
+    <property name="door" value="room6-1door5"/>
    </properties>
   </object>
-  <object name="room6-1DoorFive" type="door" x="384" y="1120" width="64" height="32"/>
-  <object name="room6-1WallButtonTwo" type="wallButton" x="1184" y="544" width="32" height="32">
-   <properties>
-    <property name="door" value="room6-1DoorThree"/>
-    <property name="left" value="false"/>
-   </properties>
-  </object>
-  <object name="room6-1DoorOne" type="door" x="928" y="448" width="64" height="32"/>
-  <object name="room6-1FloorButtonOne" type="floorButton" x="1152" y="352" width="64" height="32">
-   <properties>
-    <property name="door" value="room6-1DoorTwo"/>
-   </properties>
-  </object>
-  <object name="room6-1DoorTwo" type="door" x="1088" y="512" width="32" height="64"/>
-  <object name="room6-1DoorThree" type="door" x="928" y="256" width="64" height="32"/>
-  <object name="room6-1WallButtonThree" type="wallButton" x="672" y="160" width="32" height="32">
-   <properties>
-    <property name="door" value="room6-1DoorFour"/>
-    <property name="left" value="true"/>
-   </properties>
-  </object>
-  <object name="room6-1DoorFour" type="door" x="1408" y="192" width="64" height="32"/>
+  <object name="room6-1door5" type="door" x="384" y="1120" width="64" height="32"/>
   <object name="room6-1BreakableOne" type="breakableWall" x="704" y="128" width="32" height="64"/>
   <object name="room6-1BreakableWallTwo" type="breakableWall" x="736" y="128" width="32" height="64"/>
   <object name="room6-1BreakableWallThree" type="BreakableWall" x="768" y="128" width="32" height="64"/>
   <object name="room6-1BreakableWallFour" type="breakableWall" x="800" y="128" width="32" height="64"/>
   <object name="room6-1BreakableWallFive" type="breakableWall" x="832" y="128" width="32" height="64"/>
+  <object name="room6-1breakablewall1" type="breakablewall" x="800" y="512" width="32" height="64"/>
+  <object name="room6-1door1button" type="wallbutton" x="704" y="544" width="32" height="32">
+   <properties>
+    <property name="door" value="room6-1door1"/>
+    <property name="left" value="true"/>
+   </properties>
+  </object>
+  <object name="room6-1door1" type="door" x="928" y="448" width="64" height="32"/>
+  <object name="room6-1door2button" type="floorbutton" x="1152" y="352" width="64" height="32">
+   <properties>
+    <property name="door" value="room6-1door2"/>
+   </properties>
+  </object>
+  <object name="room6-1door2" x="1088" y="512" width="32" height="64"/>
+  <object name="room6-1door3button" type="wallbutton" x="1184" y="544" width="32" height="32">
+   <properties>
+    <property name="door" value="room6-1door3"/>
+    <property name="left" value="false"/>
+   </properties>
+  </object>
+  <object name="room6-1door3" type="door" x="928" y="256" width="64" height="32"/>
+  <object name="room6-1door4button" type="wallbutton" x="672" y="160" width="32" height="32">
+   <properties>
+    <property name="door" value="room6-1door4"/>
+    <property name="left" value="true"/>
+   </properties>
+  </object>
+  <object name="room6-1door4" type="door" x="1408" y="192" width="64" height="32"/>
+  <object type="powerup" x="800" y="1056" width="32" height="32">
+   <properties>
+    <property name="powerup" value="7"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

@@ -88,16 +88,16 @@
 </data>
  </layer>
  <objectgroup name="objects" width="48" height="38">
-  <object name="room4-3TravelPointThree" type="travelPoint" x="1504" y="288" width="32" height="96">
+  <object name="room4-3to5-1upper" type="travelPoint" x="1504" y="288" width="32" height="96">
    <properties>
     <property name="map" value="room5-1"/>
-    <property name="target" value=""/>
+    <property name="target" value="room5-1to4-3upper"/>
    </properties>
   </object>
-  <object name="room4-3TravelPointTwo" type="travelPoint" x="1504" y="544" width="32" height="64">
+  <object name="room4-3to5-1lower" type="travelPoint" x="1504" y="544" width="32" height="64">
    <properties>
     <property name="map" value="room5-1"/>
-    <property name="target" value=""/>
+    <property name="target" value="room5-1to4-3lower"/>
    </properties>
   </object>
   <object name="room4-3fFloorButtonOne" type="floorButton" x="1344" y="800" width="64" height="32">
@@ -130,10 +130,10 @@
     <property name="taret" value=""/>
    </properties>
   </object>
-  <object name="room4-3TravelPointFour" type="travelPoint" x="480" y="224" width="32" height="64">
+  <object name="room4-3to0-2" type="travelPoint" x="480" y="224" width="32" height="64">
    <properties>
     <property name="map" value="room0-2"/>
-    <property name="target" value=""/>
+    <property name="target" value="room0-2to4-3"/>
    </properties>
   </object>
   <object name="room4-3DoorFour" type="door" x="1408" y="544" width="32" height="64"/>
@@ -141,6 +141,11 @@
   <object name="room4-3SlamButtonTwo" type="slamButton" x="320" y="640" width="128" height="32">
    <properties>
     <property name="door" value="room4-3DoorFive"/>
+   </properties>
+  </object>
+  <object type="powerup" x="1280" y="576" width="32" height="32">
+   <properties>
+    <property name="powerup" value="5"/>
    </properties>
   </object>
  </objectgroup>

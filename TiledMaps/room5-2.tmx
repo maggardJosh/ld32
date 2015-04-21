@@ -84,13 +84,73 @@
 </data>
  </layer>
  <objectgroup name="objects" width="48" height="36">
-  <object name="room5-2TravelPointOne" type="travelPoint" x="0" y="928" width="32" height="64">
+  <object name="room5-2to5-1" type="travelPoint" x="0" y="928" width="32" height="64">
    <properties>
-    <property name="map" value=""/>
-    <property name="target" value=""/>
+    <property name="map" value="room5-1"/>
+    <property name="target" value="room5-1to5-2"/>
    </properties>
   </object>
-  <object name="room5-2TravelPointTwo" type="travelPoint" x="0" y="224" width="32" height="64"/>
-  <object name="room5-2TravelPointThree" type="travelPoint" x="1504" y="256" width="32" height="64"/>
+  <object name="room5-2to4-4" type="travelPoint" x="0" y="224" width="32" height="64">
+   <properties>
+    <property name="map" value="room4-4"/>
+    <property name="target" value="room4-4to5-2"/>
+   </properties>
+  </object>
+  <object name="room5-2to4-0" type="travelPoint" x="1504" y="256" width="32" height="64">
+   <properties>
+    <property name="map" value="room4-0"/>
+    <property name="target" value="room4-0to5-2"/>
+   </properties>
+  </object>
+  <object name="room5-2doorOne" type="door" x="96" y="224" width="32" height="64"/>
+  <object name="room5-2doorOneButton" type="ceilbutton" x="192" y="96" width="64" height="32"/>
+  <object name="room5-2doorTwo" type="door" x="1280" y="320" width="64" height="32"/>
+  <object name="room5-2doorTwoLever" type="lever" x="1280" y="480" width="32" height="32">
+   <properties>
+    <property name="door" value="room5-2doorTwo"/>
+   </properties>
+  </object>
+  <object name="room5-2breakableWallOne" type="breakablewall" x="1312" y="640" width="32" height="64"/>
+  <object name="room5-2breakableWallTwo" type="breakablewall" x="1216" y="832" width="32" height="64"/>
+  <object name="room5-2breakableWallTwo" type="breakablewall" x="576" y="768" width="32" height="64"/>
+  <object name="room5-2breakableWallThree" type="breakablewall" x="576" y="768" width="32" height="64"/>
+  <object name="room5-2breakableWallFour" type="breakablewall" x="288" y="832" width="32" height="64"/>
+  <object name="room5-2breakableWallFive" type="breakablewall" x="480" y="640" width="32" height="64"/>
+  <object name="room5-2breakableWallSix" type="breakablewall" x="512" y="640" width="32" height="64"/>
+  <object name="room5-2breakableWall7" type="breakablewall" x="576" y="512" width="32" height="64"/>
+  <object name="room5-2breakableWall8" type="breakablewall" x="544" y="512" width="32" height="64"/>
+  <object name="room5-2breakableWall9" type="breakablewall" x="512" y="512" width="32" height="64"/>
+  <object name="room5-2breakableWall10" type="breakablewall" x="416" y="512" width="32" height="64"/>
+  <object name="room5-2breakableWall11" type="breakablewall" x="384" y="512" width="32" height="64"/>
+  <object name="room5-2breakableWall12" type="breakablewall" x="352" y="512" width="32" height="64"/>
+  <object type="powerup" x="480" y="416" width="32" height="32">
+   <properties>
+    <property name="powerup" value="6"/>
+   </properties>
+  </object>
+  <object name="room5-2doorThreeLever" type="lever" x="576" y="448" width="32" height="32">
+   <properties>
+    <property name="door" value="room5-2doorThree"/>
+   </properties>
+  </object>
+  <object name="room5-2doorThree" type="door" x="896" y="384" width="32" height="64"/>
+  <object name="room5-2doorFour" type="door" x="1056" y="928" width="32" height="64"/>
+  <object name="room5-2doorFourLever" type="lever" x="928" y="960" width="32" height="32">
+   <properties>
+    <property name="door" value="room5-2doorFour"/>
+   </properties>
+  </object>
+  <object type="jadedragon" x="128" y="672" width="32" height="32">
+   <properties>
+    <property name="delay" value=".5"/>
+    <property name="interval" value=".5"/>
+   </properties>
+  </object>
+  <object type="jadedragon" x="864" y="544" width="32" height="32">
+   <properties>
+    <property name="delay" value="0"/>
+    <property name="interval" value=".75"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

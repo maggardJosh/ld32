@@ -80,22 +80,22 @@
 </data>
  </layer>
  <objectgroup name="objects" width="38" height="34">
-  <object name="room4-4TravelPointOne" type="travelPoint" x="0" y="608" width="32" height="64">
+  <object name="room4-4to0-2" type="travelPoint" x="0" y="608" width="32" height="64">
    <properties>
     <property name="map" value="room0-2"/>
-    <property name="target" value=""/>
+    <property name="target" value="room0-2to4-4"/>
    </properties>
   </object>
-  <object name="room4-4TravelPointTwo" type="travelPoint" x="1184" y="160" width="32" height="64">
+  <object name="room4-4to0-6" type="travelPoint" x="1184" y="160" width="32" height="64">
    <properties>
     <property name="map" value="room0-6"/>
-    <property name="target" value=""/>
+    <property name="target" value="room0-6to4-4"/>
    </properties>
   </object>
-  <object name="room4-4TravelPointThree" type="travelPoint" x="1184" y="960" width="32" height="64">
+  <object name="room4-4to5-2" type="travelPoint" x="1184" y="960" width="32" height="64">
    <properties>
     <property name="map" value="room5-2"/>
-    <property name="target" value=""/>
+    <property name="target" value="room5-2to4-4"/>
    </properties>
   </object>
   <object name="room4-4WallButtonOne" type="wallButton" x="1120" y="608" width="32" height="32">
@@ -105,10 +105,10 @@
    </properties>
   </object>
   <object name="room4-4DoorOne" type="door" x="960" y="640" width="64" height="32"/>
-  <object name="room4-4TravelPointFour" type="travelPoint" x="416" y="1056" width="128" height="32">
+  <object name="room4-4to5-1" type="travelPoint" x="416" y="1056" width="128" height="32">
    <properties>
     <property name="map" value="room5-1"/>
-    <property name="target" value=""/>
+    <property name="target" value="room5-1to4-4"/>
    </properties>
   </object>
  </objectgroup>

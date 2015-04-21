@@ -53,7 +53,7 @@
 11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
 11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
 11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
-11,11,12,0,0,0,0,0,0,0,0,0,46,0,0,0,0,0,0,0,0,0,0,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
+11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,
 11,11,12,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,16,17,17,17,17,17,17,17,17,17,17,17,17,17,17,
 11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 17,17,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -68,16 +68,58 @@
 </data>
  </layer>
  <objectgroup name="objects" width="38" height="28">
-  <object name="room6-0TravelPointOne" type="travelPoint" x="0" y="640" width="32" height="64">
+  <object name="room6-0to4-0" type="travelPoint" x="0" y="640" width="32" height="64">
    <properties>
     <property name="map" value="room4-0"/>
-    <property name="target" value=""/>
+    <property name="target" value="room4-0to6-0"/>
    </properties>
   </object>
-  <object name="room6-0TravelPointTwo" type="travelPoint" x="1184" y="576" width="32" height="64">
+  <object name="room6-0to6-1" type="travelPoint" x="1184" y="576" width="32" height="64">
    <properties>
     <property name="map" value="room6-1"/>
-    <property name="target" value=""/>
+    <property name="target" value="room6-1to6-0"/>
+   </properties>
+  </object>
+  <object name="room6-0door1lever" type="lever" x="384" y="736" width="32" height="32">
+   <properties>
+    <property name="door" value="room6-0door1"/>
+   </properties>
+  </object>
+  <object name="room6-0door1" type="door" x="768" y="576" width="32" height="64"/>
+  <object name="room6-0door2" type="door" x="832" y="576" width="32" height="64"/>
+  <object name="room6-0door3" type="door" x="896" y="576" width="32" height="64"/>
+  <object name="room6-0door4" type="door" x="960" y="576" width="32" height="64"/>
+  <object name="room6-0door5" type="door" x="1024" y="576" width="32" height="64"/>
+  <object name="room6-0door6" type="door" x="1088" y="576" width="32" height="64"/>
+  <object name="room6-0door2lever" type="lever" x="256" y="640" width="32" height="32">
+   <properties>
+    <property name="door" value="room6-0door2"/>
+   </properties>
+  </object>
+  <object name="room6-0door3lever" type="lever" x="192" y="512" width="32" height="32">
+   <properties>
+    <property name="door" value="room6-0door3"/>
+   </properties>
+  </object>
+  <object name="room6-0door4lever" type="lever" x="384" y="288" width="32" height="32">
+   <properties>
+    <property name="door" value="room6-0door4"/>
+   </properties>
+  </object>
+  <object name="room6-0door5lever" type="lever" x="576" y="512" width="32" height="32">
+   <properties>
+    <property name="door" value="room6-0door5"/>
+   </properties>
+  </object>
+  <object name="room6-0door6lever" type="lever" x="512" y="640" width="32" height="32">
+   <properties>
+    <property name="door" value="room6-0door6"/>
+   </properties>
+  </object>
+  <object type="jadedragon" x="384" y="512" width="32" height="32">
+   <properties>
+    <property name="delay" value="0"/>
+    <property name="interval" value=".3"/>
    </properties>
   </object>
  </objectgroup>
