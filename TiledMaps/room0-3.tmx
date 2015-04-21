@@ -35,7 +35,7 @@
 11,11,11,18,0,0,0,0,16,17,11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,11,11,
 17,17,18,0,0,0,0,0,0,0,10,17,18,0,0,19,13,13,13,13,13,13,13,13,13,13,13,6,0,0,16,11,11,11,
 0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,26,0,0,0,16,17,17,
-0,0,0,0,0,0,0,0,0,0,0,19,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,26,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,3,19,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,26,0,0,0,0,0,0,
 5,5,5,5,6,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,0,0,7,0,0,0,0,0,0,
 11,11,11,11,12,0,0,0,0,0,0,0,0,0,4,5,12,0,0,0,26,0,0,10,6,0,0,0,0,0,4,5,5,5,
 11,11,11,11,18,0,0,0,0,0,0,0,0,0,10,11,11,5,5,5,11,5,5,11,12,0,0,0,0,0,10,11,11,11,
@@ -48,38 +48,28 @@
 </data>
  </layer>
  <objectgroup name="objects" width="34" height="18">
-  <object name="ButtonOne" type="floorbutton" x="183" y="107" width="64" height="32">
+  <object name="room0-3to2-1" type="travelPoint" x="0" y="224" width="32" height="64">
    <properties>
-    <property name="door" value="DoorTwo"/>
+    <property name="map" value="room2-1"/>
+    <property name="target" value="room2-1to0-3"/>
    </properties>
   </object>
-  <object name="DoorTwo" type="door" x="274" y="117" width="32" height="64"/>
-  <object name="Powerup" type="powerup" x="349" y="61" width="32" height="32">
+  <object name="dragon" type="jadedragon" x="352" y="224" width="32" height="32">
    <properties>
-    <property name="powerup" value="7"/>
+    <property name="delay" value="1.0"/>
+    <property name="interval" value="1.0"/>
    </properties>
   </object>
-  <object name="DoorThree" type="door" x="323" y="118" width="64" height="32"/>
-  <object name="wallButton" type="wallbutton" x="510" y="412" width="32" height="32">
+  <object name="room0-3to0-2" type="TravelPoint" x="1056" y="256" width="32" height="64">
    <properties>
-    <property name="door" value="DoorThree"/>
-    <property name="left" value="true"/>
+    <property name="map" value="room0-2"/>
+    <property name="target" value="room0-2to0-3"/>
    </properties>
   </object>
-  <object name="ButtonTwo" type="slambutton" x="503" y="48" width="128" height="32">
+  <object name="room0-3to0-4" type="travelPoint" x="0" y="416" width="32" height="64">
    <properties>
-    <property name="door" value="DoorOne"/>
-   </properties>
-  </object>
-  <object name="ButtonOne" type="ceilbutton" x="235" y="59" width="64" height="32">
-   <properties>
-    <property name="door" value="DoorTwo"/>
-   </properties>
-  </object>
-  <object name="mapOneSpawn" type="TravelPoint" x="992" y="288" width="64" height="32">
-   <properties>
-    <property name="map" value=""/>
-    <property name="target" value=""/>
+    <property name="map" value="room0-4"/>
+    <property name="target" value="room0-4to0-3"/>
    </properties>
   </object>
  </objectgroup>
