@@ -838,7 +838,7 @@ public class Player : FAnimatedSprite
                 currentState = State.IDLE;
             yVel = 0;
             this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileWidth / 2;
-            if (land)
+            if (land && world.getFloorButton(this.x, this.y) == null)
                 for (int i = 0; i < 3; i++ )
                     foreach (Particle p in Particle.CloudParticle.GetRunParticles(this.GetPosition()))
                         Futile.stage.AddChild(p);

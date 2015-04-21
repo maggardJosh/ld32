@@ -116,38 +116,40 @@
 </data>
  </layer>
  <objectgroup name="objects" width="42" height="52">
-  <object name="ButtonOne" type="floorbutton" x="192" y="256" width="64" height="32">
+  <object name="room0-2Entrance" type="travelpoint" x="0" y="32" width="32" height="64">
    <properties>
-    <property name="door" value="DoorTwo"/>
-   </properties>
-  </object>
-  <object name="DoorTwo" type="door" x="288" y="224" width="32" height="64"/>
-  <object name="Powerup" type="powerup" x="128" y="224" width="32" height="32">
-   <properties>
-    <property name="powerup" value="7"/>
-   </properties>
-  </object>
-  <object name="DoorThree" type="door" x="298" y="165" width="64" height="32"/>
-  <object name="wallButton" type="wallbutton" x="544" y="256" width="32" height="32">
-   <properties>
-    <property name="door" value="DoorThree"/>
-    <property name="left" value="true"/>
-   </properties>
-  </object>
-  <object name="ButtonTwo" type="slambutton" x="480" y="159" width="128" height="32">
-   <properties>
-    <property name="door" value="DoorOne"/>
-   </properties>
-  </object>
-  <object name="ButtonOne" type="ceilbutton" x="196" y="146" width="64" height="32">
-   <properties>
-    <property name="door" value="DoorTwo"/>
+    <property name="map" value="room0-1"/>
+    <property name="target" value="room0-1Exit"/>
    </properties>
   </object>
   <object name="mapOneSpawn" type="TravelPoint" x="672" y="1536" width="64" height="32">
    <properties>
     <property name="map" value=""/>
     <property name="target" value=""/>
+   </properties>
+  </object>
+  <object name="room0-2to0-3" type="travelpoint" x="0" y="480" width="32" height="64">
+   <properties>
+    <property name="map" value="room0-3"/>
+    <property name="target" value="room0-3to0-2"/>
+   </properties>
+  </object>
+  <object name="room0-2to3-0" type="travelpoint" x="1312" y="224" width="32" height="64">
+   <properties>
+    <property name="door" value="room3-0to0-2"/>
+    <property name="map" value="room3-0"/>
+   </properties>
+  </object>
+  <object name="room0-2to0-6" type="travelpoint" x="1312" y="640" width="32" height="64">
+   <properties>
+    <property name="map" value="room0-6"/>
+    <property name="target" value="room0-6to0-2"/>
+   </properties>
+  </object>
+  <object name="room0-2to0-3door" type="door" x="1280" y="224" width="32" height="64"/>
+  <object name="room0-2to0-3button" type="floorbutton" x="1184" y="256" width="64" height="32">
+   <properties>
+    <property name="door" value="room0-2to0-3door"/>
    </properties>
   </object>
  </objectgroup>

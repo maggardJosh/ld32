@@ -45,6 +45,7 @@ public class World : FContainer
     }
     public void LoadMap(string mapName)
     {
+        RXDebug.Log(mapName);
         if (mapName.ToUpper() == "ENDING")
         {
             if (C.isTransitioning)
