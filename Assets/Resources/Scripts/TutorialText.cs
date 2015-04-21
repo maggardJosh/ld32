@@ -35,6 +35,8 @@ public class TutorialText : ShadowLabel
     }
     public static bool HasPowerup(int requiredPowerup)
     {
+        if (requiredPowerup == 0)
+            return true;
         switch ((Powerup.Name)requiredPowerup)
         {
             case Powerup.Name.CHARGE_JUMP:
