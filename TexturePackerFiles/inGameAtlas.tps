@@ -181,6 +181,11 @@
             <filename>player</filename>
             <filename>debugFont_0.png</filename>
             <filename>objects</filename>
+            <filename>powerups</filename>
+            <filename>enemies</filename>
+            <filename>MainMenuBackground.png</filename>
+            <filename>MainMenuLogo.png</filename>
+            <filename>PressButton.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
