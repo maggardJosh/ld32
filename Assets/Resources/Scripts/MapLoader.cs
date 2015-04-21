@@ -144,7 +144,6 @@ public class MapLoader
                     world.addBreakableWall(new BreakableWall(x + 16, -y - 32, name));
                     break;
                 case "TUTORIALTEXT":
-                    name = node.attributes["name"];
                     float.TryParse(node.attributes["x"], out x);
                     float.TryParse(node.attributes["y"], out y);
                     float.TryParse(node.attributes["width"], out width);

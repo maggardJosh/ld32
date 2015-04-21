@@ -15,7 +15,7 @@ public class TutorialText : ShadowLabel
         this.rect = rect;
         this.requiredPowerup = powerup;
         this.alpha = 0;
-        this.y = -Futile.screen.halfHeight / 3f;
+        this.y = -Futile.screen.halfHeight / 2f;
     }
 
     public void CheckInText(Player p)
