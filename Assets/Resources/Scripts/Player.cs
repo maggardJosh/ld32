@@ -208,7 +208,7 @@ public class Player : FAnimatedSprite
     private Vector2 lastExtendPos = Vector2.zero;
     private float slamDist = 0;
     private float slamStart = 0;
-    private float SLAM_BUTTON_DIST = 32 * 10;
+    private float SLAM_BUTTON_DIST = 32 * 9;
     private float SLAM_PARTICLE_DIST = 32 * 7;
     public void Update()
     {
