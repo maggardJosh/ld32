@@ -116,7 +116,7 @@ public class Player : FAnimatedSprite
         addAnimation(new FAnimation(State.DOUBLE_JUMP.ToString(), new int[] { 28, 29, 30, 31, 21 }, 100, false));
         addAnimation(new FAnimation(State.FALL.ToString(), new int[] { 22 }, 100, true));
         addAnimation(new FAnimation(State.SUPERJUMP_CHARGE.ToString(), new int[] { 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 23, 23, 23, 23, 24, 24, 24, 24, 23, 23, 23, 24, 24, 24, 23, 23, 24, 24, 23, 24, 23, 24 }, 40, false));
-        addAnimation(new FAnimation(State.INTERACT_LEVER.ToString(), new int[] { 47,48,49,50,51,52,53,54,55,56,57,58,59,60 }, 100, false));
+        addAnimation(new FAnimation(State.INTERACT_LEVER.ToString(), new int[] { 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_ONE.ToString(), new int[] { 11, 12, 13, 14 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_TWO.ToString(), new int[] { 15, 16, 17 }, 100, false));
         addAnimation(new FAnimation(State.ATTACK_THREE.ToString(), new int[] { 18, 19 }, 20, false));
@@ -208,7 +208,7 @@ public class Player : FAnimatedSprite
     private Vector2 lastExtendPos = Vector2.zero;
     private float slamDist = 0;
     private float slamStart = 0;
-    private float SLAM_BUTTON_DIST = 32 * 10;
+    private float SLAM_BUTTON_DIST = 32 * 9;
     private float SLAM_PARTICLE_DIST = 32 * 7;
     public void Update()
     {
@@ -785,69 +785,74 @@ public class Player : FAnimatedSprite
 
     public void TryMoveDown()
     {
-
-        float newY = this.y + yVel;
-        float leftX = this.x - tilemap.tileWidth / 4;
-        float rightX = this.x + tilemap.tileWidth / 4;
-        if ((!world.isPassable(leftX, newY - tilemap.tileWidth) ||
-            !world.isPassable(rightX, newY - tilemap.tileWidth)) ||
-            (world.isOneWay(leftX, newY - tilemap.tileWidth) ||
-            world.isOneWay(rightX, newY - tilemap.tileWidth)))
+        float targetY = this.y + yVel;
+        float yStep = Mathf.Min(yVel, tilemap.tileHeight / 2);
+        float lastY = y;
+        for (; y > targetY; y += Mathf.Max(-tilemap.tileHeight/2, targetY - y))
         {
 
-            if (currentState == State.TAIL_HANG_FALL)
-                currentState = State.IDLE;
-            grounded = true;
-            usedDoubleJump = false;
-        }
-        else
-        {
-            switch (currentState)
+            float leftX = this.x - tilemap.tileWidth / 4;
+            float rightX = this.x + tilemap.tileWidth / 4;
+            if ((!world.isPassable(leftX, y - tilemap.tileWidth) ||
+                !world.isPassable(rightX, y - tilemap.tileWidth)) ||
+                (world.isOneWay(leftX, y - tilemap.tileWidth) ||
+                world.isOneWay(rightX, y - tilemap.tileWidth)))
             {
-                case State.IDLE:
-                case State.SLIDE:
-                case State.RUN:
-                case State.SUPERJUMP_CHARGE:
-                    currentState = State.JUMP;
-                    grounded = false;
-                    break;
+
+                if (currentState == State.TAIL_HANG_FALL)
+                    currentState = State.IDLE;
+                grounded = true;
+                usedDoubleJump = false;
             }
-        }
-        if ((world.isPassable(leftX, newY - tilemap.tileWidth / 2) &&
-            world.isPassable(rightX, newY - tilemap.tileWidth / 2)) &&
-            !(world.isOneWay(leftX, newY - tilemap.tileWidth / 2) &&
-            world.isOneWay(rightX, newY - tilemap.tileWidth / 2)))
-        {
-            this.y = newY;
-
-
-            if (world.isDeath(this.x, this.y - tilemap.tileHeight / 2))
+            else
             {
-                Kill();
-                return;
+                switch (currentState)
+                {
+                    case State.IDLE:
+                    case State.SLIDE:
+                    case State.RUN:
+                    case State.SUPERJUMP_CHARGE:
+                        currentState = State.JUMP;
+                        grounded = false;
+                        break;
+                }
             }
-        }
-        else
-        {
-            if (xVel != 0 && RXRandom.Float() < .2f)
-                foreach (Particle p in Particle.CloudParticle.GetRunParticles(this.GetPosition()))
-                    Futile.stage.AddChild(p);
-            bool land = yVel < -2;
-            grounded = true;
-            usedDoubleJump = false;
-            if (currentState == State.JUMP)
-                currentState = State.IDLE;
-            yVel = 0;
-            this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileWidth / 2;
-            if (land && world.getFloorButton(this.x, this.y) == null)
-                for (int i = 0; i < 3; i++ )
+            if ((world.isPassable(leftX, y - tilemap.tileWidth / 2) &&
+                world.isPassable(rightX, y - tilemap.tileWidth / 2)) &&
+                !(world.isOneWay(leftX, y - tilemap.tileWidth / 2) &&
+                world.isOneWay(rightX, y - tilemap.tileWidth / 2)))
+            {
+                if (world.isDeath(this.x, this.y - tilemap.tileHeight / 2))
+                {
+                    Kill();
+                    return;
+                }
+            }
+            else
+            {
+                this.y = lastY;
+                if (xVel != 0 && RXRandom.Float() < .2f)
                     foreach (Particle p in Particle.CloudParticle.GetRunParticles(this.GetPosition()))
                         Futile.stage.AddChild(p);
+                bool land = yVel < -2;
+                grounded = true;
+                usedDoubleJump = false;
+                if (currentState == State.JUMP)
+                    currentState = State.IDLE;
+                yVel = 0;
+                this.y = Mathf.FloorToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight + tilemap.tileWidth / 2;
+                if (land && world.getFloorButton(this.x, this.y) == null)
+                    for (int i = 0; i < 3; i++)
+                        foreach (Particle p in Particle.CloudParticle.GetRunParticles(this.GetPosition()))
+                            Futile.stage.AddChild(p);
+                break;
+            }
+            CheckHookDown();
+            FloorButton button = world.getFloorButton(this.x, this.y);
+            if (button != null)
+                this.y = button.y + 6;
+            lastY = y;
         }
-        CheckHookDown();
-        FloorButton button = world.getFloorButton(this.x, this.y);
-        if (button != null)
-            this.y = button.y + 6;
     }
     public bool IsDying()
     {
@@ -878,7 +883,7 @@ public class Player : FAnimatedSprite
         if (tilemap.isHook(this.x, this.y))
         {
             currentState = State.TAIL_HANG_TRANS_IN;
-            Go.to(this, TRANS_HOOK_TIME, new TweenConfig().floatProp("x", Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2).floatProp("y", Mathf.CeilToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight - tilemap.tileHeight / 2).setEaseType(EaseType.Linear).onComplete((t) => { currentState = State.TAIL_HANG; }));
+            Go.to(this, TRANS_HOOK_TIME, new TweenConfig().floatProp("x", Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2).floatProp("y", Mathf.CeilToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight - tilemap.tileHeight / 2).setEaseType(EaseType.Linear).onComplete((t) => { if (currentState != State.DYING) { currentState = State.TAIL_HANG; }  }));
             xVel = 0;
             yVel = 0;
         }

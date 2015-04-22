@@ -22,7 +22,7 @@ public class C
     public static readonly List<int> ONE_WAY_LIST = new List<int> { 50 };
     public static readonly List<int> DEATH_LIST = new List<int> { 52 };
 
-    public const string versionNumber = "v1.0";
+    public const string versionNumber = "v1.1";
 
     public static bool isTransitioning = false;
 
