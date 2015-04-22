@@ -33,14 +33,14 @@ public class Powerup : FSprite
         this.y = y;
         Go.to(this, 3.0f, new TweenConfig().floatProp("x", 5, true).setEaseType(EaseType.QuadOut).setIterations(-1, LoopType.PingPong));
         Go.to(this, 3.7f, new TweenConfig().floatProp("y", 10, true).setEaseType(EaseType.QuadOut).setIterations(-1, LoopType.PingPong));
-        
+
+        Futile.instance.SignalUpdate += SpawnParticles;
     }
     FContainer parent;
     public override void HandleAddedToContainer(FContainer container)
     {
         parent = container;
         parent.AddChild(background);
-        Futile.instance.SignalUpdate += SpawnParticles;
         base.HandleAddedToContainer(container);
     }
     public override void HandleRemovedFromContainer()
@@ -104,6 +104,7 @@ public class Powerup : FSprite
             case Name.CHARGE_JUMP: Player.GetSaveStateInstance().chargeJump = true; break;
             case Name.SUPER_AIR_ATTACK: Player.GetSaveStateInstance().airAttackEndGame = true; break;
         }
+        this.RemoveFromContainer();
     }
     public string GetDescription()
     {
