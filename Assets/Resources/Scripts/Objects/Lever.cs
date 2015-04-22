@@ -23,10 +23,18 @@ public class Lever : FSprite
         this.y = y;
         this.name = name;
         this.doorTarget = door;
-        currentState = State.INACTIVE;
+        if (!Player.GetSaveStateInstance().activatedObjects.Contains(this.name))
+            currentState = State.INACTIVE;
+        else
+        {
+            currentState = State.ACTIVATED;
+            this.SetElementByName("lever_off");
+        }
+
     }
     public void Activate()
     {
+        Player.GetSaveStateInstance().activatedObjects.Add(this.name);
         currentState = State.ACTIVATED;
         this.SetElementByName("lever_off");
     }

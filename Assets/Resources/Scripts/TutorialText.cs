@@ -10,7 +10,7 @@ public class TutorialText : ShadowLabel
     Rect rect;
     FSprite background;
     public TutorialText(string text, int powerup, Rect rect)
-        : base(text)
+        : base(text.Replace("\\n", "\n"))
     {
         background = new FSprite(Futile.whiteElement);
         background.width = Futile.screen.width;
