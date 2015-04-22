@@ -10,6 +10,7 @@ using System.Text;
         private FSprite pressButton;
         private FSprite logo;
         private Action action;
+        private ShadowLabel LDLabel;
         public MainMenu(Action startGameAction)
         {
             this.action = startGameAction;
@@ -37,6 +38,11 @@ using System.Text;
             Go.to(wukong, 1.5f, new TweenConfig().floatProp("x", 0).onComplete((t) => { wukong.play("idle"); }));
 
             Go.to(pressButton, 1.0f, new TweenConfig().floatProp("alpha", 1).setDelay(6f).setEaseType(EaseType.QuadIn).onComplete((t2) => { Go.to(pressButton, 1.0f, new TweenConfig().floatProp("y", 7, true).setEaseType(EaseType.QuadOut).setIterations(-1, LoopType.PingPong)); }));
+
+            LDLabel = new ShadowLabel("Made in 72 hours\nfor Ludum Dare");
+            LDLabel.y = -Futile.screen.halfHeight - LDLabel.label.textRect.height;
+            this.AddChild(LDLabel);
+            Go.to(LDLabel, 1.5f, new TweenConfig().floatProp("y", -Futile.screen.halfHeight + LDLabel.label.textRect.height*.6f));
 
             Futile.instance.SignalUpdate += Update;   
         }
