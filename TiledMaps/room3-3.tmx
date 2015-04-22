@@ -92,7 +92,7 @@
   <object name="room3-3doorOneButton" type="wallbutton" x="800" y="672" width="32" height="32">
    <properties>
     <property name="door" value="room3-3doorOne"/>
-    <property name="left" value="false"/>
+    <property name="left" value="true"/>
    </properties>
   </object>
   <object name="room3-3doorTwo" type="door" x="832" y="224" width="32" height="64"/>

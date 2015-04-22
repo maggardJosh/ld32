@@ -81,7 +81,7 @@
     <property name="door" value="room3-2DoorOne"/>
    </properties>
   </object>
-  <object name="room3-2to4-0" type="TravelPoint" x="352" y="768" width="64" height="32">
+  <object name="room3-2to4-0" type="TravelPoint" x="352" y="800" width="64" height="32">
    <properties>
     <property name="map" value="room4-0"/>
     <property name="target" value="room4-0to3-2"/>
