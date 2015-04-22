@@ -33,19 +33,21 @@ public class Powerup : FSprite
         this.y = y;
         Go.to(this, 3.0f, new TweenConfig().floatProp("x", 5, true).setEaseType(EaseType.QuadOut).setIterations(-1, LoopType.PingPong));
         Go.to(this, 3.7f, new TweenConfig().floatProp("y", 10, true).setEaseType(EaseType.QuadOut).setIterations(-1, LoopType.PingPong));
-        Futile.instance.SignalUpdate += SpawnParticles;
+        
     }
     FContainer parent;
     public override void HandleAddedToContainer(FContainer container)
     {
         parent = container;
         parent.AddChild(background);
+        Futile.instance.SignalUpdate += SpawnParticles;
         base.HandleAddedToContainer(container);
     }
     public override void HandleRemovedFromContainer()
     {
         parent = null;
         background.RemoveFromContainer();
+        Futile.instance.SignalUpdate -= SpawnParticles;
         base.HandleRemovedFromContainer();
     }
     private void SpawnParticles()
