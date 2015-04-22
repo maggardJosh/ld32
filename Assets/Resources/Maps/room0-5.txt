@@ -99,5 +99,11 @@
     <property name="interval" value="2.0"/>
    </properties>
   </object>
+  <object type="tutorialtext" x="96" y="224" width="288" height="224">
+   <properties>
+    <property name="powerup" value="1"/>
+    <property name="text" value="You can change the direction of\nyour attacks in the middle\nof your combo."/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

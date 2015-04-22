@@ -95,7 +95,7 @@
     <property name="target" value="room0-4to2-1"/>
    </properties>
   </object>
-  <object type="tutorialtext" x="416" y="160" width="160" height="128">
+  <object type="tutorialtext" x="288" y="64" width="320" height="224">
    <properties>
     <property name="powerup" value="3"/>
     <property name="text" value="Press down while in the\nair to perform a slam."/>

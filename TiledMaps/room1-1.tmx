@@ -89,10 +89,10 @@
     <property name="target" value="room1-0to1-1"/>
    </properties>
   </object>
-  <object type="tutorialtext" x="384" y="416" width="224" height="224">
+  <object type="tutorialtext" x="384" y="416" width="352" height="224">
    <properties>
     <property name="powerup" value="2"/>
-    <property name="text" value="Jump near a hook to hang from it./n/nYou can jump from a hook\nas if you were on the ground."/>
+    <property name="text" value="Jump near a hook to hang from it\nand press Down to dismount.\n\nYou can also jump from a hook\nas if you were on the ground."/>
    </properties>
   </object>
  </objectgroup>
