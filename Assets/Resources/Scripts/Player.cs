@@ -788,7 +788,7 @@ public class Player : FAnimatedSprite
         float targetY = this.y + yVel;
         float yStep = Mathf.Min(yVel, tilemap.tileHeight / 2);
         float lastY = y;
-        for (; y > targetY; y += Mathf.Max(-tilemap.tileHeight/2, targetY - y))
+        for (; y > targetY; y += Mathf.Max(-tilemap.tileHeight / 2, targetY - y))
         {
 
             float leftX = this.x - tilemap.tileWidth / 4;
@@ -848,10 +848,13 @@ public class Player : FAnimatedSprite
                 break;
             }
             CheckHookDown();
-            FloorButton button = world.getFloorButton(this.x, this.y);
-            if (button != null)
-                this.y = button.y + 6;
             lastY = y;
+        }
+        FloorButton button = world.getFloorButton(this.x, this.y);
+        if (button != null)
+        {
+            this.y = button.y + 6;
+            this.yVel = 0;
         }
     }
     public bool IsDying()
@@ -883,7 +886,7 @@ public class Player : FAnimatedSprite
         if (tilemap.isHook(this.x, this.y))
         {
             currentState = State.TAIL_HANG_TRANS_IN;
-            Go.to(this, TRANS_HOOK_TIME, new TweenConfig().floatProp("x", Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2).floatProp("y", Mathf.CeilToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight - tilemap.tileHeight / 2).setEaseType(EaseType.Linear).onComplete((t) => { if (currentState != State.DYING) { currentState = State.TAIL_HANG; }  }));
+            Go.to(this, TRANS_HOOK_TIME, new TweenConfig().floatProp("x", Mathf.FloorToInt(this.x / tilemap.tileWidth) * tilemap.tileWidth + tilemap.tileWidth / 2).floatProp("y", Mathf.CeilToInt(this.y / tilemap.tileHeight) * tilemap.tileHeight - tilemap.tileHeight / 2).setEaseType(EaseType.Linear).onComplete((t) => { if (currentState != State.DYING) { currentState = State.TAIL_HANG; } }));
             xVel = 0;
             yVel = 0;
         }
